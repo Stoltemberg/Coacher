@@ -6,13 +6,6 @@ class CoachBrain:
     def __init__(self, assistant):
         self.assistant = assistant
         self.active_player_name = None
-        
-    def map_pve_name(self, raw_killer):
-        lk = raw_killer.lower()
-        if "turret" in lk or "torder" in lk: return "uma Torre"
-        if "minion" in lk: return "uma Tropa"
-        if "sru_" in lk: return "os Monstros da Selva"
-        return "o cenário"
         self.player_to_champ = {} 
         self.player_to_team = {}
         self.our_team = "ORDER"
@@ -28,6 +21,13 @@ class CoachBrain:
         self.enemy_drags = 0
         
         self.armor_ids = [3075, 3143, 3110, 6660, 3068, 6665, 3193, 3026]
+        
+    def map_pve_name(self, raw_killer):
+        lk = raw_killer.lower()
+        if "turret" in lk or "torder" in lk: return "uma Torre"
+        if "minion" in lk: return "uma Tropa"
+        if "sru_" in lk: return "os Monstros da Selva"
+        return "o cenário"
         self.mr_ids = [3065, 4401, 3155, 3156, 3001, 3118]
         self.anti_heal_ids = [3123, 3033, 3165, 3916, 6609, 3076, 3075]
 
