@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Coacher - League of Legends</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&family=Outfit:wght@400;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <!-- Background elements for glassmorphism -->
+    <div class="blob blob-1"></div>
+    <div class="blob blob-2"></div>
+    <div class="blob blob-3"></div>
+
+    <div class="app-container glass-panel">
+        <aside class="sidebar">
+            <div class="logo">
+                <h1>Coacher <span class="dot">.</span></h1>
+            </div>
+            <nav>
+                <div class="nav-item active" data-target="dashboard">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7"></rect><rect x="14" y="3" width="7" height="7"></rect><rect x="14" y="14" width="7" height="7"></rect><rect x="3" y="14" width="7" height="7"></rect></svg>
+                    Painel
+                </div>
+                <div class="nav-item" data-target="settings">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33h.09a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg>
+                    Configurações
+                </div>
+            </nav>
+            <div class="status-indicator">
+                <div class="status-dot"></div>
+                <span id="league-status" class="status-text">Aguardando League...</span>
+            </div>
+        </aside>
+
+        <main class="content-area">
+            <!-- View: Dashboard -->
+            <section id="view-dashboard" class="view active">
+                <header class="top-header">
+                    <h2>Visão Geral</h2>
+                    <div class="user-profile">
+                        <img id="summoner-icon" src="https://ddragon.leagueoflegends.com/cdn/14.6.1/img/profileicon/29.png" alt="Icon" class="avatar default-avatar">
+                        <span id="summoner-name">Desconhecido</span>
+                    </div>
+                </header>
+
+                <div class="cards-grid">
+                    <div class="card glass-card">
+                        <h3>Fase Atual</h3>
+                        <p id="game-phase" class="highlight-text">Lobby</p>
+                    </div>
+                    <div class="card glass-card">
+                        <h3>Avisos de IA</h3>
+                        <div id="ai-logs" class="logs-container">
+                            <div class="log-entry system">Sistema Iniciado... Aguardando partida.</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="match-intel-panel glass-card" style="margin-top: 2rem;">
+                    <h3>Informações Pré-Jogo</h3>
+                    <p class="subtitle">Dados coletados no carregamento</p>
+                    <div id="match-intel-content">
+                        <!-- Enemy team cards will be injected here by JS -->
+                        <div class="empty-state">Inicie uma partida para visualizar a análise do time inimigo.</div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- View: Settings -->
+            <section id="view-settings" class="view">
+                <header class="top-header">
+                    <h2>Configurações do Assistente</h2>
+                </header>
+                <div class="settings-form">
+                    <div class="setting-group glass-card">
+                        <div class="setting-row">
+                            <div class="setting-info">
+                                <h3>Assistente por Voz (TTS)</h3>
+                                <p>Receba dicas importantes audíveis através de inteligência artificial durante a partida.</p>
+                            </div>
+                            <label class="switch">
+                                <input type="checkbox" id="toggle-voice" checked>
+                                <span class="slider"></span>
+                            </label>
+                        </div>
+                    </div>
+                    <div class="setting-group glass-card">
+                        <div class="setting-row">
+                            <div class="setting-info">
+                                <h3>Volume da Voz</h3>
+                                <p>Ajuste a intensidade dos alertas falados.</p>
+                            </div>
+                            <input type="range" id="voice-volume" min="0" max="100" value="80" class="range-slider">
+                        </div>
+                    </div>
+                    <div class="setting-group glass-card">
+                        <div class="setting-row">
+                            <div class="setting-info">
+                                <h3>Alertas de Objetivos</h3>
+                                <p>Avisar sobre o cronômetro do Barão, Dragão e Aronguejos.</p>
+                            </div>
+                            <label class="switch">
+                                <input type="checkbox" id="toggle-objectives" checked>
+                                <span class="slider"></span>
+                            </label>
+                        </div>
+                    </div>
+                    <div class="setting-group glass-card">
+                        <div class="setting-row">
+                            <div class="setting-info">
+                                <h3>Cobrança Avançada (Hardcore)</h3>
+                                <p>A IA vai te xingar na orelha se o teu Farm (CS/Min) ou Placar de Visão estiver baixo demais baseada no relógio.</p>
+                            </div>
+                            <label class="switch">
+                                <input type="checkbox" id="toggle-hardcore" checked>
+                                <span class="slider"></span>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+</html>
