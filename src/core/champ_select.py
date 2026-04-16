@@ -1,25 +1,16 @@
 import threading
-import time
 import requests
-import random
+
+from core.minerva_voice import MinervaVoice
 
 class ChampSelectCoach:
-    def __init__(self, assistant):
+    def __init__(self, assistant, voice=None):
         self.assistant = assistant
+        self.voice = voice or MinervaVoice()
         self.last_enemy_picks = set()
         self.champions_map = {} # ID -> Name
         self.my_champ = None
         self.runes_advised = False
-        
-        # Heurísticas de Draft Estáticas Iniciais (serão integradas ao scraper na Fase 3 depois)
-        self.matchup_tips = {
-            "Zed": "Ó, o cara locou Zed lá. Pega um mago que tenha clear wave bom ou mete um Zhonyas logo de cara, senão ele vai te deletar debaixo da torre.",
-            "Yasuo": "Yasuo inimigo. Esse maluco vai ficar dashando igual um macaco na wave. Pega algo tipo Pantheon ou Renekton e amassa a cabeça dele na rota.",
-            "Darius": "O cara pegou Darius. Esquece lutar colado com ele, tu vai ser jantado. Joga de Teemo ou Vayne e faz ele chorar pro gank.",
-            "Master Yi": "Master Yi na jungle dos caras. Avisa o teu time pra não esquecer de guardar stun pra ele. Se ele entrar solto na backline é open mid na hora.",
-            "Blitzcrank": "Fica ligado que tem Blitzcrank. Não bota a cara se não tiver wave, ele vai pescar teu suporte inteiro. Pega um Ezreal pra fugir do puxão fácil.",
-            "Vayne": "Apareceu uma Vayne lá. Boneco nojento, foca ela de primeira antes de qualquer tanque senão ela derrete a comp toda de vocês."
-        }
         
         # Categorias para análise tática
         self.high_cc_champs = ["Leona", "Nautilus", "Morgana", "Ashe", "Sejuani", "Lissandra", "Amumu", "Maokai", "Thresh"]
@@ -27,6 +18,9 @@ class ChampSelectCoach:
         self.tanks = ["Malphite", "Ornn", "Sion", "Mundo", "Rammus", "Cho'Gath", "Zac"]
 
         self._load_champions_async()
+
+    def _schedule_say(self, delay, text, event_type="neutral"):
+        threading.Timer(delay, lambda: self.assistant.say(text, event_type, category="draft")).start()
 
     def _load_champions_async(self):
         def fetch():
@@ -75,14 +69,10 @@ class ChampSelectCoach:
         for champ_id in new_picks:
             name = self.get_champion_name(champ_id)
             if name != f"Campeão {champ_id}":
-                self.assistant.say(random.choice([
-                    f"Eles locaram {name}.",
-                    f"Putz, enfiaram um {name} daquele lado.",
-                    f"Confirmação lá pros inimigo: é {name} na tela."
-                ]))
-                if name in self.matchup_tips:
-                    time.sleep(1)
-                    self.assistant.say(self.matchup_tips[name])
+                self.assistant.say(self.voice.draft_enemy_locked(name), category="draft")
+                counter_tip = self.voice.draft_counter_tip(name)
+                if counter_tip:
+                    self._schedule_say(0.8, counter_tip)
                     
         self.last_enemy_picks = current_enemy_picks
         
@@ -93,12 +83,7 @@ class ChampSelectCoach:
                 self.my_champ = my_champ_name
                 self.runes_advised = True # Só falar uma vez por escolha
                 
-                self.assistant.say(random.choice([
-                    f"Aí sim, botou {my_champ_name} na tela... Dá um tempo que eu vou dar o papo dos melhores mato pra fugir deles.",
-                    f"Maneiro, você cravou {my_champ_name}. Vou passar a visão do que tu precisa fazer com as tuas runas pra deitar esses cara.",
-                    f"Boa escolha. Já que meteu {my_champ_name}, escuta a dica quente sobre a comp que tá do outro lado."
-                ]))
-                time.sleep(3.5)
+                self.assistant.say(self.voice.draft_pick_confirmed(my_champ_name), category="draft")
                 
                 # Heurística Tática Inimiga
                 cc_count = sum(1 for c in current_enemy_names if c in self.high_cc_champs)
@@ -106,28 +91,18 @@ class ChampSelectCoach:
                 tank_count = sum(1 for c in current_enemy_names if c in self.tanks)
                 
                 if cc_count >= 2:
-                    self.assistant.say(random.choice([
-                        "Maluco, a comp deles tá entupida de controle de grupo. Bota Purificar e pega runa de tenacidade senão você vai jogar o jogo congelado.",
-                        "Cara, tem stun do outro lado que não acaba mais. Vai ser uma tristeza se você não usar a runa de tenacidade. Equipa ela logo."
-                    ]))
+                    plan_key = "high_cc"
                 
                 elif assassin_count >= 2 or (assassin_count == 1 and my_champ_name in ["Ashe", "Jinx", "Vayne", "Caitlyn", "Kog'Maw"]):
-                    self.assistant.say(random.choice([
-                        "Presta bem atenção... tem assassinos demais no time deles e tua batata tá assando. Põe um exaustão e Osso Revestido agora pra você não tomar hit kill.",
-                        "Eles pegaram uns boneco assassino chato lá. Se tu não colocar Exaustão como feitiço e pegar umas runinha defensiva, tá na loss, confia."
-                    ]))
+                    plan_key = "assassins"
                 
                 elif tank_count >= 2:
-                    self.assistant.say(random.choice([
-                        "Nossa senhora, a comp dos malucos é puro tanque da pesada. Arranca o conquistador do baú e já prepara que tu vai ter que bater neles por meia hora seguida.",
-                        "Tem dois boneco insuportável de tanque neles. Foca em runa que dá dano estendido e derrete armor que senão eles te amassam no final de tudo."
-                    ]))
+                    plan_key = "tanks"
                 
                 else:
-                    self.assistant.say(random.choice([
-                        "A composição ali tá bem feijão com arroz, honestamente... Fica no feitiço padrão e mete a runa que achar melhor, joga na maciota que tá fácil.",
-                        "Timezinho inimigo padrão sem nada muito fora da curva. Segue o teu jogo com Flash que não tem muito segredo hoje não."
-                    ]))
+                    plan_key = "standard"
+
+                self._schedule_say(1.8, self.voice.draft_comp_plan(plan_key, my_champ_name))
 
 
     def reset(self):

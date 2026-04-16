@@ -2,6 +2,8 @@ import threading
 import requests
 from bs4 import BeautifulSoup
 
+from core.ui_bridge import evaluate_js_call
+
 class EnemyScraper:
     def __init__(self, assistant, window):
         self.assistant = assistant
@@ -61,14 +63,14 @@ class EnemyScraper:
 
             # Envia diretamente ao javascript da interface
             if self.window:
-                # Trata aspas e injeta via JS
-                safe_name = summoner_name.replace("'", "\\'")
-                safe_champ = champion_name.replace("'", "\\'")
-                safe_rank = rank.replace("'", "\\'")
-                safe_wr = winrate.replace("'", "\\'")
-                
-                js_code = f"addPreGameStat('{safe_name}', '{safe_champ}', '{safe_rank}', '{safe_wr}')"
-                self.window.evaluate_js(js_code)
+                evaluate_js_call(
+                    self.window,
+                    "addPreGameStat",
+                    summoner_name,
+                    champion_name,
+                    rank,
+                    winrate,
+                )
                 
             # Log falado opcional se o winrate for absurdamente alto ou elo perigoso.
             if "Diamante" in rank or "Mestre" in rank:

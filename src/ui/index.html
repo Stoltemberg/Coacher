@@ -3,14 +3,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Coacher - League of Legends</title>
+    <title>Coacher | Minerva Coach</title>
     <link rel="stylesheet" href="style.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&family=Outfit:wght@400;700&display=swap" rel="stylesheet">
 </head>
 <body>
-    <!-- Background elements for glassmorphism -->
     <div class="blob blob-1"></div>
     <div class="blob blob-2"></div>
     <div class="blob blob-3"></div>
@@ -37,10 +36,12 @@
         </aside>
 
         <main class="content-area">
-            <!-- View: Dashboard -->
             <section id="view-dashboard" class="view active">
                 <header class="top-header">
-                    <h2>Visão Geral</h2>
+                    <div>
+                        <span class="eyebrow">Coach em tempo real</span>
+                        <h2>Visão Geral</h2>
+                    </div>
                     <div class="user-profile">
                         <img id="summoner-icon" src="https://ddragon.leagueoflegends.com/cdn/14.6.1/img/profileicon/29.png" alt="Icon" class="avatar default-avatar">
                         <span id="summoner-name">Desconhecido</span>
@@ -54,33 +55,111 @@
                     </div>
                     <div class="card glass-card">
                         <h3>Avisos de IA</h3>
-                        <div id="ai-logs" class="logs-container">
-                            <div class="log-entry system">Sistema Iniciado... Aguardando partida.</div>
+                        <div id="ai-logs" class="logs-container" aria-live="polite">
+                            <div class="log-entry system">Sistema iniciado. Aguardando partida.</div>
                         </div>
                     </div>
                 </div>
 
-                <div class="match-intel-panel glass-card" style="margin-top: 2rem;">
-                    <h3>Informações Pré-Jogo</h3>
-                    <p class="subtitle">Dados coletados no carregamento</p>
-                    <div id="match-intel-content">
-                        <!-- Enemy team cards will be injected here by JS -->
-                        <div class="empty-state">Inicie uma partida para visualizar a análise do time inimigo.</div>
+                <section class="coaching-taxonomy glass-card">
+                    <div class="section-header">
+                        <div>
+                            <h3>Taxonomia de Calls</h3>
+                            <p class="subtitle">Cada fala tem um papel. O Minerva continua ácido, mas sempre com direção.</p>
+                        </div>
+                        <div class="section-chip">draft · lane · macro · objetivo · economia · recuperação</div>
                     </div>
-                </div>
+                    <div id="coach-taxonomy-grid" class="taxonomy-grid"></div>
+                </section>
+
+                <section class="match-intel-panel glass-card">
+                    <div class="section-header">
+                        <div>
+                            <h3>Leitura Pré-Jogo</h3>
+                            <p class="subtitle">Cards seguros, atualizados sem duplicar e prontos para a entrada da partida.</p>
+                        </div>
+                        <div class="section-chip">análise da lobby</div>
+                    </div>
+                    <div id="match-intel-content" aria-live="polite">
+                        <div class="empty-state">Inicie uma partida para visualizar a leitura do time inimigo.</div>
+                    </div>
+                </section>
+
+                <section class="postgame-panel glass-card">
+                    <div class="section-header">
+                        <div>
+                            <h3>Resumo Pós-Jogo e Memória</h3>
+                            <p class="subtitle">Leituras do coach, correções e padrões recorrentes para a próxima fila.</p>
+                        </div>
+                        <div class="section-chip">memória persistente</div>
+                    </div>
+
+                    <div class="postgame-layout">
+                        <article class="postgame-summary-shell">
+                            <div class="summary-hero">
+                                <div>
+                                    <span class="eyebrow">Última partida</span>
+                                    <h4 id="postgame-title">Aguardando fim de jogo</h4>
+                                </div>
+                                <span id="postgame-result" class="result-pill">Sem dados</span>
+                            </div>
+
+                            <div class="summary-metrics" id="postgame-metrics">
+                                <div class="metric-card">
+                                    <span class="metric-label">Duração</span>
+                                    <strong id="postgame-duration">--</strong>
+                                </div>
+                                <div class="metric-card">
+                                    <span class="metric-label">Placar</span>
+                                    <strong id="postgame-scoreline">--</strong>
+                                </div>
+                                <div class="metric-card">
+                                    <span class="metric-label">Foco</span>
+                                    <strong id="postgame-focus">--</strong>
+                                </div>
+                                <div class="metric-card">
+                                    <span class="metric-label">Confiança</span>
+                                    <strong id="postgame-confidence">--</strong>
+                                </div>
+                            </div>
+
+                            <div class="summary-block">
+                                <div class="block-header">
+                                    <h4>Leituras do coach</h4>
+                                    <span class="block-tag">pontos de atenção</span>
+                                </div>
+                                <div id="postgame-reads" class="summary-list" aria-live="polite"></div>
+                            </div>
+                        </article>
+
+                        <aside class="memory-shell">
+                            <div class="block-header">
+                                <h4>Memória do jogador</h4>
+                                <span class="block-tag">tendências e recorrências</span>
+                            </div>
+                            <div id="player-memory-feed" class="memory-feed" aria-live="polite">
+                                <div class="postgame-empty">
+                                    Quando a partida terminar, o coach pode guardar padrões como farm baixo, visão fraca, overextend e timings de objetivo.
+                                </div>
+                            </div>
+                        </aside>
+                    </div>
+                </section>
             </section>
 
-            <!-- View: Settings -->
             <section id="view-settings" class="view">
                 <header class="top-header">
-                    <h2>Configurações do Assistente</h2>
+                    <div>
+                        <span class="eyebrow">Comportamento do coach</span>
+                        <h2>Configurações do Assistente</h2>
+                    </div>
                 </header>
                 <div class="settings-form">
                     <div class="setting-group glass-card">
                         <div class="setting-row">
                             <div class="setting-info">
-                                <h3>Assistente por Voz (TTS)</h3>
-                                <p>Receba dicas importantes audíveis através de inteligência artificial durante a partida.</p>
+                                <h3>Assistente por voz (TTS)</h3>
+                                <p>Receba dicas importantes em áudio durante a partida, com a personalidade do Minerva.</p>
                             </div>
                             <label class="switch">
                                 <input type="checkbox" id="toggle-voice" checked>
@@ -91,7 +170,7 @@
                     <div class="setting-group glass-card">
                         <div class="setting-row">
                             <div class="setting-info">
-                                <h3>Volume da Voz</h3>
+                                <h3>Volume da voz</h3>
                                 <p>Ajuste a intensidade dos alertas falados.</p>
                             </div>
                             <input type="range" id="voice-volume" min="0" max="100" value="80" class="range-slider">
@@ -100,8 +179,8 @@
                     <div class="setting-group glass-card">
                         <div class="setting-row">
                             <div class="setting-info">
-                                <h3>Alertas de Objetivos</h3>
-                                <p>Avisar sobre o cronômetro do Barão, Dragão e Aronguejos.</p>
+                                <h3>Alertas de objetivos</h3>
+                                <p>Avisa sobre o cronômetro do Barão, Dragão e Arauto sem encher a tela de ruído.</p>
                             </div>
                             <label class="switch">
                                 <input type="checkbox" id="toggle-objectives" checked>
@@ -112,8 +191,8 @@
                     <div class="setting-group glass-card">
                         <div class="setting-row">
                             <div class="setting-info">
-                                <h3>Cobrança Avançada (Hardcore)</h3>
-                                <p>A IA vai te xingar na orelha se o teu Farm (CS/Min) ou Placar de Visão estiver baixo demais baseada no relógio.</p>
+                                <h3>Cobrança avançada (Hardcore)</h3>
+                                <p>O Minerva vai apertar mais quando farm, visão ou disciplina estiverem abaixo do que a partida pede.</p>
                             </div>
                             <label class="switch">
                                 <input type="checkbox" id="toggle-hardcore" checked>
