@@ -1,5 +1,5 @@
 services:
-  - type: static
+  - runtime: static
     name: coacher-neural-platform
     rootDir: site
     buildCommand: npm install && npm run build
