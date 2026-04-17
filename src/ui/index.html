@@ -2,111 +2,161 @@
 <html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Coacher | Minerva Coach</title>
+    <title>Coacher | Performance Coach</title>
     <link rel="stylesheet" href="style.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&family=Outfit:wght@400;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=Space+Grotesk:wght@500;700&display=swap" rel="stylesheet">
 </head>
-<body>
-    <div class="blob blob-1"></div>
-    <div class="blob blob-2"></div>
-    <div class="blob blob-3"></div>
+<body data-phase="lobby" data-mode="draft" data-auth="guest">
+    <section class="auth-shell" id="auth-shell">
+        <div class="auth-stage">
+            <aside class="auth-hero">
+                <span class="eyebrow">Performance Coach System</span>
+                <h1>Coacher<span class="brand-dot">.</span></h1>
+                <p>Abre tua sess&atilde;o, preserva hist&oacute;rico entre partidas e transforma o desktop app no teu painel pessoal de evolu&ccedil;&atilde;o competitiva.</p>
 
-    <div class="app-container glass-panel">
-        <aside class="sidebar">
-            <div class="logo">
-                <h1>Coacher <span class="dot">.</span></h1>
+                <div class="auth-points">
+                    <div class="auth-point">
+                        <strong>Sess&atilde;o persistente</strong>
+                        <span>Entra uma vez e o Coacher mant&eacute;m teu contexto salvo entre filas.</span>
+                    </div>
+                    <div class="auth-point">
+                        <strong>Mem&oacute;ria por jogador</strong>
+                        <span>Insights, tend&ecirc;ncias e p&oacute;s-jogo organizados por conta.</span>
+                    </div>
+                    <div class="auth-point">
+                        <strong>Dashboard de evolu&ccedil;&atilde;o</strong>
+                        <span>Depois do login, a home prioriza teu desempenho e teus padr&otilde;es reais.</span>
+                    </div>
+                </div>
+            </aside>
+
+            <div class="auth-card">
+                <div class="auth-card-head">
+                    <span class="eyebrow">Autentica&ccedil;&atilde;o</span>
+                    <h2 id="auth-title">Entrar</h2>
+                    <p id="auth-subtitle">Use tua conta para liberar o Coacher nesta m&aacute;quina.</p>
+                </div>
+
+                <div class="auth-mode-switch">
+                    <button type="button" class="auth-mode-button active" data-auth-mode="login">Entrar</button>
+                    <button type="button" class="auth-mode-button" data-auth-mode="signup">Cadastrar</button>
+                </div>
+
+                <form id="auth-form" class="auth-form">
+                    <label class="field-group" id="auth-name-group" hidden>
+                        <span>Nome</span>
+                        <input type="text" id="auth-name" placeholder="Como voc&ecirc; quer aparecer no app">
+                    </label>
+
+                    <label class="field-group">
+                        <span>E-mail</span>
+                        <input type="email" id="auth-email" placeholder="voce@exemplo.com" autocomplete="username">
+                    </label>
+
+                    <label class="field-group">
+                        <span>Senha</span>
+                        <input type="password" id="auth-password" placeholder="Sua senha" autocomplete="current-password">
+                    </label>
+
+                    <button type="submit" id="auth-submit" class="primary-button">Entrar</button>
+                </form>
+
+                <p id="auth-message" class="auth-message">Aguardando autentica&ccedil;&atilde;o.</p>
             </div>
-            <nav>
-                <div class="nav-item active" data-target="dashboard">
-                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7"></rect><rect x="14" y="3" width="7" height="7"></rect><rect x="14" y="14" width="7" height="7"></rect><rect x="3" y="14" width="7" height="7"></rect></svg>
-                    Painel
+        </div>
+    </section>
+
+    <div class="app-shell">
+        <header class="app-header">
+            <div class="app-header-left">
+                <div class="brand-compact">
+                    <span class="brand-mark">M</span>
+                    <div class="brand-copy">
+                        <strong>Coacher</strong>
+                        <span>Performance Coach System</span>
+                    </div>
                 </div>
-                <div class="nav-item" data-target="settings">
-                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33h.09a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg>
-                    Configurações
+
+                <div class="player-hub">
+                    <img id="summoner-icon" src="https://ddragon.leagueoflegends.com/cdn/14.6.1/img/profileicon/29.png" alt="Icon" class="avatar default-avatar">
+                    <div class="player-hub-copy">
+                        <strong id="summoner-name">Desconhecido</strong>
+                        <span id="auth-user-name">Visitante</span>
+                    </div>
+                    <button type="button" id="logout-button" class="ghost-button">Sair</button>
                 </div>
+            </div>
+
+            <nav class="app-nav main-nav">
+                <button class="nav-item active" type="button" data-target="dashboard">
+                    <strong>Dashboard</strong>
+                    <small>Jogador</small>
+                </button>
+                <button class="nav-item" type="button" data-target="settings">
+                    <strong>Configura&ccedil;&otilde;es</strong>
+                    <small>Coach</small>
+                </button>
             </nav>
-            <div class="status-indicator">
-                <div class="status-dot"></div>
-                <span id="league-status" class="status-text">Aguardando League...</span>
-            </div>
-        </aside>
 
-        <main class="content-area">
-            <section id="view-dashboard" class="view active">
-                <header class="top-header">
-                    <div>
-                        <span class="eyebrow">Coach em tempo real</span>
-                        <h2>Visão Geral</h2>
-                    </div>
-                    <div class="user-profile">
-                        <img id="summoner-icon" src="https://ddragon.leagueoflegends.com/cdn/14.6.1/img/profileicon/29.png" alt="Icon" class="avatar default-avatar">
-                        <span id="summoner-name">Desconhecido</span>
-                    </div>
-                </header>
-
-                <div class="cards-grid">
-                    <div class="card glass-card">
-                        <h3>Fase Atual</h3>
-                        <p id="game-phase" class="highlight-text">Lobby</p>
-                    </div>
-                    <div class="card glass-card">
-                        <h3>Avisos de IA</h3>
-                        <div id="ai-logs" class="logs-container" aria-live="polite">
-                            <div class="log-entry system">Sistema iniciado. Aguardando partida.</div>
-                        </div>
-                    </div>
+            <div class="shell-status">
+                <span class="status-indicator"></span>
+                <div class="shell-status-copy">
+                    <span class="eyebrow">League Client</span>
+                    <strong id="league-status">Aguardando League...</strong>
                 </div>
+            </div>
+        </header>
 
-                <section class="coaching-taxonomy glass-card">
-                    <div class="section-header">
-                        <div>
-                            <h3>Taxonomia de Calls</h3>
-                            <p class="subtitle">Cada fala tem um papel. O Minerva continua ácido, mas sempre com direção.</p>
-                        </div>
-                        <div class="section-chip">draft · lane · macro · objetivo · economia · recuperação</div>
+        <main class="workspace">
+            <section id="view-dashboard" class="view active">
+                <section class="hero-surface">
+                    <div class="hero-backdrop"></div>
+                    <div class="hero-copy">
+                        <span class="eyebrow">Dashboard do jogador</span>
+                        <h2>Teu momento competitivo, sem ru&iacute;do.</h2>
+                        <p>A home agora existe para te mostrar padr&atilde;o, evolu&ccedil;&atilde;o e onde tua pr&oacute;xima melhora realmente est&aacute;.</p>
                     </div>
-                    <div id="coach-taxonomy-grid" class="taxonomy-grid"></div>
+
+                    <div class="hero-status-row">
+                        <article class="hero-status-card">
+                            <span class="metric-label">Resultado recente</span>
+                            <strong id="postgame-result">Sem dados</strong>
+                        </article>
+                        <article class="hero-status-card hero-status-card-wide">
+                            <span class="metric-label">Leitura principal</span>
+                            <strong id="postgame-focus" class="spotlight-value">--</strong>
+                            <p id="coach-mode-copy" class="mode-copy">O painel resume o sinal mais forte do teu momento atual como jogador.</p>
+                            <span id="coach-mode-pill" class="mode-pill hidden-telemetry">Draft</span>
+                            <span id="game-phase" class="hidden-telemetry">Lobby</span>
+                        </article>
+                    </div>
                 </section>
 
-                <section class="match-intel-panel glass-card">
-                    <div class="section-header">
-                        <div>
-                            <h3>Leitura Pré-Jogo</h3>
-                            <p class="subtitle">Cards seguros, atualizados sem duplicar e prontos para a entrada da partida.</p>
-                        </div>
-                        <div class="section-chip">análise da lobby</div>
-                    </div>
-                    <div id="match-intel-content" aria-live="polite">
-                        <div class="empty-state">Inicie uma partida para visualizar a leitura do time inimigo.</div>
-                    </div>
-                </section>
-
-                <section class="postgame-panel glass-card">
-                    <div class="section-header">
-                        <div>
-                            <h3>Resumo Pós-Jogo e Memória</h3>
-                            <p class="subtitle">Leituras do coach, correções e padrões recorrentes para a próxima fila.</p>
-                        </div>
-                        <div class="section-chip">memória persistente</div>
-                    </div>
-
-                    <div class="postgame-layout">
-                        <article class="postgame-summary-shell">
-                            <div class="summary-hero">
+                <section class="dashboard-grid dashboard-grid-clean">
+                    <div class="workspace-main">
+                        <section class="workspace-section performance-section section-enter">
+                            <div class="section-header section-header-tight">
                                 <div>
-                                    <span class="eyebrow">Última partida</span>
-                                    <h4 id="postgame-title">Aguardando fim de jogo</h4>
+                                    <span class="eyebrow">Vis&atilde;o geral</span>
+                                    <h3>Desempenho recente</h3>
                                 </div>
-                                <span id="postgame-result" class="result-pill">Sem dados</span>
                             </div>
 
-                            <div class="summary-metrics" id="postgame-metrics">
+                            <div class="summary-hero summary-hero-compact performance-hero">
+                                <div>
+                                    <h4 id="postgame-title">Aguardando fim de jogo</h4>
+                                    <p class="summary-subtitle">Uma leitura curta do que mais define teu estado atual e como isso aparece entre partidas.</p>
+                                </div>
+                                <div id="coach-taxonomy-grid" class="taxonomy-grid taxonomy-grid-compact hidden-telemetry" aria-hidden="true"></div>
+                            </div>
+
+                            <div class="summary-metrics player-metrics" id="postgame-metrics">
                                 <div class="metric-card">
-                                    <span class="metric-label">Duração</span>
+                                    <span class="metric-label">Dura&ccedil;&atilde;o</span>
                                     <strong id="postgame-duration">--</strong>
                                 </div>
                                 <div class="metric-card">
@@ -114,93 +164,264 @@
                                     <strong id="postgame-scoreline">--</strong>
                                 </div>
                                 <div class="metric-card">
-                                    <span class="metric-label">Foco</span>
-                                    <strong id="postgame-focus">--</strong>
-                                </div>
-                                <div class="metric-card">
-                                    <span class="metric-label">Confiança</span>
+                                    <span class="metric-label">Confian&ccedil;a</span>
                                     <strong id="postgame-confidence">--</strong>
                                 </div>
-                            </div>
-
-                            <div class="summary-block">
-                                <div class="block-header">
-                                    <h4>Leituras do coach</h4>
-                                    <span class="block-tag">pontos de atenção</span>
-                                </div>
-                                <div id="postgame-reads" class="summary-list" aria-live="polite"></div>
-                            </div>
-                        </article>
-
-                        <aside class="memory-shell">
-                            <div class="block-header">
-                                <h4>Memória do jogador</h4>
-                                <span class="block-tag">tendências e recorrências</span>
-                            </div>
-                            <div id="player-memory-feed" class="memory-feed" aria-live="polite">
-                                <div class="postgame-empty">
-                                    Quando a partida terminar, o coach pode guardar padrões como farm baixo, visão fraca, overextend e timings de objetivo.
+                                <div class="metric-card">
+                                    <span class="metric-label">Sinal dominante</span>
+                                    <strong id="player-signal-dominant">--</strong>
                                 </div>
                             </div>
-                        </aside>
+
+                            <div class="player-dashboard-grid">
+                                <div class="postgame-column">
+                                    <div class="section-subgroup">
+                                        <div class="subsection-header">
+                                            <h4>Headline da sess&atilde;o</h4>
+                                            <span class="subsection-label">resumo</span>
+                                        </div>
+                                        <div id="postgame-reads" class="summary-list" aria-live="polite"></div>
+                                    </div>
+
+                                    <div class="section-subgroup">
+                                        <div class="subsection-header">
+                                            <h4>For&ccedil;as e ajustes</h4>
+                                            <span class="subsection-label">insights</span>
+                                        </div>
+                                        <div id="postgame-insights" class="insight-grid" aria-live="polite"></div>
+                                    </div>
+                                </div>
+
+                                <div class="postgame-column">
+                                    <div class="section-subgroup">
+                                        <div class="subsection-header">
+                                            <h4>Leitura adaptativa</h4>
+                                            <span class="subsection-label">tend&ecirc;ncias</span>
+                                        </div>
+                                        <div id="postgame-adaptive" class="adaptive-grid" aria-live="polite"></div>
+                                    </div>
+
+                                    <div class="section-subgroup">
+                                        <div class="subsection-header">
+                                            <h4>Mem&oacute;ria viva</h4>
+                                            <span class="subsection-label">recorr&ecirc;ncia</span>
+                                        </div>
+                                        <div id="player-memory-feed" class="memory-feed" aria-live="polite">
+                                            <div class="postgame-empty">Quando a partida terminar, o coach pode guardar padr&otilde;es como farm baixo, vis&atilde;o fraca e timings de objetivo.</div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </section>
+
+                        <section class="workspace-section context-section section-enter">
+                            <div class="section-header section-header-tight">
+                                <div>
+                                    <span class="eyebrow">Contexto de partida</span>
+                                    <h3>Leitura externa</h3>
+                                </div>
+                            </div>
+
+                            <div class="focus-layout player-analysis-layout">
+                                <article class="split-block quiet-block">
+                                    <div class="subsection-header">
+                                        <h4>Fila e inimigos</h4>
+                                        <span class="subsection-label">pr&eacute;-jogo</span>
+                                    </div>
+                                    <div id="match-intel-content" aria-live="polite">
+                                        <div class="empty-state">Inicie uma partida para puxar o contexto da fila, composi&ccedil;&otilde;es e sinais de matchup.</div>
+                                    </div>
+                                </article>
+
+                                <article class="split-block quiet-block">
+                                    <div class="subsection-header">
+                                        <h4>Mapa atual</h4>
+                                        <span class="subsection-label">tempo real</span>
+                                    </div>
+                                    <div id="jungle-intel-content" aria-live="polite">
+                                        <div class="empty-state">Assim que o jogo abrir, esta &aacute;rea vira uma leitura de mapa &uacute;til para teu momento atual.</div>
+                                    </div>
+                                </article>
+                            </div>
+                        </section>
+
+                        <section class="workspace-section timeline-section section-enter">
+                            <div class="section-header section-header-tight">
+                                <div>
+                                    <span class="eyebrow">Hist&oacute;rico</span>
+                                    <h3>Linha do tempo da partida</h3>
+                                </div>
+                            </div>
+                            <div id="postgame-timeline" class="timeline-feed" aria-live="polite"></div>
+                        </section>
                     </div>
+
+                    <aside class="workspace-inspector">
+                        <section class="inspector-section live-status-panel section-enter">
+                            <div class="section-header section-header-tight">
+                                <div>
+                                    <span class="eyebrow">Sess&atilde;o</span>
+                                    <h3>Leitura r&aacute;pida</h3>
+                                </div>
+                            </div>
+                            <div class="session-status-stack">
+                                <div class="status-stat">
+                                    <span class="metric-label">Sess&atilde;o</span>
+                                    <strong id="player-phase-copy">Lobby</strong>
+                                </div>
+                                <div class="status-stat">
+                                    <span class="metric-label">Headline</span>
+                                    <strong id="player-headline-mini">Sem leitura ainda</strong>
+                                </div>
+                                <div class="status-stat">
+                                    <span class="metric-label">Pr&oacute;ximo foco</span>
+                                    <strong id="player-next-focus">Aguardando dados</strong>
+                                </div>
+                                <span id="league-status-main" class="hidden-telemetry">Aguardando League...</span>
+                            </div>
+                        </section>
+
+                        <section class="inspector-section live-feed-panel section-enter">
+                            <div class="section-header section-header-tight">
+                                <div>
+                                    <span class="eyebrow">Feed ao vivo</span>
+                                    <h3>Eventos recentes</h3>
+                                </div>
+                            </div>
+                            <div id="ai-logs" class="logs-container" aria-live="polite">
+                                <div class="log-entry system">Sistema iniciado. Aguardando partida.</div>
+                            </div>
+                        </section>
+                    </aside>
                 </section>
             </section>
 
             <section id="view-settings" class="view">
-                <header class="top-header">
-                    <div>
-                        <span class="eyebrow">Comportamento do coach</span>
-                        <h2>Configurações do Assistente</h2>
+                <header class="topbar">
+                    <div class="topbar-copy">
+                        <span class="eyebrow">Controle fino</span>
+                        <h2>Configura&ccedil;&otilde;es do coach</h2>
+                        <p class="topbar-subtitle">Ajuste voz, intensidade e fam&iacute;lias de call sem poluir o dashboard principal do jogador.</p>
                     </div>
                 </header>
-                <div class="settings-form">
-                    <div class="setting-group glass-card">
-                        <div class="setting-row">
-                            <div class="setting-info">
-                                <h3>Assistente por voz (TTS)</h3>
-                                <p>Receba dicas importantes em áudio durante a partida, com a personalidade do Minerva.</p>
+
+                <section class="settings-layout settings-layout-premium">
+                    <article class="settings-block settings-block-wide">
+                        <div class="section-header section-header-tight">
+                            <div>
+                                <span class="eyebrow">Voz</span>
+                                <h3>Escolha de voz</h3>
+                            </div>
+                        </div>
+                        <p class="card-copy">Minerva usa ElevenLabs. Padr&atilde;o usa uma voz neural gratuita e n&atilde;o consome cr&eacute;ditos da ElevenLabs.</p>
+                        <div class="preset-row">
+                            <button type="button" class="preset-chip" data-voice-personality="minerva">Minerva</button>
+                            <button type="button" class="preset-chip" data-voice-personality="standard">Padr&atilde;o</button>
+                        </div>
+                    </article>
+
+                    <article class="settings-block settings-block-wide">
+                        <div class="section-header section-header-tight">
+                            <div>
+                                <span class="eyebrow">Entrega</span>
+                                <h3>Modo de fala</h3>
+                            </div>
+                        </div>
+                        <p class="card-copy">Escolha se o coach fala no padr&atilde;o, aperta no hardcore ou economiza fala no minimal.</p>
+                        <div class="preset-row">
+                            <button type="button" class="preset-chip" data-voice-preset="standard">Standard</button>
+                            <button type="button" class="preset-chip" data-voice-preset="hardcore">Hardcore</button>
+                            <button type="button" class="preset-chip" data-voice-preset="minimal">Minimal</button>
+                        </div>
+                    </article>
+
+                    <article class="settings-block">
+                        <div class="settings-row">
+                            <div>
+                                <span class="eyebrow">TTS</span>
+                                <h3>Assistente por voz</h3>
+                                <p class="card-copy">Receba as chamadas importantes em &aacute;udio durante a partida.</p>
                             </div>
                             <label class="switch">
                                 <input type="checkbox" id="toggle-voice" checked>
                                 <span class="slider"></span>
                             </label>
                         </div>
-                    </div>
-                    <div class="setting-group glass-card">
-                        <div class="setting-row">
-                            <div class="setting-info">
-                                <h3>Volume da voz</h3>
-                                <p>Ajuste a intensidade dos alertas falados.</p>
+                    </article>
+
+                    <article class="settings-block">
+                        <div class="settings-row">
+                            <div>
+                                <span class="eyebrow">Volume</span>
+                                <h3>Intensidade da voz</h3>
+                                <p class="card-copy">Ajuste a presen&ccedil;a dos alertas falados.</p>
                             </div>
                             <input type="range" id="voice-volume" min="0" max="100" value="80" class="range-slider">
                         </div>
-                    </div>
-                    <div class="setting-group glass-card">
-                        <div class="setting-row">
-                            <div class="setting-info">
-                                <h3>Alertas de objetivos</h3>
-                                <p>Avisa sobre o cronômetro do Barão, Dragão e Arauto sem encher a tela de ruído.</p>
+                    </article>
+
+                    <article class="settings-block settings-block-wide">
+                        <div class="section-header section-header-tight">
+                            <div>
+                                <span class="eyebrow">Categorias</span>
+                                <h3>Preset de calls</h3>
+                            </div>
+                        </div>
+                        <p class="card-copy">Escolha se o coach fica balanceado, mais focado em draft, macro ou recupera&ccedil;&atilde;o.</p>
+                        <div class="preset-row">
+                            <button type="button" class="preset-chip" data-category-preset="balanced">Balanced</button>
+                            <button type="button" class="preset-chip" data-category-preset="draft">Draft</button>
+                            <button type="button" class="preset-chip" data-category-preset="macro">Macro</button>
+                            <button type="button" class="preset-chip" data-category-preset="recovery">Recovery</button>
+                        </div>
+                    </article>
+
+                    <article class="settings-block settings-block-wide">
+                        <div class="section-header section-header-tight">
+                            <div>
+                                <span class="eyebrow">Filtro</span>
+                                <h3>Categorias ativas</h3>
+                            </div>
+                        </div>
+                        <p class="card-copy">Ligue e desligue fam&iacute;lias de call sem mexer no resto do produto.</p>
+                        <div class="preset-row">
+                            <button type="button" class="preset-chip category-chip" data-category-toggle="draft">Draft</button>
+                            <button type="button" class="preset-chip category-chip" data-category-toggle="lane">Lane</button>
+                            <button type="button" class="preset-chip category-chip" data-category-toggle="macro">Macro</button>
+                            <button type="button" class="preset-chip category-chip" data-category-toggle="objective">Objetivo</button>
+                            <button type="button" class="preset-chip category-chip" data-category-toggle="economy">Economia</button>
+                            <button type="button" class="preset-chip category-chip" data-category-toggle="recovery">Recovery</button>
+                        </div>
+                    </article>
+
+                    <article class="settings-block">
+                        <div class="settings-row">
+                            <div>
+                                <span class="eyebrow">Objetivos</span>
+                                <h3>Alertas de objetivo</h3>
+                                <p class="card-copy">Avisa sobre timers de Bar&atilde;o, Drag&atilde;o e Arauto sem virar ru&iacute;do constante.</p>
                             </div>
                             <label class="switch">
                                 <input type="checkbox" id="toggle-objectives" checked>
                                 <span class="slider"></span>
                             </label>
                         </div>
-                    </div>
-                    <div class="setting-group glass-card">
-                        <div class="setting-row">
-                            <div class="setting-info">
-                                <h3>Cobrança avançada (Hardcore)</h3>
-                                <p>O Minerva vai apertar mais quando farm, visão ou disciplina estiverem abaixo do que a partida pede.</p>
+                    </article>
+
+                    <article class="settings-block">
+                        <div class="settings-row">
+                            <div>
+                                <span class="eyebrow">Hardcore</span>
+                                <h3>Cobran&ccedil;a avan&ccedil;ada</h3>
+                                <p class="card-copy">O coach aperta mais quando farm, vis&atilde;o ou disciplina ficam abaixo do que a partida pede.</p>
                             </div>
                             <label class="switch">
                                 <input type="checkbox" id="toggle-hardcore" checked>
                                 <span class="slider"></span>
                             </label>
                         </div>
-                    </div>
-                </div>
+                    </article>
+                </section>
             </section>
         </main>
     </div>

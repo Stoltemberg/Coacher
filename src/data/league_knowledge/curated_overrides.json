@@ -1,0 +1,981 @@
+{
+  "champions": {
+    "aatrox": {
+      "power_spikes": [
+        "nivel 4 com wave longa e espaco pra Q",
+        "cutelo ou primeiro item de sustain",
+        "dois itens quando side lane vira pressao real"
+      ],
+      "draft_build_focus": [
+        "prioriza sustain e luta longa antes de ganancia pura",
+        "contra kite e corta-cura, compra janela de engage e nao so dano seco"
+      ],
+      "roles": {
+        "top": {
+          "lane_plan": "Aatrox quer wave com espaço, troca curta nas bordas da Q e all-in só quando o sustain dele puder continuar a luta",
+          "first_reset_focus": "volta com sustain ou dano suficiente para a wave não te expulsar da lane",
+          "mid_game_job": "segurar side lane com pressão e chegar na fight como ameaça de front-to-back e dive",
+          "situational_items": [
+            "corta-cura contra sustain espelhado ou suporte de cura",
+            "ferramenta de acesso se o outro lado kitear demais"
+          ],
+          "matchups": {
+            "renekton": {
+              "verdict": "skill apertado cedo",
+              "plan": "joga no limite da wave, usa alcance da Q para bater curto e nao entrega furia gratis pro Renekton",
+              "danger": "nivel 3 a 6 com dash duplo e troca curta colada",
+              "spike_race": "se tu segurar o early, teu sustain e tua teamfight crescem melhor no primeiro item"
+            }
+          }
+        }
+      }
+    },
+    "ahri": {
+      "power_spikes": [
+        "nivel 6 com ultimate para pickoff",
+        "primeiro item de burst para limpar wave e sair do mapa",
+        "dois itens quando o charme ja ameaca kill sozinho"
+      ],
+      "draft_build_focus": [
+        "contra engage ou assassin, considera ferramenta defensiva cedo sem atrasar teu burst principal",
+        "usa mobilidade para pressionar side e entrar em luta por pickoff"
+      ],
+      "roles": {
+        "mid": {
+          "lane_plan": "joga a wave para ter prioridade e transforma teus resets em roam; Ahri perde valor quando fica parada trocando sem proposito",
+          "first_reset_focus": "garante mana ou burst para limpar wave e liberar roam sem perder o mid",
+          "mid_game_job": "achar pickoff lateral, negar flanco inimigo e começar luta boa com charme certo",
+          "situational_items": [
+            "seguro defensivo contra assassino ou dive pesado",
+            "penetração mágica se o outro lado respeitar teu burst com MR cedo"
+          ],
+          "matchups": {
+            "zed": {
+              "verdict": "skill explosivo",
+              "plan": "abusa alcance no early, segura o charme para negar a entrada dele e chama jungle quando a wave voltar pro teu lado",
+              "danger": "nivel 6 sem flash ou sem spell defensiva",
+              "spike_race": "teu mapa abre no nivel 6; o dele tambem, entao quem gastar cooldown torto primeiro sangra"
+            },
+            "syndra": {
+              "verdict": "pressionavel com paciencia",
+              "plan": "desvia do stun, limpa wave sem tomar poke dobrado e joga a lane para reset e roam, nao para duelo eterno no mid",
+              "danger": "stun conectado com wave parada no meio",
+              "spike_race": "Syndra domina range cedo; tu cresce muito quando o ult te libera para pickoff lateral"
+            }
+          }
+        }
+      }
+    },
+    "caitlyn": {
+      "power_spikes": [
+        "lane fase com alcance e push cedo",
+        "primeiro item para punir torre e troca curta",
+        "dois itens quando o headshot e a linha de traps definem fight"
+      ],
+      "draft_build_focus": [
+        "se tu tens push, converte em placa, ward e reset no tempo",
+        "contra engage reto, respeita nivel 2 e mantem a wave como escudo"
+      ],
+      "roles": {
+        "bottom": {
+          "lane_plan": "Caitlyn quer wave grande, trap em choke e vantagem de alcance transformada em placa, reset e visão",
+          "first_reset_focus": "volta com dano e controle suficiente para continuar empurrando sem morrer no engage",
+          "mid_game_job": "usar range e traps para cercar objetivo antes da luta começar",
+          "situational_items": [
+            "anti-heal se o bot inimigo sustentar demais",
+            "ferramenta defensiva se muito engage chegar na tua linha"
+          ],
+          "matchups": {
+            "nautilus": {
+              "verdict": "perigoso se a wave quebrar",
+              "plan": "usa a tropa para negar ancora, pressiona cedo e nao anda no corredor sem trap pronta",
+              "danger": "hook sem minion na frente e all-in com jungle junto",
+              "spike_race": "teu controle de lane vem antes; se ele achar engage limpa, a rota desanda rapido"
+            }
+          }
+        }
+      }
+    },
+    "draven": {
+      "power_spikes": [
+        "nivel 1 a 3 com machado ativo",
+        "primeiro item para snowballar a lane",
+        "mid game cedo se a vantagem virar torre e mapa"
+      ],
+      "draft_build_focus": [
+        "queres acelerar cedo e cobrar ouro da passiva antes da partida estabilizar",
+        "se o outro lado tiver engage forte, respeita o primeiro reset e não acha que dano salva posicionamento ruim"
+      ],
+      "roles": {
+        "bottom": {
+          "opening_plan": "Draven quer a lane pegando fogo cedo; disputa nivel 2 e pune qualquer ADC que queira farmar em paz",
+          "lane_plan": "Draven vive de pressão e medo. Se a lane ficar morna demais, tu estás desperdiçando o boneco",
+          "first_reset_focus": "volta com dano e controle suficiente para continuar exigindo respeito da rota",
+          "mid_game_job": "explodir alvo acessível e usar a vantagem de lane para acelerar o mapa antes da fight ficar longa demais",
+          "situational_items": [
+            "seguro defensivo se muito engage vier na tua direção",
+            "anti-heal se o suporte inimigo sustentar demais"
+          ]
+        }
+      }
+    },
+    "darius": {
+      "power_spikes": [
+        "nivel 1 a 3 com stack e wave longa",
+        "nivel 6 para punir all-in torto",
+        "primeiro item de luta longa para side lane"
+      ],
+      "draft_build_focus": [
+        "queres luta estendida e controle de brush; build sem acesso ao alvo perde valor",
+        "se o outro lado kiteia muito, compra ferramenta para encurtar a lane"
+      ],
+      "roles": {
+        "top": {
+          "lane_plan": "Darius quer brush, wave curta do lado dele e troca longa só quando o stack vier no tempo certo",
+          "first_reset_focus": "garante poder de troca e recurso para manter a lane em zona de ameaça",
+          "mid_game_job": "forçar side lane ou entrar na frente da fight como ameaça de reset e execute",
+          "situational_items": [
+            "ferramenta de acesso contra kite",
+            "anti-heal se o outro top viver de sustain"
+          ],
+          "matchups": {
+            "fiora": {
+              "verdict": "skill alta",
+              "plan": "quebra o ritmo da lane, nao telegrapha o E e joga com wave curta para ela nao te punir no espaco",
+              "danger": "troca longa com vitais abertas e wave ruim",
+              "spike_race": "Fiora escala o side melhor; teu trabalho e cobrar muito do early e do primeiro item"
+            }
+          }
+        }
+      }
+    },
+    "jarvaniv": {
+      "power_spikes": [
+        "nivel 2 a 3 com bandeira e arrasto",
+        "nivel 6 para engage garantida",
+        "primeiro item utilitário ou de lutador para controlar rio e objetivo"
+      ],
+      "draft_build_focus": [
+        "teu valor vem de iniciar no timing certo e jogar com prioridade das lanes",
+        "contra muito disengage, pensa em como forçar flash antes do grande objetivo"
+      ],
+      "roles": {
+        "jungle": {
+          "opening_plan": "Jarvan quer ler qual lane tem setup e aparecer cedo; full clear sem pressão é desperdício de boneco",
+          "lane_plan": "Tua jungle joga em volta de prioridade e janela de gank. Se ninguém puder te acompanhar, não inventa herói no rio",
+          "first_reset_focus": "volta com recurso para continuar forçando presença em lane e contestar objetivo cedo",
+          "mid_game_job": "ser o gatilho da engage ou o flanco que quebra a retaguarda no objetivo",
+          "situational_items": [
+            "tenacidade ou resistência contra muito controle",
+            "utilidade para iniciar ou sobreviver depois da bandeira"
+          ]
+        }
+      }
+    },
+    "jinx": {
+      "power_spikes": [
+        "primeiro item completo",
+        "dois itens para fight longa e objetivo",
+        "tres itens quando reseta luta com um abate"
+      ],
+      "draft_build_focus": [
+        "contra muito engage, prioriza sobreviver a primeira entrada antes de sonhar com full greed",
+        "contra front line pesada, prepara DPS consistente e penetracao no timing"
+      ],
+      "roles": {
+        "bottom": {
+          "lane_plan": "Jinx quer wave limpa, espacamento e front line viva. Quanto mais cedo tu estabiliza a rota, mais facil ela entra no modo carry",
+          "first_reset_focus": "volta com dano e segurança suficiente para não perder a lane no primeiro engage limpo",
+          "mid_game_job": "bater no alvo mais próximo, converter objetivo e resetar luta quando sair o primeiro abate",
+          "situational_items": [
+            "anti-heal contra sustain forte",
+            "penetração contra front line pesada"
+          ],
+          "matchups": {
+            "draven": {
+              "verdict": "delicado cedo",
+              "plan": "cede um pouco de pressao no inicio, farma vivo e so troca com wave e suporte alinhados",
+              "danger": "troca curta no early com machados ativos",
+              "spike_race": "Draven quer te quebrar antes do primeiro item; teu jogo melhora muito se tu chega inteira em dois itens"
+            },
+            "leona": {
+              "verdict": "perigoso",
+              "plan": "usa minion como parede, respeita o nivel 2 e deixa armadilha ou peel preparados antes de andar para frente",
+              "danger": "engage reto com flash ou ângulo limpo",
+              "spike_race": "ela manda no all-in cedo; tu mandas na luta longa depois do primeiro item se sobreviveres"
+            }
+          }
+        }
+      }
+    },
+    "leesin": {
+      "power_spikes": [
+        "nivel 3 para gank ou invade",
+        "primeiro item para continuar ditando tempo",
+        "mid game cedo com pickoff e controle de objetivo"
+      ],
+      "draft_build_focus": [
+        "Lee Sin precisa transformar early em mapa, não só em highlight vazio",
+        "contra comp forte de front-to-back, força pickoff e flanco antes da fight ficar frontal"
+      ],
+      "roles": {
+        "jungle": {
+          "opening_plan": "Lee Sin quer decidir o early: invade, gank ou cobertura de lane. O que não pode é desaparecer nos primeiros minutos",
+          "lane_plan": "Teu jogo é ritmo. Se tu perdes o timing de lane e objetivo, teu boneco vai murchando",
+          "first_reset_focus": "volta com dano e mobilidade para continuar ameaçando pickoff ou dive",
+          "mid_game_job": "cortar visão, achar pickoff e transformar ângulo bom em luta ganha antes do DPS deles entrar",
+          "situational_items": [
+            "resistência cedo se o outro lado punir tua entrada",
+            "letalidade ou dano de lutador conforme a comp te pedir pickoff ou front line"
+          ]
+        }
+      }
+    },
+    "leona": {
+      "power_spikes": [
+        "nivel 2 para all-in",
+        "nivel 6 para pickoff limpo",
+        "primeiro item de engage para forcar rio e objetivo"
+      ],
+      "draft_build_focus": [
+        "joga por controle de brush, nivel 2 e primeira janela de roam",
+        "se o outro lado kiteia demais, pensa em como entrar com flash ou flank e nao so andar reto"
+      ],
+      "roles": {
+        "support": {
+          "lane_plan": "Leona quer brush, nível 2 e call curta. Se a lane ficar parada, teu valor cai e o bot deles respira",
+          "first_reset_focus": "volta com recurso para achar engage de novo e garantir visão do rio",
+          "mid_game_job": "abrir luta ou punir passo torto na entrada do objetivo",
+          "situational_items": [
+            "tenacidade ou resistência contra muito controle de resposta",
+            "item utilitário para segurar carry se a engage direta estiver ruim"
+          ],
+          "matchups": {
+            "jinx": {
+              "verdict": "favoravel se a entrada for limpa",
+              "plan": "controla brush, acelera nivel 2 e puxa a fight quando a Jinx estiver sem minion escudo",
+              "danger": "poke demais antes de achar a janela",
+              "spike_race": "teu pico de lane e cedo; se a rota empacar, a Jinx cresce mais na luta longa"
+            }
+          }
+        }
+      }
+    },
+    "lulu": {
+      "power_spikes": [
+        "nivel 2 se o ADC puder bater junto",
+        "nivel 6 para negar engage e resetar fight",
+        "primeiro item utilitário para buffar teu carry"
+      ],
+      "draft_build_focus": [
+        "Lulu cresce muito quando joga para um carry claro; não desperdiça o boneco tentando iniciar fight torta",
+        "contra dive pesado, tua build precisa te deixar viva para usar peel completo"
+      ],
+      "roles": {
+        "support": {
+          "opening_plan": "Lulu quer wave estável, poke limpo e timing de shield ou polymorph para quebrar a primeira entrada deles",
+          "lane_plan": "Tua lane vive de negar engage e manter teu carry jogável. Se tu gastas skill à toa, a rota fica aberta",
+          "first_reset_focus": "volta com utilidade, pink e recurso para continuar segurando o bot",
+          "mid_game_job": "proteger o carry principal e transformar dive inimigo em luta ruim para eles",
+          "situational_items": [
+            "item de peel ou cura conforme o carry da tua comp precisar",
+            "seguro próprio se o outro lado estiver caçando suporte no flanco"
+          ]
+        }
+      }
+    },
+    "nautilus": {
+      "power_spikes": [
+        "nivel 2",
+        "nivel 6 com engage garantido",
+        "primeiro item utilitario para iniciar por rio e objetivo"
+      ],
+      "draft_build_focus": [
+        "queres jogar por ângulo de ancora e prioridade de wave do bot",
+        "contra poke pesado, protege vida cedo para nao perder a primeira janela de engage"
+      ],
+      "roles": {
+        "support": {
+          "opening_plan": "Nautilus quer brush, wave curta a favor e ângulo de âncora. Se a lane abrir demais sem visão, tu viras previsível",
+          "lane_plan": "Teu valor é ameaçar engage mesmo sem clicar. A lane boa é a em que o ADC deles joga com medo",
+          "first_reset_focus": "volta com vida, bota ou utilidade para continuar cobrando o rio e o bot",
+          "mid_game_job": "achar a cara do alvo certo na entrada do objetivo ou responder engage com controle em cadeia",
+          "situational_items": [
+            "resistência cedo contra poke ou mage support",
+            "item utilitário para engatar a luta ou proteger carry"
+          ]
+        }
+      }
+    },
+    "nami": {
+      "power_spikes": [
+        "nivel 2 com dupla agressiva",
+        "nivel 6 para contra-engage ou pickoff",
+        "primeiro item utilitário para buffar trade e objective setup"
+      ],
+      "draft_build_focus": [
+        "Nami quer lane com ritmo e parceiro que capitalize teu poke ou teu engage curto",
+        "contra hard engage, tua força está em quebrar a primeira entrada e manter o carry jogável"
+      ],
+      "roles": {
+        "support": {
+          "opening_plan": "Nami quer wave estável, poke limpo e troca curta com E e W sem se expor à engage boba",
+          "lane_plan": "Tua lane vive de janela curta e sustain inteligente. Se tu curas tarde e pokes sem cobertura, a rota abre",
+          "first_reset_focus": "volta com utilidade e mana para continuar trocando e preparando drag",
+          "mid_game_job": "buffar o carry certo, quebrar engage inimiga e acelerar pickoff com bolha ou ult",
+          "situational_items": [
+            "anti-heal se o sustain inimigo começar a distorcer luta",
+            "item de peel se a tua backline for o alvo principal"
+          ]
+        }
+      }
+    },
+    "rakan": {
+      "power_spikes": [
+        "nivel 2 para engage limpa",
+        "nivel 6 para pickoff e teamfight",
+        "primeiro item utilitário para iniciar e sair vivo"
+      ],
+      "draft_build_focus": [
+        "Rakan quer ângulo e follow-up; se o time não puder te seguir, tua engage vira suicídio bonito",
+        "contra muito controle, protege a entrada e pensa no contra-engage também"
+      ],
+      "roles": {
+        "support": {
+          "opening_plan": "Rakan quer brush, wave curta e timing de engage com o ADC pronto para entrar junto",
+          "lane_plan": "Tua lane vale pela ameaça de entrada. Sem acompanhamento do parceiro, tu só gastas recurso à toa",
+          "first_reset_focus": "volta com bota, pink e utilidade para continuar abrindo espaço no bot e no rio",
+          "mid_game_job": "achar flanco, iniciar em alvo vulnerável ou virar contra-engage antes do objetivo explodir",
+          "situational_items": [
+            "tenacidade ou resistência se o outro lado tiver muito CC",
+            "item utilitário para acelerar engage ou proteger carry"
+          ]
+        }
+      }
+    },
+    "milio": {
+      "power_spikes": [
+        "lane estável com shield e alcance extra",
+        "nivel 6 para negar engage pesada",
+        "primeiro item utilitário para escalar teu carry"
+      ],
+      "draft_build_focus": [
+        "Milio joga para habilitar carry e estragar o all-in inimigo, não para forçar a luta sozinho",
+        "contra dive pesado, tua build precisa te manter vivo até o cleanse ou o peel entrarem"
+      ],
+      "roles": {
+        "support": {
+          "opening_plan": "Milio quer wave controlada e trocas com alcance extra sem tomar engage de cara limpa",
+          "lane_plan": "Tua rota gira em torno de manter o ADC confortável e punir o outro bot quando ele força além da conta",
+          "first_reset_focus": "volta com utilidade, pink e recurso suficiente para continuar protegendo tua lane",
+          "mid_game_job": "manter o carry principal jogável e desarmar o primeiro engage ou pickoff inimigo",
+          "situational_items": [
+            "item de peel mais forte se tua comp tiver hypercarry claro",
+            "seguro próprio se o outro lado estiver colapsando na backline"
+          ]
+        }
+      }
+    },
+    "ornn": {
+      "power_spikes": [
+        "primeiro item defensivo para segurar lane",
+        "nivel 6 para engage e contra-engage",
+        "mid game quando começa a empilhar utilidade e upgrades"
+      ],
+      "draft_build_focus": [
+        "Ornn quer lane sem hemorrágia e teamfight limpa depois; não precisa ganhar highlight no early",
+        "contra dano misto, constrói defesa de verdade e leva a luta para o front-to-back"
+      ],
+      "roles": {
+        "top": {
+          "opening_plan": "Ornn quer wave decente e troca racional; teu trabalho cedo é não deixar a lane explodir antes do primeiro item",
+          "lane_plan": "Joga a lane para sobreviver bem, guardar recurso e chegar útil no primeiro grande objetivo",
+          "first_reset_focus": "volta com defesa real para estabilizar a rota e parar de sangrar espaço",
+          "mid_game_job": "ser a frente da luta e escolher quando a engage começa ou termina",
+          "situational_items": [
+            "armadura ou MR conforme a fonte principal da lane e da comp",
+            "utilidade para segurar carry se o outro lado viver de dive"
+          ]
+        }
+      }
+    },
+    "malphite": {
+      "power_spikes": [
+        "primeiro item de armadura ou utilidade de lane",
+        "nivel 6 para all-in ou resposta de engage",
+        "mid game quando teu ult passa a decidir objective fight"
+      ],
+      "draft_build_focus": [
+        "Malphite quer matchup física ou comp agrupada para o ult valer ouro",
+        "se o outro lado for AP ou split demais, tua build precisa respeitar isso em vez de seguir piloto automático"
+      ],
+      "roles": {
+        "top": {
+          "opening_plan": "Malphite quer early controlado e vida suficiente para chegar no 6 sem lane quebrada",
+          "lane_plan": "Segura a lane, usa o poke quando for limpo e não compra luta longa que teu boneco não quer cedo",
+          "first_reset_focus": "volta com defesa ou mana suficiente para parar de ceder wave de graça",
+          "mid_game_job": "ser o botão de engage ou de punição quando o carry inimigo pisar fora da linha",
+          "situational_items": [
+            "armadura pesada contra tops físicos e ADC forte",
+            "MR ou utilidade se o perigo vier do AP ou do flanco"
+          ]
+        }
+      }
+    },
+    "orianna": {
+      "power_spikes": [
+        "primeiro item de mana e wave control",
+        "dois itens quando o choque ja vira reset de fight",
+        "teamfight de mid game com front line organizada"
+      ],
+      "draft_build_focus": [
+        "controla espaco e objetivo; teu valor sobe quando a comp luta de frente",
+        "contra dive, guarda ult para contra-engage e nao para abrir highlight torto"
+      ],
+      "roles": {
+        "mid": {
+          "lane_plan": "Orianna quer comandar espaço e wave, empurrar quando puder e deixar a bola decidir por onde o inimigo não passa",
+          "first_reset_focus": "volta com mana e pressão suficiente para continuar mandando no centro da lane",
+          "mid_game_job": "jogar por objetivo frontal, controlar choke e transformar ult em contra-engage ou reset",
+          "situational_items": [
+            "seguro defensivo contra dive ou pickoff",
+            "penetração mágica quando o front line inimigo adiantar MR"
+          ],
+          "matchups": {
+            "syndra": {
+              "verdict": "skill de spacing",
+              "plan": "trabalha a wave, troca no limite da esfera e nao da stun gratis com passo torto para frente",
+              "danger": "stun longo com jungle perto ou sem flash",
+              "spike_race": "as duas escalam bem; tu brilhas mais quando a fight fica organizada e frontal"
+            },
+            "zed": {
+              "verdict": "delicado apos 6",
+              "plan": "pune antes do nivel 6, segura escudo e posiciona a wave de forma que ele nao te force all-in no meio da lane",
+              "danger": "ult do Zed quando tua wave e tua visao estao tortas",
+              "spike_race": "teu valor cresce em teamfight; o dele cresce em side e pickoff cedo"
+            }
+          }
+        }
+      }
+    },
+    "fiora": {
+      "power_spikes": [
+        "nivel 3 para trocar com vital e reposicionamento",
+        "primeiro item para dominar side lane",
+        "dois itens quando split push vira ameaça real"
+      ],
+      "draft_build_focus": [
+        "Fiora quer side e duelo, não teamfight frontal longa sem necessidade",
+        "contra muito controle, tua entrada na luta precisa ser por ângulo e tempo, não por ego"
+      ],
+      "roles": {
+        "top": {
+          "opening_plan": "Fiora quer wave jogável e leitura das vitais; early ruim é quando tu tomas trade torta só por ansiedade",
+          "lane_plan": "Joga a lane por spacing, vital e resposta no timing certo. Teu boneco cresce quando a luta fica elegante, não bagunçada",
+          "first_reset_focus": "volta com dano e sustain suficientes para começar a ditar side lane",
+          "mid_game_job": "abrir o mapa na side e forçar o inimigo a escolher entre te responder ou perder objetivo",
+          "situational_items": [
+            "anti-heal contra sustain pesado na side",
+            "seguro defensivo se a partida pedir flank em vez de split puro"
+          ],
+          "matchups": {
+            "darius": {
+              "verdict": "skill alta",
+              "plan": "joga na borda do engage dele, usa riposta para quebrar a maior janela de stack e não te prende em troca longa ruim",
+              "danger": "stack demais cedo com wave torta",
+              "spike_race": "ele cobra mais cedo na lane reta; tu cresces melhor quando o side e o item aparecem"
+            }
+          }
+        }
+      }
+    },
+    "camille": {
+      "power_spikes": [
+        "nivel 3 com mobilidade e troca curta",
+        "Sheen ou primeiro item para burst de side lane",
+        "nivel 6 e dois itens quando pickoff vira sentença"
+      ],
+      "draft_build_focus": [
+        "Camille quer side lane e pickoff, então tua build precisa te deixar acessar carry ou splitar com segurança",
+        "contra front line pesada, prepara luta por flanco e não por frente"
+      ],
+      "roles": {
+        "top": {
+          "opening_plan": "Camille quer early disciplinado até a lane te dar parede, espaço e timing de troca curta",
+          "lane_plan": "Escolhe bem quando entrar e sair; teu boneco perde muito quando vira trocação longa sem critério",
+          "first_reset_focus": "volta com componente de burst e sustain para começar a ameaçar all-in",
+          "mid_game_job": "achar alvo lateral, isolar carry ou puxar side até abrir TP ou colapso",
+          "situational_items": [
+            "resistência cedo se a lane estiver te cobrando burst demais",
+            "anti-heal contra sustain de side lane"
+          ]
+        }
+      }
+    },
+    "viktor": {
+      "power_spikes": [
+        "primeiros upgrades com wave control",
+        "primeiro item para dano e push consistentes",
+        "dois itens quando zona e burst limpam objective fight"
+      ],
+      "draft_build_focus": [
+        "Viktor quer espaço, wave e setup de choke; o boneco paga caro por early torto sem visão",
+        "contra assassino ou dive, tua build precisa comprar tempo para a fight chegar no teu range"
+      ],
+      "roles": {
+        "mid": {
+          "opening_plan": "Viktor quer farm sólido e mana viva no early; tua lane começa no controle da wave e não na pressa de forçar troca",
+          "lane_plan": "Se tu controlas o centro da lane, o mapa começa a te respeitar. Se não, tu viras alvo de gank e de roam",
+          "first_reset_focus": "volta com recurso para continuar limpando wave e não ser arrancado do mid",
+          "mid_game_job": "travar choke, desgastar front line e decidir objective fight com zona e burst",
+          "situational_items": [
+            "seguro defensivo contra dive e flank",
+            "penetração mágica quando MR começar a cortar tua curva"
+          ]
+        }
+      }
+    },
+    "azir": {
+      "power_spikes": [
+        "primeiro item para mana e DPS",
+        "dois itens quando fight longa fica tua",
+        "mid game com prioridade e objective control"
+      ],
+      "draft_build_focus": [
+        "Azir quer espaço e front line; quanto mais organizada a fight, mais teu boneco cresce",
+        "contra dive pesado, tua build e teu posicionamento precisam comprar tempo para os soldados trabalharem"
+      ],
+      "roles": {
+        "mid": {
+          "opening_plan": "Azir quer farm limpo e wave suficiente para não ceder o centro do mapa cedo demais",
+          "lane_plan": "Teu jogo cresce com prioridade e setup. Sem espaço, tu perdes muito do valor que o boneco entrega",
+          "first_reset_focus": "volta com mana e componente de dano para sustentar push e objetivo",
+          "mid_game_job": "ser a fonte de DPS segura da fight e usar o ult para reposicionar ou punir engage torta",
+          "situational_items": [
+            "seguro defensivo se muito pickoff vier no teu alcance",
+            "penetração mágica para atravessar front line pesada"
+          ]
+        }
+      }
+    },
+    "taliyah": {
+      "power_spikes": [
+        "nivel 3 a 4 com push e rotação",
+        "nivel 6 para quebrar mapa",
+        "primeiro item para burst e controle de terreno"
+      ],
+      "draft_build_focus": [
+        "Taliyah quer mapa e parede boa, então tua prioridade de lane vale ouro",
+        "contra assassino ou dive, segura a peça que quebra a entrada antes de pensar só em poke"
+      ],
+      "roles": {
+        "mid": {
+          "opening_plan": "Taliyah quer wave e lado do mapa claro para que cada push possa virar roam ou pressão no rio",
+          "lane_plan": "Teu boneco pune espaço mal ocupado. Se tu ficas presa em farm espelhado, a partida anda sem ti",
+          "first_reset_focus": "volta com mana e burst para seguir empurrando e saindo da lane com propósito",
+          "mid_game_job": "quebrar mapa, isolar alvo e preparar objetivo antes da luta estourar",
+          "situational_items": [
+            "seguro defensivo contra dive e flanco",
+            "penetração mágica se o outro lado fechar MR cedo"
+          ]
+        }
+      }
+    },
+    "sylas": {
+      "power_spikes": [
+        "nivel 3 com troca curta forte",
+        "nivel 6 dependendo do ult roubado",
+        "primeiro item para burst e sustain de luta"
+      ],
+      "draft_build_focus": [
+        "Sylas muda muito com o ult inimigo; lê a draft para saber se és side, pickoff ou contra-engage",
+        "contra range e poke cedo, tua build precisa te fazer sobreviver até a janela de all-in"
+      ],
+      "roles": {
+        "mid": {
+          "opening_plan": "Sylas quer sobreviver o early sem se quebrar e chegar no nível em que a luta fica tua",
+          "lane_plan": "Joga por janela curta e cooldown. Teu boneco parece injusto quando entra no tempo; fora disso ele sangra muito",
+          "first_reset_focus": "volta com sustain ou burst suficientes para brigar de verdade por wave e escaramuça",
+          "mid_game_job": "explodir alvo vulnerável ou usar ult roubado para virar a teamfight",
+          "situational_items": [
+            "seguro defensivo contra burst cedo",
+            "penetração mágica se a linha de frente começar a travar teu dano"
+          ]
+        }
+      }
+    },
+    "akali": {
+      "power_spikes": [
+        "nivel 6 para all-in limpo",
+        "primeiro item para burst e pickoff",
+        "dois itens quando flank vira morte certa"
+      ],
+      "draft_build_focus": [
+        "Akali quer nevoa, flanco e tempo de cooldown; teu boneco não ama fight frontal limpa",
+        "contra muita linha de frente, prepara ângulo e alvo antes de entrar, não entra na bagunça cedo"
+      ],
+      "roles": {
+        "mid": {
+          "opening_plan": "Akali quer early controlado e vida suficiente para o 6 realmente ameaçar a lane",
+          "lane_plan": "Tua força está em cortar ângulo e explodir alvo quando o mapa abre, não em insistir em troca reta sem recurso",
+          "first_reset_focus": "volta com burst e ferramenta para continuar viva até achar a boa janela",
+          "mid_game_job": "flanquear, quebrar backline e sumir antes da resposta fechar em cima de ti",
+          "situational_items": [
+            "seguro defensivo se muito controle estiver te esperando",
+            "penetração mágica se MR cedo atrasar tua curva"
+          ]
+        }
+      }
+    },
+    "yone": {
+      "power_spikes": [
+        "berserkers ou primeiro grande componente",
+        "nivel 6 para all-in e setup",
+        "dois itens quando side e teamfight ficam assustadoras"
+      ],
+      "draft_build_focus": [
+        "Yone quer espaço para stackar e escolher quando a luta fica longa ou vira pickoff",
+        "contra controle pesado, tua entrada precisa ser muito mais limpa do que bonita"
+      ],
+      "roles": {
+        "mid": {
+          "opening_plan": "Yone quer early disciplinado até ter ataque e reset suficientes para trocar de verdade",
+          "lane_plan": "Teu boneco cresce quando tu jogas por stack, spacing e entrada boa; o resto é highlight vazio",
+          "first_reset_focus": "volta com velocidade e dano para a lane começar a te obedecer",
+          "mid_game_job": "achar engage em carry exposto ou side lane que force resposta ruim",
+          "situational_items": [
+            "tenacidade ou defesa se muito controle travar tua entrada",
+            "penetração quando o front line começar a te segurar demais"
+          ]
+        }
+      }
+    },
+    "renekton": {
+      "power_spikes": [
+        "nivel 3 com fúria controlada",
+        "nivel 6 para dive e all-in",
+        "primeiro item para dominar troca curta"
+      ],
+      "draft_build_focus": [
+        "queres acelerar early e abrir o mapa antes da lane escalar contra ti",
+        "contra sustain longo, joga por janela curta e wave no teu ritmo"
+      ],
+      "roles": {
+        "top": {
+          "lane_plan": "Renekton quer furia controlada, troca curta brutal e wave no ponto em que o adversário nunca saiba se vai tomar dive",
+          "first_reset_focus": "volta com dano ou recurso de lane para manter o early no teu ritmo",
+          "mid_game_job": "acelerar side ou flanco cedo e explodir alvo antes da fight ficar longa demais",
+          "situational_items": [
+            "anti-heal contra sustain de bruiser",
+            "resistência cedo se a lane virar pura resposta de burst"
+          ],
+          "matchups": {
+            "aatrox": {
+              "verdict": "bom cedo se fores disciplinado",
+              "plan": "entra na janela curta, usa furia no momento certo e sai antes da luta virar novela nas bordas da Q",
+              "danger": "brigar em troca longa com sustain ativo do Aatrox",
+              "spike_race": "tu mandas mais cedo; se a lane empatar demais, o Aatrox cresce bem em luta longa"
+            }
+          }
+        }
+      }
+    },
+    "sejuani": {
+      "power_spikes": [
+        "nivel 3 para gank com setup",
+        "nivel 6 para pick ou engage longa",
+        "primeiro item defensivo para controlar objetivo"
+      ],
+      "draft_build_focus": [
+        "Sejuani joga com lane melee e setup; teu valor aumenta muito quando o time consegue seguir teu controle",
+        "contra muito poke, prepara entrada limpa e não toma objetivo de cara sem visão"
+      ],
+      "roles": {
+        "jungle": {
+          "opening_plan": "Sejuani quer jungle eficiente e gank com setup, não corrida cega atrás de lane que não pode te seguir",
+          "lane_plan": "Teu começo é escolher fight com número e controle. Sem prioridade, tu só estás pedindo invasão",
+          "first_reset_focus": "volta com tanque suficiente para segurar rio e continuar sendo ameaça de engage",
+          "mid_game_job": "preparar visão, chamar frente da luta e escolher quando o objetivo vira guerra",
+          "situational_items": [
+            "tenacidade ou resistência conforme a fonte principal de dano deles",
+            "utilidade para amplificar engage ou peel"
+          ]
+        }
+      }
+    },
+    "vi": {
+      "power_spikes": [
+        "nivel 3 com rota de gank clara",
+        "nivel 6 para pickoff garantido",
+        "primeiro item para seguir entrando em alvo prioritário"
+      ],
+      "draft_build_focus": [
+        "Vi quer alvo claro e follow-up; tua draft vale mais quando alguém consegue bater junto no teu ult",
+        "contra peel pesado, pensa em como forçar summoner antes do grande objetivo"
+      ],
+      "roles": {
+        "jungle": {
+          "opening_plan": "Vi quer pathing eficiente e leitura de lane vulnerável; teu early não pode ser passeio sem pressão",
+          "lane_plan": "Joga por janela de engage e por objetivo cedo. Se o time não puder seguir, tua entrada vira presente",
+          "first_reset_focus": "volta com recurso para continuar ameaçando gank ou dive sem te partir no meio",
+          "mid_game_job": "trancar carry ou peça-chave antes da luta ficar espalhada demais",
+          "situational_items": [
+            "tenacidade ou resistência contra muito controle",
+            "dano ou utilidade conforme a comp pedir pickoff ou front line"
+          ]
+        }
+      }
+    },
+    "viego": {
+      "power_spikes": [
+        "nivel 3 para escaramuça curta",
+        "primeiro item para duelar e resetar luta",
+        "mid game quando qualquer kill pode virar sequência"
+      ],
+      "draft_build_focus": [
+        "Viego quer fight quebrada e alvo baixo; tua comp precisa gerar primeira morte ou tempo para isso acontecer",
+        "contra muito controle, tua entrada tem de ser depois da bagunça começar, não antes"
+      ],
+      "roles": {
+        "jungle": {
+          "opening_plan": "Viego quer early controlado e escaramuça bem escolhida, não luta cega só porque o boneco parece forte",
+          "lane_plan": "Teu jogo escala com reset e com pickoff. Se tu entras primeiro sem visão, perde a melhor parte do kit",
+          "first_reset_focus": "volta com dano e sustain para continuar jogável em duelo e objetivo",
+          "mid_game_job": "limpar luta depois da primeira morte e transformar pickoff em dominó no mapa",
+          "situational_items": [
+            "tenacidade ou resistência se o outro lado tiver muito CC",
+            "anti-heal se o duelo ou o front line dependerem disso"
+          ]
+        }
+      }
+    },
+    "xinzhao": {
+      "power_spikes": [
+        "nivel 2 a 3 com gank forte",
+        "primeiro item para controlar escaramuça",
+        "mid game cedo quando teu ult reorganiza a luta"
+      ],
+      "draft_build_focus": [
+        "Xin quer o early no teu colo; se a partida passar sem pressão, tu atrasas teu melhor momento",
+        "contra poke ou muito range, tua entrada precisa ser escolhida e seguida"
+      ],
+      "roles": {
+        "jungle": {
+          "opening_plan": "Xin Zhao quer escolher lane e brigar cedo; full clear sem pressão quase sempre é jogar abaixo do teu boneco",
+          "lane_plan": "Tua jungle vale pela presença. Se o mapa não sentir teu nome cedo, o outro jungler respira demais",
+          "first_reset_focus": "volta com dano ou resistência suficientes para continuar cobrando luta no rio",
+          "mid_game_job": "abrir escaramuça, quebrar a formação e proteger a tua linha enquanto o resto entra",
+          "situational_items": [
+            "tenacidade contra controle em cadeia",
+            "resistência ou dano conforme teu papel seja frente ou pickoff"
+          ]
+        }
+      }
+    },
+    "wukong": {
+      "power_spikes": [
+        "nivel 6 para fight e gank absurdos",
+        "primeiro item para troca e objetivo",
+        "mid game quando flank e engage ficam fortíssimos"
+      ],
+      "draft_build_focus": [
+        "Wukong quer fight bagunçada a teu favor, especialmente contra backline sem flash ou peel limpo",
+        "contra comp de poke, prepara flanco e timing de entrada, não caminha reto"
+      ],
+      "roles": {
+        "jungle": {
+          "opening_plan": "Wukong quer early limpo e tempo para chegar forte no 6 sem perder o mapa inteiro",
+          "lane_plan": "Teu boneco cresce muito quando a fight abre ângulo para clone e ult. O early é preparação, não preguiça",
+          "first_reset_focus": "volta com recurso de luta para não chegar fraco na primeira disputa séria",
+          "mid_game_job": "achar flank ou engage que quebre a backline e force os caras a lutar torto",
+          "situational_items": [
+            "tenacidade se a entrada estiver sendo travada por controle",
+            "anti-heal se a front line deles viver de sustain"
+          ]
+        }
+      }
+    },
+    "nocturne": {
+      "power_spikes": [
+        "nivel 6 para apagar o mapa",
+        "primeiro item para pickoff consistente",
+        "mid game quando side e carry sem flash viram alvo de rotina"
+      ],
+      "draft_build_focus": [
+        "Nocturne quer side e alvo isolado; o boneco perde valor se a luta virar só front-to-back na tua cara",
+        "contra muito peel, prepara visão e cooldowns antes de apertar R igual maluco"
+      ],
+      "roles": {
+        "jungle": {
+          "opening_plan": "Nocturne quer early seguro, info de lane e um 6 que já encontre alvo útil no mapa",
+          "lane_plan": "Teu jogo muda no 6. Até lá, não doa recurso só para parecer ativo; prepara a escuridão certa",
+          "first_reset_focus": "volta com dano e clear suficientes para acelerar até o ult sem perder presença",
+          "mid_game_job": "apagar carry sem cobertura ou forçar medo constante em side lane e objetivo",
+          "situational_items": [
+            "seguro defensivo se a comp inimiga estiver cheia de resposta ao dive",
+            "anti-heal se o alvo principal viver de sustain"
+          ]
+        }
+      }
+    },
+    "khazix": {
+      "power_spikes": [
+        "nivel 3 para pickoff ou invade",
+        "primeiro item de letalidade",
+        "mid game quando visão ruim vira alvo isolado de graça"
+      ],
+      "draft_build_focus": [
+        "Kha'Zix quer nevoa, pickoff e alvo sozinho; quanto mais organizada a comp inimiga, mais tua entrada precisa ser pensada",
+        "contra front line pesada, joga por lateral e não por frente"
+      ],
+      "roles": {
+        "jungle": {
+          "opening_plan": "Kha'Zix quer leitura de rota e nevoa cedo; o early ruim é aquele em que tu mostras tua cara sem garantir nada",
+          "lane_plan": "Teu jogo é pressão invisível. Se o mapa sabe sempre onde tu estás, teu boneco perde dentes",
+          "first_reset_focus": "volta com letalidade e tempo para continuar ameaçando invade, pickoff ou side lane",
+          "mid_game_job": "punir alvo isolado, cortar visão e transformar erro de posicionamento em mapa aberto",
+          "situational_items": [
+            "seguro defensivo se muito controle ou peel negarem tua entrada",
+            "penetração quando a frente da luta estiver segurando demais tua curva"
+          ]
+        }
+      }
+    },
+    "syndra": {
+      "power_spikes": [
+        "primeiro recall com mana e controle de wave",
+        "nivel 6 para burst limpo",
+        "dois itens quando o pickoff fica absurdo"
+      ],
+      "draft_build_focus": [
+        "usa range para negar entrada e transformar wave em pressao de mapa",
+        "contra assassino, respeita janela de flank e nao joga sem visao lateral"
+      ],
+      "roles": {
+        "mid": {
+          "lane_plan": "Syndra quer push, range e erro punido. Se tu jogas morno, ela vira só uma mage comum e perde o terror da lane",
+          "first_reset_focus": "volta com mana e burst para manter prioridade e ameaça de stun",
+          "mid_game_job": "punir alvo fora de posição e negar entrada inimiga no objetivo com zona e pickoff",
+          "situational_items": [
+            "seguro defensivo contra assassino ou flank",
+            "penetração mágica se o outro lado fechar MR cedo"
+          ],
+          "matchups": {
+            "ahri": {
+              "verdict": "skill com vantagem de range cedo",
+              "plan": "empurra cedo, trava roam e guarda stun para punir a entrada dela, nao para poke vazio",
+              "danger": "charme fora de visao ou roam da Ahri depois do 6",
+              "spike_race": "tu controlas a lane antes; ela ganha muito valor quando começa a sair do mid"
+            },
+            "orianna": {
+              "verdict": "skill de controle",
+              "plan": "quebra a zona da bola com push e movimentacao lateral, e nao te contenta em farmar igual espelho",
+              "danger": "troca longa parada dentro do range da esfera",
+              "spike_race": "as duas escalam, mas tua pressao de pickoff aparece mais cedo"
+            }
+          }
+        }
+      }
+    },
+    "thresh": {
+      "power_spikes": [
+        "nivel 2 para pressionar hook",
+        "nivel 6 para pickoff e zoneamento",
+        "primeiro item utilitário para criar janela em objective fight"
+      ],
+      "draft_build_focus": [
+        "Thresh vale tanto para engajar quanto para salvar; tua leitura de luta precisa decidir isso cedo",
+        "contra muito dive, preserva lanterna e não gasta recurso só para acertar highlight"
+      ],
+      "roles": {
+        "support": {
+          "opening_plan": "Thresh quer controlar brush, ameaçar hook e usar a lanterna para transformar gank ou resposta em vantagem",
+          "lane_plan": "Teu boneco domina quando o outro bot respeita a possibilidade da jogada, não só o clique em si",
+          "first_reset_focus": "volta com utilidade e recurso para continuar mandando no espaço do bot e do rio",
+          "mid_game_job": "escolher se a luta vai ser engage, peel ou pickoff e fazer o time chegar junto",
+          "situational_items": [
+            "resistência cedo contra poke e suporte mage",
+            "item utilitário de proteção se o carry da tua comp for o centro da luta"
+          ]
+        }
+      }
+    },
+    "zed": {
+      "power_spikes": [
+        "nivel 3 quando a sombra ja decide troca",
+        "nivel 6 para all-in e side pressure",
+        "primeiro item de letalidade para pickoff limpo"
+      ],
+      "draft_build_focus": [
+        "queres cortar visao e brigar por ângulo, nao por frente",
+        "se o outro lado vier de armadura cedo, adapta sem ficar preso em build de highlight"
+      ],
+      "roles": {
+        "mid": {
+          "lane_plan": "Zed ganha quando cria medo e nevoa. Se tu fores previsivel na sombra, a lane trava e teu boneco perde muito valor",
+          "first_reset_focus": "volta com letalidade e controle lateral para que cada sombra ameaçe kill real",
+          "mid_game_job": "jogar side, cortar visão e cobrar alvo sem proteção antes do objetivo nascer",
+          "situational_items": [
+            "penetração contra armadura cedo",
+            "ferramenta defensiva se a partida exigir entrada arriscada"
+          ],
+          "matchups": {
+            "ahri": {
+              "verdict": "skill explosivo",
+              "plan": "aceita perder um pouco de vida cedo se isso te der janela limpa no 6; teu foco e achar all-in quando o charme sair torto",
+              "danger": "charme segurado e wave ruim do teu lado",
+              "spike_race": "o 6 dos dois e forte; tu vences melhor na side, ela responde melhor com pickoff organizado"
+            },
+            "orianna": {
+              "verdict": "bom se tu quebras o ritmo",
+              "plan": "varia a sombra, nega o conforto do range dela e pressiona o mapa assim que limpar a wave",
+              "danger": "poke demais antes do 6 e wave constantemente no meio",
+              "spike_race": "tu sobes muito no 6; ela cresce mais quando a partida vira teamfight frontal"
+            }
+          }
+        }
+      }
+    }
+  },
+  "synergies": {
+    "duo": {
+      "draven+leona": {
+        "label": "snowball brutal de bot lane",
+        "plan": "essa dupla quer nível 2, brush control e engage curta para transformar qualquer erro em kill ou flash queimado",
+        "spike": "o pico vem cedo demais; se a lane passa ilesa pelo primeiro reset, já existe janela para placa, dive e dragão"
+      },
+      "lucian+nami": {
+        "label": "burst com poke e ritmo de wave",
+        "plan": "Lucian com Nami quer empurrar cedo, bater em janela curta e usar prioridade de bot para liberar rio e reset melhor",
+        "spike": "o primeiro item do Lucian com a utilidade da Nami já cria kill threat e controle forte de objetivo"
+      },
+      "rakan+xayah": {
+        "label": "all-in com follow-up limpo",
+        "plan": "Rakan com Xayah quer brigar em janela organizada, protegendo a resposta e cobrando o passo torto da lane inimiga",
+        "spike": "a dupla cresce no 6 e volta a escalar bem quando a teamfight abre espaço para engage e peel no mesmo pacote"
+      }
+    },
+    "jungle_lane": {
+      "jarvaniv+ahri": {
+        "label": "pickoff limpo de mid jungle",
+        "plan": "Jarvan IV com Ahri quer wave preparada e chegada coordenada para forçar flash, pickoff ou controle do rio",
+        "spike": "o 6 dos dois cria engage direta e transição muito forte para dragão ou invade"
+      },
+      "leesin+renekton": {
+        "label": "2v2 de topo para esmagar cedo",
+        "plan": "Lee Sin com Renekton quer lado forte no topo, dive cedo e pressão constante para quebrar a lane antes do mapa estabilizar",
+        "spike": "nível 3 a 6 já basta para transformar wave boa em kill, torre ou domínio de Arauto"
+      },
+      "sejuani+sylas": {
+        "label": "setup pesado de skirmish",
+        "plan": "Sejuani com Sylas quer troca curta que vire cadeia de controle e escaramuça ganha no rio ou no mid",
+        "spike": "assim que a lane tiver prioridade mínima, a dupla já consegue forçar luta muito acima do normal"
+      },
+      "vi+orianna": {
+        "label": "engage de objetivo muito confiável",
+        "plan": "Vi com Orianna quer entrada frontal organizada, visão antes do rio e follow-up rápido para decidir teamfight",
+        "spike": "o nível 6 dos dois já muda completamente a ameaça em objetivo e side collapse"
+      }
+    }
+  }
+}

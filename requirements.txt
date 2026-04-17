@@ -4,3 +4,4 @@ beautifulsoup4>=4.12.2
 lcu-driver>=3.0.0
 pygame>=2.5.2
 python-dotenv>=1.0.0
+edge-tts>=6.1.12

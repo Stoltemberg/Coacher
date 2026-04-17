@@ -10,6 +10,8 @@ from pathlib import Path
 from tempfile import NamedTemporaryFile
 from typing import Any
 
+from core.app_paths import app_data_dir
+
 
 def _utc_now() -> datetime:
     return datetime.now(timezone.utc)
@@ -19,12 +21,7 @@ def _default_base_dir() -> Path:
     override = os.getenv("COACHER_MEMORY_DIR")
     if override:
         return Path(override).expanduser()
-
-    appdata = os.getenv("LOCALAPPDATA") or os.getenv("APPDATA")
-    if appdata:
-        return Path(appdata).expanduser() / "Coacher"
-
-    return Path.home() / ".coacher"
+    return app_data_dir()
 
 
 def resolve_memory_store_path(custom_path: str | Path | None = None) -> Path:
@@ -56,20 +53,46 @@ class MemoryStore:
     def exists(self) -> bool:
         return self.path.exists()
 
+    def _quarantine_invalid_store(self) -> None:
+        timestamp = _utc_now().strftime("%Y%m%d-%H%M%S")
+        quarantine_path = self.path.with_name(f"{self.path.stem}.corrupt-{timestamp}{self.path.suffix}")
+
+        try:
+            if self.path.exists():
+                self.path.replace(quarantine_path)
+        except OSError:
+            # If we cannot move the broken file, loading should still fail safe.
+            pass
+
     def load(self) -> dict[str, Any] | None:
         if not self.path.exists():
             return None
 
-        raw_text = self.path.read_text(encoding="utf-8").strip()
+        try:
+            raw_text = self.path.read_text(encoding="utf-8").strip()
+        except OSError:
+            return None
+
         if not raw_text:
             return None
 
-        payload = json.loads(raw_text)
-        if not isinstance(payload, dict):
-            raise ValueError("Memory store must contain a JSON object.")
+        try:
+            payload = json.loads(raw_text)
+        except json.JSONDecodeError:
+            self._quarantine_invalid_store()
+            return None
 
-        if isinstance(payload.get("memory"), dict):
-            return payload["memory"]
+        if not isinstance(payload, dict):
+            self._quarantine_invalid_store()
+            return None
+
+        if "memory" in payload:
+            memory_payload = payload.get("memory")
+            if isinstance(memory_payload, dict):
+                return memory_payload
+            if memory_payload is not None:
+                self._quarantine_invalid_store()
+                return None
 
         return payload
 

@@ -10,7 +10,7 @@ from collections import Counter, defaultdict
 from dataclasses import dataclass, field
 from datetime import datetime, timezone
 from pathlib import Path
-from threading import RLock
+from threading import RLock, Timer
 from typing import Any, Iterable, Optional
 
 from .memory_store import MemoryStore
@@ -254,11 +254,15 @@ class PlayerMemory:
         intensity: str = "standard",
         storage_path: str | Path | None = None,
         autosave: bool = True,
+        save_debounce_seconds: float = 1.0,
         load_from_disk: bool = True,
     ):
         self._lock = RLock()
         self._store = MemoryStore.default(storage_path)
         self._autosave = bool(autosave)
+        self._save_debounce_seconds = max(0.0, float(save_debounce_seconds))
+        self._save_timer: Optional[Timer] = None
+        self._pending_snapshot: Optional[dict[str, Any]] = None
 
         self.player_name = player_name
         self.champion_name = champion_name
@@ -296,15 +300,27 @@ class PlayerMemory:
 
     def configure_storage(self, storage_path: str | Path | None) -> None:
         with self._lock:
+            self._cancel_pending_save_locked()
+            self._pending_snapshot = None
             self._store = MemoryStore.default(storage_path)
             self.reload()
 
     def save(self) -> bool:
         with self._lock:
-            return self._store.save(self.snapshot())
+            snapshot = self.snapshot()
+            self._pending_snapshot = snapshot
+            self._cancel_pending_save_locked()
+        saved = self._store.save(snapshot)
+        if saved:
+            with self._lock:
+                if self._pending_snapshot == snapshot:
+                    self._pending_snapshot = None
+        return saved
 
     def reload(self) -> bool:
         with self._lock:
+            self._cancel_pending_save_locked()
+            self._pending_snapshot = None
             payload = self._store.load()
             if payload is None:
                 return False
@@ -364,12 +380,59 @@ class PlayerMemory:
             )
 
     def _touch_storage(self) -> None:
-        if self._autosave:
-            self._store.save(self.snapshot())
+        self._queue_save()
+
+    def _queue_save(self, *, immediate: bool = False) -> None:
+        if not self._autosave:
+            return
+
+        with self._lock:
+            snapshot = self.snapshot()
+            self._pending_snapshot = snapshot
+            self._cancel_pending_save_locked()
+
+            if immediate or self._save_debounce_seconds <= 0:
+                pass
+            else:
+                timer = Timer(self._save_debounce_seconds, self._flush_pending_save)
+                timer.daemon = True
+                self._save_timer = timer
+                timer.start()
+                return
+
+        saved = self._store.save(snapshot)
+        if saved:
+            with self._lock:
+                if self._pending_snapshot == snapshot:
+                    self._pending_snapshot = None
+
+    def _flush_pending_save(self) -> bool:
+        with self._lock:
+            snapshot = self._pending_snapshot
+            self._save_timer = None
+
+        if snapshot is None:
+            return False
+
+        saved = self._store.save(snapshot)
+        if saved:
+            with self._lock:
+                if self._pending_snapshot == snapshot:
+                    self._pending_snapshot = None
+        return saved
+
+    def _cancel_pending_save_locked(self) -> None:
+        if self._save_timer is not None:
+            self._save_timer.cancel()
+            self._save_timer = None
 
     def _archive_current_match(self) -> None:
         self.history.append(self.current_match)
-        self.reset_current_match()
+        self.current_match = MatchMemory(
+            player_name=self.player_name,
+            champion_name=self.champion_name,
+            role=self.role,
+        )
 
     def start_match(
         self,
@@ -527,8 +590,8 @@ class PlayerMemory:
             if archive_current or keep_history:
                 self.history.append(self.current_match)
             self.reset_current_match()
-            self._touch_storage()
-            return summary
+        self._queue_save(immediate=True)
+        return summary
 
     def generate_postgame_summary(
         self,
@@ -560,6 +623,15 @@ class PlayerMemory:
         severity_counts = Counter(entry.severity for entry in entries)
         kind_counts = Counter(entry.kind for entry in entries)
         category_counts = Counter(entry.category for entry in entries)
+        impact_counts = Counter(
+            _normalize_text(entry.metadata.get("impact")).lower()
+            for entry in entries
+            if _normalize_text(entry.metadata.get("impact"))
+        )
+        adaptive_summary = self._derive_adaptive_summary(entries)
+        critical_moments = sum(
+            1 for entry in entries if self._priority_rank(entry.metadata.get("priority")) >= 2
+        )
 
         evaluations = [entry for entry in entries if entry.kind == "evaluation"]
         score_buckets: dict[str, list[float]] = defaultdict(list)
@@ -578,7 +650,7 @@ class PlayerMemory:
         strengths = self._derive_strengths(entries, avg_scores, max_strengths)
         improvements = self._derive_improvements(entries, avg_scores, max_improvements)
         key_moments = self._derive_key_moments(entries, max_key_moments)
-        next_steps = self._derive_next_steps(improvements, avg_scores, final_result)
+        next_steps = self._derive_next_steps(improvements, avg_scores, final_result, entries)
 
         stats = {
             "entries": len(entries),
@@ -589,6 +661,9 @@ class PlayerMemory:
             "negative": severity_counts.get("negative", 0),
             "neutral": severity_counts.get("neutral", 0),
             "top_categories": category_counts.most_common(5),
+            "top_impacts": impact_counts.most_common(5),
+            "adaptive": adaptive_summary,
+            "critical_moments": critical_moments,
             "avg_scores": avg_scores,
             "duration_seconds": round(match.duration_seconds(), 1),
         }
@@ -672,6 +747,7 @@ class PlayerMemory:
             recurring_improvements = self._derive_recurring_improvements(
                 avg_scores, negative_categories, limit_patterns
             )
+            adaptive_profile = self._derive_history_adaptive_profile(matches)
 
             return {
                 "matches_played": len(matches),
@@ -681,8 +757,50 @@ class PlayerMemory:
                 "headline": self._history_headline(wins, losses, len(matches)),
                 "recurring_strengths": recurring_strengths,
                 "recurring_improvements": recurring_improvements,
+                "adaptive_profile": adaptive_profile,
                 "recent_memory": recent_memory[:limit_recent],
             }
+
+    def build_postgame_timeline(
+        self,
+        *,
+        limit: int = 12,
+        match: Optional[MatchMemory] = None,
+    ) -> list[dict[str, Any]]:
+        with self._lock:
+            scoped_match = match
+            if scoped_match is None:
+                matches = self._completed_matches(limit_matches=1)
+                scoped_match = matches[-1] if matches else None
+
+            if scoped_match is None or not scoped_match.entries:
+                return []
+
+            entries = list(scoped_match.entries)
+            important_entries = [
+                entry
+                for entry in entries
+                if entry.importance >= 0.55 or entry.kind == "evaluation"
+            ]
+            timeline_source = important_entries or entries
+            if limit > 0:
+                timeline_source = timeline_source[-limit:]
+
+            ordered = sorted(timeline_source, key=lambda entry: entry.timestamp)
+            return [
+                {
+                    "clock": self._timeline_clock(entry, scoped_match.started_at),
+                    "phase": entry.phase,
+                    "category": entry.category,
+                    "severity": entry.severity,
+                    "kind": entry.kind,
+                    "text": entry.text,
+                    "impact": _normalize_text(entry.metadata.get("impact")) or "normal",
+                    "priority": _normalize_text(entry.metadata.get("priority")) or "normal",
+                    "metadata": dict(entry.metadata),
+                }
+                for entry in ordered
+            ]
 
     def _completed_matches(self, limit_matches: int) -> list[MatchMemory]:
         completed = [
@@ -693,6 +811,12 @@ class PlayerMemory:
         if limit_matches <= 0:
             return completed
         return completed[-limit_matches:]
+
+    def _timeline_clock(self, entry: MemoryEntry, started_at: datetime) -> str:
+        game_time = _as_float(entry.metadata.get("game_time"))
+        seconds = int(game_time) if game_time is not None else int(max(0.0, (entry.timestamp - started_at).total_seconds()))
+        minutes, remainder = divmod(seconds, 60)
+        return f"{minutes:02d}:{remainder:02d}"
 
     def _match_display_name(self, match: MatchMemory) -> str:
         champion = _normalize_text(match.champion_name) or "Campeao"
@@ -879,6 +1003,7 @@ class PlayerMemory:
         scored = sorted(
             entries,
             key=lambda entry: (
+                self._priority_rank(entry.metadata.get("priority")),
                 entry.importance,
                 1 if entry.severity == "positive" else 0,
                 entry.timestamp,
@@ -889,7 +1014,9 @@ class PlayerMemory:
         moments = []
         for entry in scored:
             prefix = self._entry_prefix(entry)
-            moments.append(f"{prefix}{entry.text}")
+            impact = _normalize_text(entry.metadata.get("impact"))
+            emphasis = f"[{impact}] " if impact else ""
+            moments.append(f"{prefix}{emphasis}{entry.text}")
             if len(moments) >= max_key_moments:
                 break
 
@@ -900,11 +1027,20 @@ class PlayerMemory:
         improvements: list[str],
         avg_scores: dict[str, float],
         result: str,
+        entries: list[MemoryEntry],
     ) -> list[str]:
         next_steps: list[str] = []
 
         for improvement in improvements[:3]:
             next_steps.append(self._improvement_to_action(improvement))
+
+        critical_negative = [
+            entry
+            for entry in entries
+            if entry.severity == "negative" and self._priority_rank(entry.metadata.get("priority")) >= 2
+        ]
+        if critical_negative:
+            next_steps.append("Reve as janelas mais caras da partida e cria regra fixa para nao repetir o mesmo erro sob pressao.")
 
         if "farm" in avg_scores or "cs" in avg_scores:
             next_steps.append("Cria meta de farm por minuto e cobra wave antes de cacar luta.")
@@ -919,6 +1055,139 @@ class PlayerMemory:
             next_steps.append("Registra mais eventos e avaliacoes para eu transformar a proxima partida em leitura util.")
 
         return _unique_in_order(next_steps)[:5]
+
+    def _derive_adaptive_summary(self, entries: list[MemoryEntry]) -> dict[str, Any]:
+        adaptive_entries = [
+            entry
+            for entry in entries
+            if entry.category == "adaptive_feedback"
+            or _normalize_text(entry.metadata.get("adaptive_topic"))
+        ]
+        if not adaptive_entries:
+            return {
+                "repeated_patterns": [],
+                "recovered_patterns": [],
+                "phase_pressure": [],
+                "headline": "",
+            }
+
+        topic_labels = {
+            "farm": "farm",
+            "vision": "visao",
+            "itemization": "adaptacao de build",
+            "objective_setup": "setup de objetivo",
+            "fight_discipline": "trocas e entradas",
+            "lane_control": "controle de lane",
+        }
+
+        repeated_counter = Counter()
+        recovered_counter = Counter()
+        phase_pressure = Counter()
+
+        for entry in adaptive_entries:
+            topic = _normalize_text(entry.metadata.get("adaptive_topic")).lower()
+            if not topic:
+                continue
+            mode = _normalize_text(entry.metadata.get("adaptive_mode")).lower()
+            label = topic_labels.get(topic, topic.replace("_", " "))
+            if mode == "recovery":
+                recovered_counter[label] += 1
+            else:
+                repeated_counter[label] += 1
+            if entry.phase:
+                phase_pressure[entry.phase] += 1
+
+        repeated_patterns = [
+            f"{label} cobrou {count}x durante a partida."
+            for label, count in repeated_counter.most_common(3)
+        ]
+        recovered_patterns = [
+            f"{label} foi corrigido {count}x depois de entrar em alerta."
+            for label, count in recovered_counter.most_common(3)
+        ]
+        phase_pressure_items = [
+            f"{phase.replace('_', ' ')} concentrou {count} leituras adaptativas."
+            for phase, count in phase_pressure.most_common(3)
+        ]
+
+        if repeated_patterns and recovered_patterns:
+            headline = "O coach pegou padrao repetido durante a partida, mas tambem viu correcao real em alguns pontos."
+        elif repeated_patterns:
+            headline = "A partida teve vazamentos repetidos que puxaram cobranca adaptativa do coach."
+        else:
+            headline = "As correcoes em tempo real apareceram e o coach marcou resposta boa durante o jogo."
+
+        return {
+            "repeated_patterns": repeated_patterns,
+            "recovered_patterns": recovered_patterns,
+            "phase_pressure": phase_pressure_items,
+            "headline": headline,
+        }
+
+    def _derive_history_adaptive_profile(self, matches: list[MatchMemory]) -> dict[str, Any]:
+        repeated = Counter()
+        recovered = Counter()
+        phase_pressure = Counter()
+
+        for match in matches:
+            for entry in match.entries:
+                topic = _normalize_text(entry.metadata.get("adaptive_topic")).lower()
+                if not topic:
+                    continue
+                mode = _normalize_text(entry.metadata.get("adaptive_mode")).lower()
+                if mode == "recovery":
+                    recovered[topic] += 1
+                else:
+                    repeated[topic] += 1
+                if entry.phase:
+                    phase_pressure[entry.phase] += 1
+
+        def _topic_label(topic: str) -> str:
+            labels = {
+                "farm": "farm",
+                "vision": "visao",
+                "itemization": "adaptacao de build",
+                "objective_setup": "setup de objetivo",
+                "fight_discipline": "trocas e entradas",
+                "lane_control": "controle de lane",
+            }
+            return labels.get(topic, topic.replace("_", " "))
+
+        primary_leak = repeated.most_common(1)
+        primary_fix = recovered.most_common(1)
+        hot_phase = phase_pressure.most_common(1)
+
+        leak_topic = _topic_label(primary_leak[0][0]) if primary_leak else ""
+        fix_topic = _topic_label(primary_fix[0][0]) if primary_fix else ""
+        hot_phase_label = hot_phase[0][0].replace("_", " ") if hot_phase else ""
+
+        if leak_topic and fix_topic:
+            headline = f"Teu historico recente vaza mais por {leak_topic}, mas ja mostrou resposta boa em {fix_topic}."
+        elif leak_topic:
+            headline = f"Teu historico recente ta vazando mais por {leak_topic}."
+        elif fix_topic:
+            headline = f"Teu historico recente ja mostra resposta boa em {fix_topic}."
+        else:
+            headline = ""
+
+        return {
+            "headline": headline,
+            "primary_leak": leak_topic,
+            "primary_fix": fix_topic,
+            "hot_phase": hot_phase_label,
+            "repeated_topics": [_topic_label(topic) for topic, _ in repeated.most_common(3)],
+            "recovered_topics": [_topic_label(topic) for topic, _ in recovered.most_common(3)],
+        }
+
+    def _priority_rank(self, value: Any) -> int:
+        token = _normalize_text(value).lower()
+        mapping = {
+            "critical": 3,
+            "high": 2,
+            "medium": 1,
+            "normal": 0,
+        }
+        return mapping.get(token, 0)
 
     def _entry_prefix(self, entry: MemoryEntry) -> str:
         if entry.severity == "positive":
