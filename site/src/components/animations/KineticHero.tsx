@@ -2,6 +2,8 @@
 
 import { useEffect, useRef } from "react";
 import anime from "animejs";
+import NeuralBrain from "./NeuralBrain";
+
 
 export default function KineticHero() {
   const containerRef = useRef<HTMLDivElement>(null);
@@ -46,8 +48,9 @@ export default function KineticHero() {
   };
 
   return (
-    <div ref={containerRef} className="flex flex-col items-center justify-center min-h-[95vh] text-center px-4 overflow-hidden">
-      <h1 className="flex flex-col items-center gap-0 font-black tracking-tighter w-full max-w-[95vw]">
+    <div ref={containerRef} className="relative flex flex-col items-center justify-center min-h-[95vh] text-center px-4 overflow-hidden">
+      <NeuralBrain />
+      <h1 className="relative z-10 flex flex-col items-center gap-0 font-black tracking-tighter w-full max-w-[95vw]">
         {lines.map((line, lineIdx) => (
           <div key={lineIdx} className="line block w-full whitespace-nowrap">
             {line.split("").map((l, i) => (
@@ -62,11 +65,11 @@ export default function KineticHero() {
         ))}
       </h1>
 
-      <p className="hero-sub max-w-2xl mt-12 text-lg md:text-2xl text-muted-foreground font-mono opacity-0 uppercase tracking-[0.3em] text-white">
+      <p className="hero-sub relative z-10 max-w-2xl mt-12 text-lg md:text-2xl text-muted-foreground font-mono opacity-0 uppercase tracking-[0.3em] text-white">
         [ NEURAL_COACHER ] - PERFORMANCE DE ELITE EM TEMPO REAL.
       </p>
 
-      <div className="hero-btn mt-12 flex flex-col sm:flex-row gap-6 opacity-0">
+      <div className="hero-btn relative z-10 mt-12 flex flex-col sm:flex-row gap-6 opacity-0">
         <button
           onClick={() => scrollTo("download")}
           className="px-10 py-5 bg-accent text-white font-bold hover:bg-violet-600 transition-all active:scale-95 text-lg"
