@@ -15,5 +15,5 @@ services:
         value: attachment; filename="coacher_v1_setup.exe"
     routes:
       - type: rewrite
-        source: /.*
+        source: /([^.]*)
         destination: /index.html
