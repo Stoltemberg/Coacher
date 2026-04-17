@@ -1,8 +1,9 @@
-staticSites:
-  - name: coacher-neural-platform
+services:
+  - type: static
+    name: coacher-neural-platform
     rootDir: site
     buildCommand: npm install && npm run build
-    publishPath: out
+    staticPublishPath: out
     autoDeploy: true
     headers:
       - path: /coacher_v1_setup.exe
