@@ -49,9 +49,9 @@ export default function BentoFeatures() {
           whileInView={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8 }}
           viewport={{ once: true }}
-          className="flex flex-col md:flex-row justify-between items-end mb-16 gap-8"
+          className="flex flex-col md:flex-row justify-between items-start md:items-end mb-16 gap-8"
         >
-          <h2 className="text-6xl max-w-xl font-black uppercase">Construído para a Elite.</h2>
+          <h2 className="text-4xl md:text-6xl max-w-xl font-black uppercase">Construído para a Elite.</h2>
           <p className="text-muted-foreground font-mono text-sm max-w-sm uppercase tracking-widest">
             [01] A MAIS AVANÇADA SUÍTE DE ANÁLISE JÁ CONSTRUÍDA PARA O RIFT.
           </p>
