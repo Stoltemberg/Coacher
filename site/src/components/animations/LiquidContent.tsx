@@ -22,10 +22,24 @@ export default function LiquidContent({ children }: { children: React.ReactNode 
     stiffness: 200
   });
 
+  const [isMobile, setIsMobile] = useState(false);
   const [isMounted, setIsMounted] = useState(false);
-  useEffect(() => setIsMounted(true), []);
+
+  useEffect(() => {
+    setIsMounted(true);
+    const checkMobile = () => {
+      setIsMobile(window.innerWidth < 1024);
+    };
+    checkMobile();
+    window.addEventListener("resize", checkMobile);
+    return () => window.removeEventListener("resize", checkMobile);
+  }, []);
 
   if (!isMounted) return <>{children}</>;
+
+  if (isMobile) {
+    return <div className="relative overflow-x-hidden">{children}</div>;
+  }
 
   return (
     <>

@@ -20,40 +20,54 @@ export default function LiquidDrip() {
   const { scrollY } = useScroll();
   const parallaxY = useTransform(scrollY, [0, 5000], [0, -2500]);
 
+  const [isMobile, setIsMobile] = useState(false);
   const [isMounted, setIsMounted] = useState(false);
-  useEffect(() => setIsMounted(true), []);
+
+  useEffect(() => {
+    setIsMounted(true);
+    const checkMobile = () => {
+      setIsMobile(window.innerWidth < 1024);
+    };
+    checkMobile();
+    window.addEventListener("resize", checkMobile);
+    return () => window.removeEventListener("resize", checkMobile);
+  }, []);
 
   if (!isMounted) return null;
 
+  const dripCount = isMobile ? 3 : 6;
+
   return (
     <div className="fixed inset-0 pointer-events-none z-0 overflow-hidden">
-      {/* SVG Filter Definition */}
-      <svg className="hidden">
-        <defs>
-          <filter id="goo">
-            <feGaussianBlur in="SourceGraphic" stdDeviation="10" result="blur" />
-            <feColorMatrix 
-              in="blur" 
-              mode="matrix" 
-              values="1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  0 0 0 18 -7" 
-              result="goo" 
-            />
-            <feComposite in="SourceGraphic" in2="goo" operator="atop" />
-          </filter>
-        </defs>
-      </svg>
+      {/* SVG Filter Definition - Only render on Desktop */}
+      {!isMobile && (
+        <svg className="hidden">
+          <defs>
+            <filter id="goo">
+              <feGaussianBlur in="SourceGraphic" stdDeviation="10" result="blur" />
+              <feColorMatrix 
+                in="blur" 
+                mode="matrix" 
+                values="1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  0 0 0 18 -7" 
+                result="goo" 
+              />
+              <feComposite in="SourceGraphic" in2="goo" operator="atop" />
+            </filter>
+          </defs>
+        </svg>
+      )}
 
       {/* Drip Elements */}
       <motion.div 
-        className="liquid-goo absolute inset-0 will-change-transform"
+        className={`${!isMobile ? "liquid-goo" : ""} absolute inset-0 will-change-transform`}
         style={{ y: parallaxY }}
       >
-        {[...Array(6)].map((_, i) => (
+        {[...Array(dripCount)].map((_, i) => (
           <motion.div
             key={`drip-${i}`}
-            className="absolute bg-accent/40 rounded-full"
+            className={`absolute ${isMobile ? "bg-accent/20 blur-xl" : "bg-accent/40"} rounded-full`}
             style={{
-              left: `${15 + i * 15}%`,
+              left: `${15 + i * (isMobile ? 30 : 15)}%`,
               top: "-50px",
               width: `${10 + (i % 3) * 5}px`,
               height: "100px",
@@ -72,12 +86,12 @@ export default function LiquidDrip() {
         ))}
         
         {/* Static hanging drips */}
-        {[...Array(4)].map((_, i) => (
+        {[...Array(isMobile ? 2 : 4)].map((_, i) => (
           <div
             key={`static-${i}`}
             className="absolute bg-accent/20 rounded-full opacity-30"
             style={{
-              left: `${30 + i * 20}%`,
+              left: `${30 + i * (isMobile ? 40 : 20)}%`,
               top: "-20px",
               width: "40px",
               height: "60px",

@@ -17,7 +17,7 @@ export default function PersonalityDemo() {
       <div className="max-w-4xl mx-auto text-center">
         <h2 className="text-4xl md:text-6xl mb-8 uppercase font-black">Interação Dinâmica.</h2>
         <p className="text-muted-foreground mb-16 font-mono uppercase tracking-widest text-sm">
-          O MOTOR MINERVA_VOICE OFERECE DIFERENTES PERFIS DE FEEDBACK PARA CADA ESTILO DE ATLETA.
+          O MOTOR MIN_COACHER_VOICE OFERECE DIFERENTES PERFIS DE FEEDBACK PARA CADA ESTILO DE ATLETA.
         </p>
 
         <div className="flex justify-center gap-4 mb-12">
