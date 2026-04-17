@@ -1,7 +1,6 @@
 services:
-  - type: static
+  - type: static_site
     name: coacher-neural-platform
-    env: static
     plan: free
     rootDir: site
     buildCommand: npm install && npm run build
