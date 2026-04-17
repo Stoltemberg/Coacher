@@ -1,0 +1,75 @@
+@import "tailwindcss";
+
+:root {
+  --background: #050505;
+  --foreground: #f0f0f0;
+  --accent: #8b5cf6; /* Vivid Violet */
+  --accent-foreground: #ffffff;
+  --muted: #1a1a1a;
+  --muted-foreground: #a1a1aa;
+  --border: #262626;
+  --toxic: #adff2f; /* Toxic Lime */
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-border: var(--border);
+  --color-toxic: var(--toxic);
+  
+  --font-display: var(--font-display);
+  --font-mono: var(--font-mono);
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  background: var(--background);
+  color: var(--foreground);
+  font-family: var(--font-display), Arial, sans-serif;
+  overflow-x: hidden;
+}
+
+h1, h2, h3, h4 {
+  text-transform: uppercase;
+  letter-spacing: -0.02em;
+  font-weight: 900;
+}
+
+.noise-overlay {
+  position: fixed;
+  inset: 0;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
+  opacity: 0.05;
+  pointer-events: none;
+  z-index: 9999;
+}
+
+.brutalist-border {
+  border: 1px solid var(--border);
+  transition: all 0.3s cubic-bezier(0.23, 1, 0.32, 1);
+}
+
+.brutalist-border:hover {
+  border-color: var(--accent);
+  box-shadow: 4px 4px 0px var(--accent);
+}
+
+.liquid-goo {
+  filter: url('#goo');
+}
+
+@keyframes liquid-pulse {
+  0%, 100% { transform: scaleY(1); }
+  50% { transform: scaleY(1.05); }
+}
+
+.animate-liquid {
+  animation: liquid-pulse 4s ease-in-out infinite;
+}
