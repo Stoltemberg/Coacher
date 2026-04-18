@@ -516,6 +516,16 @@ class Api:
         self.voice_preset = "hardcore"
         self.voice_personality = "minerva"
         self.category_filters = dict(self.DEFAULT_CATEGORY_FILTERS)
+        self.solo_focus = True
+        
+        # New configurable intervals & thresholds
+        self.macro_interval = 200
+        self.minimap_interval = 150
+        self.economy_interval = 300
+        self.item_check_interval = 45
+        self.farm_threshold = 0.6
+        self.vision_threshold = 5.0
+
         self.authenticated = auth_service.snapshot().get("authenticated", False)
         self._load_settings()
 
@@ -528,6 +538,13 @@ class Api:
             "voice_preset": self.voice_preset,
             "voice_personality": self.voice_personality,
             "category_filters": dict(self.category_filters),
+            "solo_focus": self.solo_focus,
+            "macro_interval": self.macro_interval,
+            "minimap_interval": self.minimap_interval,
+            "economy_interval": self.economy_interval,
+            "item_check_interval": self.item_check_interval,
+            "farm_threshold": self.farm_threshold,
+            "vision_threshold": self.vision_threshold,
         }
 
     def _persist_settings(self):
@@ -547,7 +564,16 @@ class Api:
             **self.DEFAULT_CATEGORY_FILTERS,
             **(payload.get("category_filters") or {}),
         }
+        self.solo_focus = bool(payload.get("solo_focus", True))
         self.hardcore_enabled = bool(payload.get("hardcore_enabled", self.voice_preset == "hardcore"))
+        
+        # Load new configurable params
+        self.macro_interval = int(payload.get("macro_interval", self.macro_interval))
+        self.minimap_interval = int(payload.get("minimap_interval", self.minimap_interval))
+        self.economy_interval = int(payload.get("economy_interval", self.economy_interval))
+        self.item_check_interval = int(payload.get("item_check_interval", self.item_check_interval))
+        self.farm_threshold = float(payload.get("farm_threshold", self.farm_threshold))
+        self.vision_threshold = float(payload.get("vision_threshold", self.vision_threshold))
 
     def _apply_settings_runtime(self):
         assistant.set_volume(self.volume)
@@ -556,6 +582,16 @@ class Api:
         voice.set_intensity("hardcore" if self.hardcore_enabled else "standard")
         coach.objectives_enabled = self.objectives_enabled
         coach.set_voice_preset(self.voice_preset)
+        
+        # Apply structured settings to CoachBrain
+        coach.settings.solo_focus = self.solo_focus
+        coach.settings.macro_interval = self.macro_interval
+        coach.settings.minimap_interval = self.minimap_interval
+        coach.settings.economy_interval = self.economy_interval
+        coach.settings.item_check_interval = self.item_check_interval
+        coach.settings.farm_threshold = self.farm_threshold
+        coach.settings.vision_threshold = self.vision_threshold
+        
         assistant.set_tts_mode("minimal" if self.voice_preset == "minimal" else "smart")
         for category, enabled in self.category_filters.items():
             coach.set_category_enabled(category, enabled)
@@ -602,6 +638,50 @@ class Api:
         assistant.set_tts_mode("minimal" if normalized == "minimal" else "smart")
         self._persist_settings()
         print(f"[Backend] Preset de voz: {normalized}")
+        push_settings_snapshot()
+
+    def toggle_solo_focus(self, state):
+        self.solo_focus = bool(state)
+        if hasattr(coach, 'settings'):
+            coach.settings.solo_focus = self.solo_focus
+        self._persist_settings()
+        print(f"[Backend] Solo Focus: {'Ligado' if self.solo_focus else 'Desligado'}")
+        push_settings_snapshot()
+
+    def set_macro_interval(self, value):
+        self.macro_interval = int(value)
+        coach.settings.macro_interval = self.macro_interval
+        self._persist_settings()
+        push_settings_snapshot()
+
+    def set_minimap_interval(self, value):
+        self.minimap_interval = int(value)
+        coach.settings.minimap_interval = self.minimap_interval
+        self._persist_settings()
+        push_settings_snapshot()
+
+    def set_economy_interval(self, value):
+        self.economy_interval = int(value)
+        coach.settings.economy_interval = self.economy_interval
+        self._persist_settings()
+        push_settings_snapshot()
+
+    def set_item_check_interval(self, value):
+        self.item_check_interval = int(value)
+        coach.settings.item_check_interval = self.item_check_interval
+        self._persist_settings()
+        push_settings_snapshot()
+
+    def set_farm_threshold(self, value):
+        self.farm_threshold = float(value)
+        coach.settings.farm_threshold = self.farm_threshold
+        self._persist_settings()
+        push_settings_snapshot()
+
+    def set_vision_threshold(self, value):
+        self.vision_threshold = float(value)
+        coach.settings.vision_threshold = self.vision_threshold
+        self._persist_settings()
         push_settings_snapshot()
 
     def set_voice_personality(self, personality):

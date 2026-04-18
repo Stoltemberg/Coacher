@@ -34,6 +34,7 @@ def analyze_champion_kill(
     our_team: str,
     voice,
     map_pve_name,
+    solo_focus: bool = False,
 ) -> EventAnalysis:
     killer = _clean_name(event.get("KillerName"))
     victim = _clean_name(event.get("VictimName"))
@@ -80,6 +81,9 @@ def analyze_champion_kill(
     if not killer or not victim:
         return analysis
 
+    if solo_focus:
+        return analysis
+
     is_victim_ally = player_to_team.get(victim) == our_team
     if killer not in player_to_champ:
         pve = map_pve_name(killer)
@@ -100,13 +104,15 @@ def analyze_first_blood(voice) -> EventAnalysis:
     return EventAnalysis(calls=[EventCall(voice.first_blood(), "positive", "first_blood", importance=0.84, metadata={"impact": "ritmo cedo", "priority": "high"})])
 
 
-def analyze_multikill(event: dict[str, Any], *, active_player_name: str | None, voice) -> EventAnalysis:
+def analyze_multikill(event: dict[str, Any], *, active_player_name: str | None, voice, solo_focus: bool = False) -> EventAnalysis:
     killer = _clean_name(event.get("KillerName"))
     kill_streak = event.get("KillStreak", 2)
 
     if killer == active_player_name:
         return EventAnalysis(calls=[EventCall(voice.self_multikill(kill_streak), "positive", "multikill", importance=0.92, metadata={"impact": "fight decisiva", "priority": "high", "streak": kill_streak})])
     if kill_streak >= 2:
+        if solo_focus:
+            return EventAnalysis()
         return EventAnalysis(calls=[EventCall(voice.enemy_multikill(killer, kill_streak), "negative", "multikill", importance=0.93, metadata={"impact": "fight colapsou", "priority": "high", "streak": kill_streak, "subject": killer})])
     return EventAnalysis()
 

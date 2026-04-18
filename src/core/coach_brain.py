@@ -46,8 +46,8 @@ class CoachBrain:
         self.anti_heal_ids = [3123, 3033, 3165, 3916, 6609, 3076, 3075]
 
         self.category_cooldowns = {
-            "macro": 90,
-            "minimap": 75,
+            "macro": self.settings.macro_interval,
+            "minimap": self.settings.minimap_interval,
             "identity": 20,
             "assist": 10,
             "lane_matchup": 45,
@@ -56,9 +56,9 @@ class CoachBrain:
             "opening_plan": 90,
             "mid_game_job": 180,
             "jungle_intel": 50,
-            "farm_eval": 120,
-            "vision_eval": 120,
-            "item_advice": 45,
+            "farm_eval": self.settings.economy_interval,
+            "vision_eval": self.settings.economy_interval,
+            "item_advice": self.settings.item_check_interval,
             "self_kill": 8,
             "self_death": 8,
             "ally_death": 6,
@@ -366,7 +366,14 @@ class CoachBrain:
             return
         if category:
             now = time.monotonic()
-            cooldown = self.category_cooldowns.get(category, 0) * cooldown_scale
+            # Dynamic cooldown lookup for core settings
+            cooldown_val = self.category_cooldowns.get(category, 0)
+            if category == "macro": cooldown_val = self.settings.macro_interval
+            elif category == "minimap": cooldown_val = self.settings.minimap_interval
+            elif category in {"farm_eval", "vision_eval"}: cooldown_val = self.settings.economy_interval
+            elif category == "item_advice": cooldown_val = self.settings.item_check_interval
+            
+            cooldown = cooldown_val * cooldown_scale
             last_time = self.last_announced_at.get(category, 0)
             if now - last_time < cooldown:
                 return
@@ -446,13 +453,17 @@ class CoachBrain:
 
     def _macro_timer(self):
         while True:
-            time.sleep(200)
+            # Sleep based on setting, with a safety floor of 5s
+            interval = max(5, self.settings.macro_interval)
+            time.sleep(interval)
             if self.coaching_active and self.active_player_name:
                 self._announce(self.voice.macro_reminder(), category="macro")
 
     def _minimap_timer(self):
         while True:
-            time.sleep(150)
+            # Sleep based on setting, with a safety floor of 5s
+            interval = max(5, self.settings.minimap_interval)
+            time.sleep(interval)
             if self.coaching_active and self.active_player_name:
                 self._announce(self.voice.minimap_reminder(), category="minimap")
 
@@ -464,6 +475,48 @@ class CoachBrain:
             self.memory.current_match.player_name = self.active_player_name
             self._announce(self.voice.player_identified(), category="identity")
             self._sync_state()
+
+    def _get_counter_item_suggestion(self, need_type):
+        """Sugere um item especifico baseado no campeao do jogador e na necessidade."""
+        if not self.current_champion_name or not self.knowledge:
+            return None
+        
+        champ = self.knowledge.get_champion(self.current_champion_name)
+        if not champ:
+            return None
+            
+        tags = set(champ.tags or [])
+        archetype = getattr(champ, "archetype", "")
+        
+        is_ap = "Mage" in tags or archetype in {"control_mage", "burst_mage", "enchanter"}
+        is_tank = "Tank" in tags or archetype == "tank"
+        is_marksman = "Marksman" in tags or archetype == "marksman"
+        
+        # Se for um assassino ou lutador, tentamos deduzir se e AD ou AP (simplificado)
+        if archetype == "assassin" and self.current_champion_name in {"Akali", "Katarina", "Evelynn", "Fizz", "Diana"}:
+            is_ap = True
+            
+        if need_type == "armor_pen":
+            if is_ap: return None # Mago nao faz pen fisica
+            if is_marksman: return "Lembrancas do Lorde Dominik"
+            return "Rencor de Serylda"
+            
+        if need_type == "magic_pen":
+            if not is_ap: return None # AD nao faz pen magica (geralmente)
+            return "Cajado do Vazio"
+            
+        if need_type == "anti_heal":
+            if is_tank: return "Vestimenta de Espinhos"
+            if is_ap: return "Orbe do Esquecimento"
+            return "Chamado do Carrasco"
+            
+        return None
+
+    def _update_match_data(self, data):
+        self.game_time = data.get("gameTime", 0.0)
+        if self.coaching_active:
+            self.current_phase = determine_phase(self.game_time)
+        self._sync_state()
 
     def update_game_stats(self, data):
         self.game_time = data.get("gameTime", 0.0)
@@ -631,13 +684,15 @@ class CoachBrain:
             )
             self.mid_game_job_announced = True
 
-        if self.game_time > 300 and (self.game_time - self.last_farm_eval) > 300:
+        if self.game_time > 300 and (self.game_time - self.last_farm_eval) > self.settings.economy_interval:
             self.last_farm_eval = self.game_time
             for signal in self.coach_service.economy_signals(
                 game_time=self.game_time,
                 creep_score=cs,
                 ward_score=wards,
                 hardcore_enabled=self.hardcore_enabled,
+                farm_threshold=self.settings.farm_threshold,
+                vision_threshold=self.settings.vision_threshold,
             ):
                 if signal.metric == "farm" and signal.severity == "negative":
                     self._announce(self.voice.low_farm(cs, minutes), "negative", category="farm_eval")
@@ -679,7 +734,8 @@ class CoachBrain:
         self._sync_state()
         
         current_time = time.time()
-        if current_time - self.last_item_check > 20: 
+        if current_time - self.last_item_check > self.settings.item_check_interval: 
+ 
             self.last_item_check = current_time
             
             for p in players_data:
@@ -699,49 +755,56 @@ class CoachBrain:
                         has_anti_heal = any(i in self.anti_heal_ids for i in items)
                     
                     if has_armor and "armor_pen" not in self.advised_items:
-                        self._announce(self.voice.armor_warning(p_nick), "negative", category="item_advice")
-                        self.memory.record_evaluation(
-                            "itemization",
-                            0.35,
-                            note=f"Adaptação de build necessária contra armadura de {p_nick}.",
-                            phase=self.current_phase,
-                            category="economy",
-                            target="Comprar penetração física no próximo reset.",
-                            severity="negative",
-                            metadata={"game_time": self.game_time},
-                        )
-                        self._push_memory_entry("Loja atrasada", f"{p_nick} já tem armadura pesada e a build precisa responder.", "negative")
-                        self._process_adaptive_signal(
-                            "item_advice",
-                            "negative",
-                            {"game_time": self.game_time, "metric": "itemization", "priority": "high", "subject": p_nick},
-                        )
-                        self.advised_items.add("armor_pen")
-                        return
+                        item_sug = self._get_counter_item_suggestion("armor_pen")
+                        # Se eu sou AP, ignorar aviso de armor pen
+                        if item_sug or not self.knowledge:
+                            self._announce(self.voice.armor_warning(p_nick, item_sug), "negative", category="item_advice")
+                            self.memory.record_evaluation(
+                                "itemization",
+                                0.35,
+                                note=f"Adaptação de build necessária contra armadura de {p_nick}. Sugestão: {item_sug or 'Penetração'}.",
+                                phase=self.current_phase,
+                                category="economy",
+                                target=f"Comprar {item_sug or 'penetração física'} no próximo reset.",
+                                severity="negative",
+                                metadata={"game_time": self.game_time},
+                            )
+                            self._push_memory_entry("Loja atrasada", f"{p_nick} já tem armadura pesada. Considere {item_sug or 'penetração'}.", "negative")
+                            self._process_adaptive_signal(
+                                "item_advice",
+                                "negative",
+                                {"game_time": self.game_time, "metric": "itemization", "priority": "high", "subject": p_nick},
+                            )
+                            self.advised_items.add("armor_pen")
+                            return
                         
                     if has_mr and "magic_pen" not in self.advised_items:
-                        self._announce(self.voice.magic_resist_warning(p_nick), "negative", category="item_advice")
-                        self.memory.record_evaluation(
-                            "itemization",
-                            0.35,
-                            note=f"Adaptação AP necessária contra resistência mágica de {p_nick}.",
-                            phase=self.current_phase,
-                            category="economy",
-                            target="Preparar penetração mágica no próximo reset.",
-                            severity="negative",
-                            metadata={"game_time": self.game_time},
-                        )
-                        self._push_memory_entry("Resposta mágica atrasada", f"{p_nick} segurou tua curva de dano com MR.", "negative")
-                        self._process_adaptive_signal(
-                            "item_advice",
-                            "negative",
-                            {"game_time": self.game_time, "metric": "itemization", "priority": "high", "subject": p_nick},
-                        )
-                        self.advised_items.add("magic_pen")
-                        return
+                        item_sug = self._get_counter_item_suggestion("magic_pen")
+                        # Se eu sou AD puro, talvez ignorar aviso de magic pen
+                        if item_sug or not self.knowledge:
+                            self._announce(self.voice.magic_resist_warning(p_nick, item_sug), "negative", category="item_advice")
+                            self.memory.record_evaluation(
+                                "itemization",
+                                0.35,
+                                note=f"Adaptação AP necessária contra resistência mágica de {p_nick}. Sugestão: {item_sug or 'Penetração'}.",
+                                phase=self.current_phase,
+                                category="economy",
+                                target=f"Preparar {item_sug or 'penetração mágica'} no próximo reset.",
+                                severity="negative",
+                                metadata={"game_time": self.game_time},
+                            )
+                            self._push_memory_entry("Resposta mágica atrasada", f"{p_nick} fechou MR. {item_sug or 'Ajuste a build'}.", "negative")
+                            self._process_adaptive_signal(
+                                "item_advice",
+                                "negative",
+                                {"game_time": self.game_time, "metric": "itemization", "priority": "high", "subject": p_nick},
+                            )
+                            self.advised_items.add("magic_pen")
+                            return
 
                     if has_anti_heal and "anti_heal" not in self.advised_items:
-                        self._announce(self.voice.anti_heal_warning(p_nick), "negative", category="item_advice")
+                        item_sug = self._get_counter_item_suggestion("anti_heal")
+                        self._announce(self.voice.anti_heal_warning(p_nick, item_sug), "negative", category="item_advice")
                         self.memory.record_evaluation(
                             "survivability",
                             0.4,
@@ -815,6 +878,7 @@ class CoachBrain:
             ally_drags=self.ally_drags,
             enemy_drags=self.enemy_drags,
             map_pve_name=self.map_pve_name,
+            solo_focus=self.settings.solo_focus,
         )
 
         if analysis.stat_updates:

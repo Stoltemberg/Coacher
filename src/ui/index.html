@@ -93,12 +93,18 @@
 
             <nav class="app-nav main-nav">
                 <button class="nav-item active" type="button" data-target="dashboard">
-                    <strong>Dashboard</strong>
-                    <small>Jogador</small>
+                    <span class="nav-indicator"></span>
+                    <div class="nav-content">
+                        <strong>Command Center</strong>
+                        <small>Dashboard Ativo</small>
+                    </div>
                 </button>
                 <button class="nav-item" type="button" data-target="settings">
-                    <strong>Configura&ccedil;&otilde;es</strong>
-                    <small>Coach</small>
+                    <span class="nav-indicator"></span>
+                    <div class="nav-content">
+                        <strong>Neural Config</strong>
+                        <small>Ajustes de Coach</small>
+                    </div>
                 </button>
             </nav>
 
@@ -137,113 +143,127 @@
                 </section>
 
                 <section class="dashboard-grid dashboard-grid-clean">
-                    <div class="workspace-main">
-                        <section class="workspace-section performance-section section-enter">
+                    <!-- SLOT 1: THE CORE VOX -->
+                    <div class="workspace-main" style="grid-column: span 2;">
+                        <section class="workspace-section performance-section section-enter brutalist-card card-wide" data-corner="1">
                             <div class="section-header section-header-tight">
                                 <div>
-                                    <span class="eyebrow">Vis&atilde;o geral</span>
-                                    <h3>Desempenho recente</h3>
+                                    <span class="eyebrow">Inteligência Neural</span>
+                                    <h3>Headline da Sessão</h3>
                                 </div>
+                                <div id="postgame-scoreline-badge" class="mode-pill">--</div>
                             </div>
 
                             <div class="summary-hero summary-hero-compact performance-hero">
-                                <div>
-                                    <h4 id="postgame-title">Aguardando fim de jogo</h4>
-                                    <p class="summary-subtitle">Uma leitura curta do que mais define teu estado atual e como isso aparece entre partidas.</p>
-                                </div>
-                                <div id="coach-taxonomy-grid" class="taxonomy-grid taxonomy-grid-compact hidden-telemetry" aria-hidden="true"></div>
+                                <h4 id="postgame-title">Aguardando análise...</h4>
+                                <div id="postgame-reads" class="summary-list" aria-live="polite"></div>
                             </div>
+                        </section>
+                    </div>
 
-                            <div class="summary-metrics player-metrics" id="postgame-metrics">
+                    <!-- SLOT 2: METRICS BAR -->
+                    <div class="workspace-main" style="grid-column: span 1;">
+                         <section class="workspace-section section-enter brutalist-card" data-corner="6">
+                            <div class="section-header section-header-tight">
+                                <div>
+                                    <span class="eyebrow">Métricas</span>
+                                    <h3>Performance Analítica</h3>
+                                </div>
+                            </div>
+                            <div class="summary-metrics player-metrics" id="postgame-metrics" style="grid-template-columns: 1fr 1fr; gap: 12px;">
                                 <div class="metric-card">
-                                    <span class="metric-label">Dura&ccedil;&atilde;o</span>
+                                    <span class="metric-label">Duração</span>
                                     <strong id="postgame-duration">--</strong>
                                 </div>
                                 <div class="metric-card">
-                                    <span class="metric-label">Placar</span>
-                                    <strong id="postgame-scoreline">--</strong>
-                                </div>
-                                <div class="metric-card">
-                                    <span class="metric-label">Confian&ccedil;a</span>
+                                    <span class="metric-label">Confiança</span>
                                     <strong id="postgame-confidence">--</strong>
                                 </div>
                                 <div class="metric-card">
-                                    <span class="metric-label">Sinal dominante</span>
+                                    <span class="metric-label">Sinal Dominante</span>
                                     <strong id="player-signal-dominant">--</strong>
                                 </div>
-                            </div>
-
-                            <div class="player-dashboard-grid">
-                                <div class="postgame-column">
-                                    <div class="section-subgroup">
-                                        <div class="subsection-header">
-                                            <h4>Headline da sess&atilde;o</h4>
-                                            <span class="subsection-label">resumo</span>
-                                        </div>
-                                        <div id="postgame-reads" class="summary-list" aria-live="polite"></div>
-                                    </div>
-
-                                    <div class="section-subgroup">
-                                        <div class="subsection-header">
-                                            <h4>For&ccedil;as e ajustes</h4>
-                                            <span class="subsection-label">insights</span>
-                                        </div>
-                                        <div id="postgame-insights" class="insight-grid" aria-live="polite"></div>
-                                    </div>
-                                </div>
-
-                                <div class="postgame-column">
-                                    <div class="section-subgroup">
-                                        <div class="subsection-header">
-                                            <h4>Leitura adaptativa</h4>
-                                            <span class="subsection-label">tend&ecirc;ncias</span>
-                                        </div>
-                                        <div id="postgame-adaptive" class="adaptive-grid" aria-live="polite"></div>
-                                    </div>
-
-                                    <div class="section-subgroup">
-                                        <div class="subsection-header">
-                                            <h4>Mem&oacute;ria viva</h4>
-                                            <span class="subsection-label">recorr&ecirc;ncia</span>
-                                        </div>
-                                        <div id="player-memory-feed" class="memory-feed" aria-live="polite">
-                                            <div class="postgame-empty">Quando a partida terminar, o coach pode guardar padr&otilde;es como farm baixo, vis&atilde;o fraca e timings de objetivo.</div>
-                                        </div>
-                                    </div>
+                                <div class="metric-card">
+                                    <span class="metric-label">Saldo Neural</span>
+                                    <strong id="postgame-scoreline">--</strong>
                                 </div>
                             </div>
-                        </section>
+                         </section>
+                    </div>
 
-                        <section class="workspace-section context-section section-enter">
-                            <div class="section-header section-header-tight">
+                    <!-- SLOT 3: INSIGHTS & ADJUSTS -->
+                    <div class="workspace-main" style="grid-column: span 2;">
+                        <section class="workspace-section section-enter brutalist-card" data-corner="2">
+                             <div class="section-header">
                                 <div>
-                                    <span class="eyebrow">Contexto de partida</span>
-                                    <h3>Leitura externa</h3>
+                                    <span class="eyebrow">Ações e Ajustes</span>
+                                    <h3>Forças e Ajustes</h3>
                                 </div>
                             </div>
+                            <div id="postgame-insights" class="insight-grid" aria-live="polite"></div>
+                        </section>
+                    </div>
 
-                            <div class="focus-layout player-analysis-layout">
-                                <article class="split-block quiet-block">
-                                    <div class="subsection-header">
-                                        <h4>Fila e inimigos</h4>
-                                        <span class="subsection-label">pr&eacute;-jogo</span>
-                                    </div>
-                                    <div id="match-intel-content" aria-live="polite">
-                                        <div class="empty-state">Inicie uma partida para puxar o contexto da fila, composi&ccedil;&otilde;es e sinais de matchup.</div>
-                                    </div>
-                                </article>
+                    <!-- SLOT 4: ADAPTIVE TRENDS -->
+                    <div class="workspace-main" style="grid-column: span 1;">
+                        <section class="workspace-section section-enter brutalist-card" data-corner="3">
+                            <div class="section-header">
+                                <div>
+                                    <span class="eyebrow">Evolução</span>
+                                    <h3>Tendências Adaptativas</h3>
+                                </div>
+                            </div>
+                            <div id="postgame-adaptive" class="adaptive-grid" aria-live="polite"></div>
+                        </section>
+                    </div>
 
-                                <article class="split-block quiet-block">
-                                    <div class="subsection-header">
-                                        <h4>Mapa atual</h4>
-                                        <span class="subsection-label">tempo real</span>
-                                    </div>
-                                    <div id="jungle-intel-content" aria-live="polite">
-                                        <div class="empty-state">Assim que o jogo abrir, esta &aacute;rea vira uma leitura de mapa &uacute;til para teu momento atual.</div>
-                                    </div>
-                                </article>
+                    <!-- SLOT 5: LIVE MEMORY SIDELOG -->
+                    <aside class="workspace-inspector" style="grid-row: span 2;">
+                        <section class="workspace-section section-enter brutalist-card card-tall" data-corner="4">
+                            <div class="section-header">
+                                <div>
+                                    <span class="eyebrow">Arquivo de Memória</span>
+                                    <h3>Memória Viva</h3>
+                                </div>
+                                <span class="subsection-label">recorrência</span>
+                            </div>
+                            <div id="player-memory-feed" class="memory-feed custom-scrollbar" style="max-height: 600px; overflow-y: auto; padding-right: 8px;" aria-live="polite">
+                                <div class="postgame-empty">Aguardando o desenrolar da partida para registrar padrões de memória.</div>
                             </div>
                         </section>
+                    </aside>
+
+                    <!-- SLOT 6: PREGAME INTEL -->
+                    <div class="workspace-main" style="grid-column: span 2;">
+                        <section class="workspace-section context-section section-enter brutalist-card" data-corner="1">
+                            <div class="section-header">
+                                <div>
+                                    <span class="eyebrow">Análise de Fila</span>
+                                    <h3>Fila e Inimigos</h3>
+                                </div>
+                                <span class="subsection-label">pré-jogo</span>
+                            </div>
+                            <div id="match-intel-content" class="intel-grid custom-scrollbar" style="max-height: 480px; overflow-y: auto;" aria-live="polite">
+                                <div class="empty-state">Inicie uma partida para puxar o contexto da fila e composições.</div>
+                            </div>
+                        </section>
+                    </div>
+
+                    <!-- SLOT 7: REALTIME JUNGLE -->
+                    <div class="workspace-main" style="grid-column: span 1;">
+                        <section class="workspace-section section-enter brutalist-card" data-corner="5">
+                            <div class="section-header">
+                                <div>
+                                    <span class="eyebrow">Telemetria de Selva</span>
+                                    <h3>Mapa Atual</h3>
+                                </div>
+                                <span class="subsection-label">tempo real</span>
+                            </div>
+                            <div id="jungle-intel-content" aria-live="polite">
+                                <div class="empty-state">Lendo sinais do mapa assim que a partida iniciar.</div>
+                            </div>
+                        </section>
+                    </div>
 
                         <section class="workspace-section timeline-section section-enter">
                             <div class="section-header section-header-tight">
@@ -305,120 +325,200 @@
                     </div>
                 </header>
 
-                <section class="settings-layout settings-layout-premium">
-                    <article class="settings-block settings-block-wide">
-                        <div class="section-header section-header-tight">
+                <section class="settings-grid">
+                    <!-- AUDIO & VOICE -->
+                    <article class="settings-block span-2">
+                        <div class="section-header">
                             <div>
-                                <span class="eyebrow">Voz</span>
-                                <h3>Escolha de voz</h3>
+                                <span class="eyebrow">Audio & Voice</span>
+                                <h3>Neural Output</h3>
                             </div>
                         </div>
-                        <p class="card-copy">Minerva usa ElevenLabs. Padr&atilde;o usa uma voz neural gratuita e n&atilde;o consome cr&eacute;ditos da ElevenLabs.</p>
-                        <div class="preset-row">
-                            <button type="button" class="preset-chip" data-voice-personality="minerva">Minerva</button>
-                            <button type="button" class="preset-chip" data-voice-personality="standard">Padr&atilde;o</button>
-                        </div>
-                    </article>
-
-                    <article class="settings-block settings-block-wide">
-                        <div class="section-header section-header-tight">
-                            <div>
-                                <span class="eyebrow">Entrega</span>
-                                <h3>Modo de fala</h3>
+                        <div class="settings-control-group">
+                            <div class="settings-row">
+                                <div class="row-label">
+                                    <strong>Assistente por voz</strong>
+                                    <p>Chamadas importantes em áudio</p>
+                                </div>
+                                <label class="switch">
+                                    <input type="checkbox" id="toggle-voice" checked>
+                                    <span class="slider"></span>
+                                </label>
                             </div>
-                        </div>
-                        <p class="card-copy">Escolha se o coach fala no padr&atilde;o, aperta no hardcore ou economiza fala no minimal.</p>
-                        <div class="preset-row">
-                            <button type="button" class="preset-chip" data-voice-preset="standard">Standard</button>
-                            <button type="button" class="preset-chip" data-voice-preset="hardcore">Hardcore</button>
-                            <button type="button" class="preset-chip" data-voice-preset="minimal">Minimal</button>
-                        </div>
-                    </article>
-
-                    <article class="settings-block">
-                        <div class="settings-row">
-                            <div>
-                                <span class="eyebrow">TTS</span>
-                                <h3>Assistente por voz</h3>
-                                <p class="card-copy">Receba as chamadas importantes em &aacute;udio durante a partida.</p>
+                            <div class="settings-row">
+                                <div class="row-label">
+                                    <strong>Volume</strong>
+                                    <p>Intensidade da voz</p>
+                                </div>
+                                <input type="range" id="voice-volume" min="0" max="100" value="80" class="range-slider">
                             </div>
-                            <label class="switch">
-                                <input type="checkbox" id="toggle-voice" checked>
-                                <span class="slider"></span>
-                            </label>
                         </div>
                     </article>
 
                     <article class="settings-block">
-                        <div class="settings-row">
+                        <div class="section-header">
                             <div>
-                                <span class="eyebrow">Volume</span>
-                                <h3>Intensidade da voz</h3>
-                                <p class="card-copy">Ajuste a presen&ccedil;a dos alertas falados.</p>
+                                <span class="eyebrow">Personality</span>
+                                <h3>Voz da Minerva</h3>
                             </div>
-                            <input type="range" id="voice-volume" min="0" max="100" value="80" class="range-slider">
+                        </div>
+                        <div class="preset-column">
+                            <button type="button" class="preset-chip active" data-voice-personality="minerva">Minerva (ElevenLabs)</button>
+                            <button type="button" class="preset-chip" data-voice-personality="standard">Neural Standard</button>
                         </div>
                     </article>
 
-                    <article class="settings-block settings-block-wide">
-                        <div class="section-header section-header-tight">
+                    <!-- TIMERS -->
+                    <article class="settings-block span-2">
+                        <div class="section-header">
                             <div>
-                                <span class="eyebrow">Categorias</span>
-                                <h3>Preset de calls</h3>
+                                <span class="eyebrow">Engine Timers</span>
+                                <h3>Intervalos de Coaching</h3>
                             </div>
                         </div>
-                        <p class="card-copy">Escolha se o coach fica balanceado, mais focado em draft, macro ou recupera&ccedil;&atilde;o.</p>
-                        <div class="preset-row">
-                            <button type="button" class="preset-chip" data-category-preset="balanced">Balanced</button>
-                            <button type="button" class="preset-chip" data-category-preset="draft">Draft</button>
-                            <button type="button" class="preset-chip" data-category-preset="macro">Macro</button>
-                            <button type="button" class="preset-chip" data-category-preset="recovery">Recovery</button>
-                        </div>
-                    </article>
-
-                    <article class="settings-block settings-block-wide">
-                        <div class="section-header section-header-tight">
-                            <div>
-                                <span class="eyebrow">Filtro</span>
-                                <h3>Categorias ativas</h3>
+                        <div class="settings-control-grid">
+                            <div class="field-group">
+                                <label>Lembrete Macro (seg)</label>
+                                <div class="input-with-value">
+                                    <input type="range" id="macro-interval" min="30" max="600" value="200" class="range-slider">
+                                    <span class="value-tag" id="macro-interval-value">200s</span>
+                                </div>
                             </div>
-                        </div>
-                        <p class="card-copy">Ligue e desligue fam&iacute;lias de call sem mexer no resto do produto.</p>
-                        <div class="preset-row">
-                            <button type="button" class="preset-chip category-chip" data-category-toggle="draft">Draft</button>
-                            <button type="button" class="preset-chip category-chip" data-category-toggle="lane">Lane</button>
-                            <button type="button" class="preset-chip category-chip" data-category-toggle="macro">Macro</button>
-                            <button type="button" class="preset-chip category-chip" data-category-toggle="objective">Objetivo</button>
-                            <button type="button" class="preset-chip category-chip" data-category-toggle="economy">Economia</button>
-                            <button type="button" class="preset-chip category-chip" data-category-toggle="recovery">Recovery</button>
-                        </div>
-                    </article>
-
-                    <article class="settings-block">
-                        <div class="settings-row">
-                            <div>
-                                <span class="eyebrow">Objetivos</span>
-                                <h3>Alertas de objetivo</h3>
-                                <p class="card-copy">Avisa sobre timers de Bar&atilde;o, Drag&atilde;o e Arauto sem virar ru&iacute;do constante.</p>
+                            <div class="field-group">
+                                <label>Mapa & Selva (seg)</label>
+                                <div class="input-with-value">
+                                    <input type="range" id="minimap-interval" min="30" max="600" value="150" class="range-slider">
+                                    <span class="value-tag" id="minimap-interval-value">150s</span>
+                                </div>
                             </div>
-                            <label class="switch">
-                                <input type="checkbox" id="toggle-objectives" checked>
-                                <span class="slider"></span>
-                            </label>
+                            <div class="field-group">
+                                <label>Check Economia (seg)</label>
+                                <div class="input-with-value">
+                                    <input type="range" id="economy-interval" min="60" max="900" value="300" class="range-slider">
+                                    <span class="value-tag" id="economy-interval-value">300s</span>
+                                </div>
+                            </div>
+                            <div class="field-group">
+                                <label>Review Itens (seg)</label>
+                                <div class="input-with-value">
+                                    <input type="range" id="item-check-interval" min="15" max="300" value="45" class="range-slider">
+                                    <span class="value-tag" id="item-check-interval-value">45s</span>
+                                </div>
+                            </div>
                         </div>
                     </article>
 
                     <article class="settings-block">
-                        <div class="settings-row">
+                        <div class="section-header">
                             <div>
-                                <span class="eyebrow">Hardcore</span>
-                                <h3>Cobran&ccedil;a avan&ccedil;ada</h3>
-                                <p class="card-copy">O coach aperta mais quando farm, vis&atilde;o ou disciplina ficam abaixo do que a partida pede.</p>
+                                <span class="eyebrow">Intensity</span>
+                                <h3>Modo de Entrega</h3>
                             </div>
-                            <label class="switch">
-                                <input type="checkbox" id="toggle-hardcore" checked>
-                                <span class="slider"></span>
-                            </label>
+                        </div>
+                        <div class="preset-column">
+                            <button type="button" class="preset-chip" data-voice-preset="standard">Standard (Educativo)</button>
+                            <button type="button" class="preset-chip active" data-voice-preset="hardcore">Hardcore (Cobrança)</button>
+                            <button type="button" class="preset-chip" data-voice-preset="minimal">Minimal (Foco)</button>
+                        </div>
+                    </article>
+
+                    <!-- GOALS -->
+                    <article class="settings-block span-full">
+                        <div class="section-header">
+                            <div>
+                                <span class="eyebrow">Performance Goals</span>
+                                <h3>Limites de Tolerância</h3>
+                            </div>
+                        </div>
+                        <div class="settings-control-grid cols-3">
+                            <div class="field-group">
+                                <label>Meta de Farm (CS%)</label>
+                                <p class="field-info">Porcentagem do farm ideal esperada</p>
+                                <div class="input-with-value">
+                                    <input type="range" id="farm-threshold" min="0.3" max="1.0" step="0.05" value="0.6" class="range-slider">
+                                    <span class="value-tag" id="farm-threshold-value">60%</span>
+                                </div>
+                            </div>
+                            <div class="field-group">
+                                <label>Ward Score aos 10m</label>
+                                <p class="field-info">Mínimo de visão aceitável</p>
+                                <div class="input-with-value">
+                                    <input type="range" id="vision-threshold" min="0" max="15" step="0.5" value="5" class="range-slider">
+                                    <span class="value-tag" id="vision-threshold-value">5.0</span>
+                                </div>
+                            </div>
+                            <div class="field-group">
+                                <div class="settings-row block-row">
+                                    <div class="row-label">
+                                        <strong>Modo Hardcore</strong>
+                                        <p>Cobrança agressiva se abaixo da meta</p>
+                                    </div>
+                                    <label class="switch">
+                                        <input type="checkbox" id="toggle-hardcore" checked>
+                                        <span class="slider"></span>
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+                    </article>
+
+                    <!-- STRATEGY -->
+                    <article class="settings-block span-2">
+                        <div class="section-header">
+                            <div>
+                                <span class="eyebrow">Coaching Focus</span>
+                                <h3>Filtros e Prioridades</h3>
+                            </div>
+                        </div>
+                        <div class="dual-column-layout">
+                            <div class="category-selection">
+                                <span class="subsection-label">Categorias Ativas</span>
+                                <div class="preset-row">
+                                    <button type="button" class="preset-chip active category-chip" data-category-toggle="draft">Draft</button>
+                                    <button type="button" class="preset-chip active category-chip" data-category-toggle="lane">Lane</button>
+                                    <button type="button" class="preset-chip active category-chip" data-category-toggle="macro">Macro</button>
+                                    <button type="button" class="preset-chip active category-chip" data-category-toggle="objective">Objetivo</button>
+                                    <button type="button" class="preset-chip active category-chip" data-category-toggle="economy">Economia</button>
+                                    <button type="button" class="preset-chip active category-chip" data-category-toggle="recovery">Recovery</button>
+                                </div>
+                            </div>
+                            <div class="strategy-options">
+                                <div class="settings-row">
+                                    <div class="row-label">
+                                        <strong>Solo Focus</strong>
+                                        <p>Ignorar feed de aliados e focar no jogador</p>
+                                    </div>
+                                    <label class="switch">
+                                        <input type="checkbox" id="toggle-solo-focus" checked>
+                                        <span class="slider"></span>
+                                    </label>
+                                </div>
+                                <div class="settings-row">
+                                    <div class="row-label">
+                                        <strong>Alertas de Objetivos</strong>
+                                        <p>Timers de Dragão e Barão</p>
+                                    </div>
+                                    <label class="switch">
+                                        <input type="checkbox" id="toggle-objectives" checked>
+                                        <span class="slider"></span>
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+                    </article>
+
+                    <article class="settings-block">
+                        <div class="section-header">
+                            <div>
+                                <span class="eyebrow">Presets</span>
+                                <h3>Quick Config</h3>
+                            </div>
+                        </div>
+                        <div class="preset-column">
+                            <button type="button" class="preset-chip" data-category-preset="balanced">Balanced Mode</button>
+                            <button type="button" class="preset-chip" data-category-preset="draft">High Draft Info</button>
+                            <button type="button" class="preset-chip" data-category-preset="macro">Macro & Vision</button>
+                            <button type="button" class="preset-chip" data-category-preset="recovery">Recovery Only</button>
                         </div>
                     </article>
                 </section>

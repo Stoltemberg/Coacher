@@ -59,6 +59,13 @@ class CoachSettings:
     category_filters: dict[str, bool] = field(
         default_factory=lambda: dict(DEFAULT_CATEGORY_FILTERS)
     )
+    solo_focus: bool = True
+    macro_interval: int = 200
+    minimap_interval: int = 150
+    economy_interval: int = 300
+    item_check_interval: int = 45
+    farm_threshold: float = 0.6
+    vision_threshold: float = 5.0
 
     def set_preset(self, preset: str) -> None:
         normalized = (preset or "standard").strip().lower()

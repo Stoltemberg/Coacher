@@ -74,7 +74,7 @@ export default function KineticHero() {
           onClick={() => scrollTo("download")}
           className="px-10 py-5 bg-accent text-white font-bold hover:bg-violet-600 transition-all active:scale-95 text-lg"
         >
-          OBTER O CÉREBRO
+          OBTER COACH
         </button>
         <button
           onClick={() => scrollTo("features")}

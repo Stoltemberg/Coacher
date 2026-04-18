@@ -178,25 +178,28 @@ class MinervaVoice:
             f"Visao fraca. Sem ward tu so ta apostando, e coach nenhum salva aposta burra no escuro.",
         )
 
-    def armor_warning(self, player_name):
+    def armor_warning(self, player_name, item_name=None):
+        suggestion = f", tipo um {item_name}," if item_name else ""
         return self._pick(
-            f"O {player_name} ja fechou armadura pesada. Ajusta tua build e entra com penetracao, senao teu dano morre ali.",
-            f"Olha o tab: {player_name} ja ta blindado. Se tu insistir em build seca, vai bater e nao vai acontecer nada.",
-            f"{player_name} bufou na armadura. Prepara penetracao fisica porque agora forca bruta sozinha nao resolve.",
+            f"O {player_name} ja fechou armadura pesada. Ajusta tua build e entra com penetracao{suggestion} senao teu dano morre ali.",
+            f"Olha o tab: {player_name} ja ta blindado. Se tu insistir em build seca sem {item_name or 'penetracao'}, vai bater e nao vai acontecer nada.",
+            f"{player_name} bufou na armadura. Prepara {item_name or 'penetracao fisica'} porque agora forca bruta sozinha nao resolve.",
         )
 
-    def magic_resist_warning(self, player_name):
+    def magic_resist_warning(self, player_name, item_name=None):
+        suggestion = f", prepara um {item_name}," if item_name else ""
         return self._pick(
-            f"{player_name} ja botou resistencia magica. Se teu dano e AP, prepara penetracao e para de fingir que vai atravessar isso no abraco.",
-            f"O {player_name} fechou MR. Ajusta a loja depois da base porque teu burst cru vai perder valor.",
-            f"Tem resistencia magica do lado deles no {player_name}. Sem item certo, tu so vai cocar essa barra de vida.",
+            f"{player_name} ja botou resistencia magica. Se teu dano e AP{suggestion} para de fingir que vai atravessar isso no abraco.",
+            f"O {player_name} fechou MR. Ajusta a loja depois da base e busca um {item_name or 'item de penetracao'} porque teu burst cru vai perder valor.",
+            f"Tem resistencia magica do lado deles no {player_name}. Sem {item_name or 'penetracao'}, tu so vai cocar essa barra de vida.",
         )
 
-    def anti_heal_warning(self, player_name):
+    def anti_heal_warning(self, player_name, item_name=None):
+        suggestion = f" e busca um {item_name}" if item_name else ""
         return self._pick(
-            f"{player_name} comprou corta-cura. Se tua luta depende de sustain, respeita e escolhe melhor o momento de entrar.",
-            f"O {player_name} ja ta com anti-heal. Nao estica troca achando que vampirismo vai te carregar.",
-            f"Tem reducao de cura na mao do {player_name}. Joga a fight com mais criterio porque tua recuperacao caiu bastante.",
+            f"{player_name} comprou corta-cura. Se tua luta depende de sustain, respeita{suggestion} e escolhe melhor o momento de entrar.",
+            f"O {player_name} ja ta com anti-heal. Nao estica troca achando que vampirismo vai te carregar - {item_name or 'precisa ajustar a luta'} agora.",
+            f"Tem reducao de cura na mao do {player_name}. Joga a fight com mais criterio{suggestion} porque tua recuperacao caiu bastante.",
         )
 
     def early_build_plan(self, my_champion, enemy_names, plan_key="standard"):

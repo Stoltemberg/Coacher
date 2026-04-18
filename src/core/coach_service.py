@@ -100,12 +100,16 @@ class CoachService:
         creep_score: int,
         ward_score: float,
         hardcore_enabled: bool,
+        farm_threshold: float = 0.6,
+        vision_threshold: float = 5.0,
     ) -> list[EconomySignal]:
         return analyze_economy(
             game_time=game_time,
             creep_score=creep_score,
             ward_score=ward_score,
             hardcore_enabled=hardcore_enabled,
+            farm_threshold=farm_threshold,
+            vision_threshold=vision_threshold,
         )
 
     def classify_enemy_itemization(self, item_ids: list[int]) -> dict[str, list[str]]:
@@ -132,6 +136,7 @@ class CoachService:
         ally_drags: int,
         enemy_drags: int,
         map_pve_name,
+        solo_focus: bool = False,
     ) -> EventAnalysis:
         name = str(event.get("EventName") or "")
         if name == "ChampionKill":
@@ -143,11 +148,12 @@ class CoachService:
                 our_team=our_team,
                 voice=voice,
                 map_pve_name=map_pve_name,
+                solo_focus=solo_focus,
             )
         if name == "FirstBlood":
             return analyze_first_blood(voice)
         if name == "Multikill":
-            return analyze_multikill(event, active_player_name=active_player_name, voice=voice)
+            return analyze_multikill(event, active_player_name=active_player_name, voice=voice, solo_focus=solo_focus)
         if name in {"DragonKill", "BaronKill", "HordeKill", "HeraldKill"}:
             return analyze_objective_event(
                 event,

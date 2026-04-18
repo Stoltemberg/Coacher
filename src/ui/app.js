@@ -918,23 +918,29 @@ function renderJungleIntel() {
 
     const metrics = createElement('div', { className: 'jungle-metrics' });
     [
-        ['Jungler', intel.enemy_jungler_name || intel.enemy_jungler_champion || '--'],
-        ['Último impacto', intel.last_seen_clock || '--:--'],
-        ['Lado provável', normalizeText(intel.probable_side, 'unknown')],
-        ['Confiança', `${Math.round((intel.confidence || 0) * 100)}%`]
+        ['JUNGLER', intel.enemy_jungler_name || intel.enemy_jungler_champion || '--'],
+        ['IMPACTO', intel.last_seen_clock || '--:--'],
+        ['LADO', normalizeText(intel.probable_side, 'UNKNOWN').toUpperCase()],
+        ['CONFIANÇA', `${Math.round((intel.confidence || 0) * 100)}%`]
     ].forEach(([label, value]) => {
         metrics.appendChild(createElement('div', {
-            className: 'jungle-metric',
+            className: 'jungle-metric brutalist-card',
             children: [
-                createElement('span', { className: 'metric-label', text: label }),
-                createElement('strong', { text: value })
+                createElement('span', { className: 'eyebrow', text: label }),
+                createElement('strong', { 
+                    text: value,
+                    style: 'display: block; font-size: 1.2rem; color: var(--toxic);' 
+                })
             ]
         }));
     });
 
-    const objectiveRow = createElement('div', { className: 'jungle-objectives' });
+    const objectiveRow = createElement('div', { 
+        className: 'jungle-objectives',
+        style: 'display: flex; gap: 4px; flex-wrap: wrap; margin-top: 12px;'
+    });
     ['dragon', 'herald', 'baron', 'horde'].forEach(objective => {
-        objectiveRow.appendChild(buildChip(`${objective}: ${intel.objective_presence?.[objective] || 0}`, 'signal-chip jungle-chip'));
+        objectiveRow.appendChild(buildChip(`${objective.toUpperCase()} ${intel.objective_presence?.[objective] || 0}`, 'jungle-chip'));
     });
 
     const notesWrap = createElement('div', { className: 'jungle-notes' });
@@ -995,6 +1001,11 @@ function updatePostGameSummary(summary = {}) {
     if (result) result.textContent = normalizeText(merged.result, POSTGAME_DEFAULT.result);
     if (duration) duration.textContent = normalizeText(merged.duration, POSTGAME_DEFAULT.duration);
     if (scoreline) scoreline.textContent = normalizeText(merged.scoreline, POSTGAME_DEFAULT.scoreline);
+    
+    const scoreBadge = document.getElementById('postgame-scoreline-badge');
+    if (scoreBadge) {
+        scoreBadge.textContent = normalizeText(merged.scoreline, '--');
+    }
     if (focus) focus.textContent = normalizeText(merged.focus, POSTGAME_DEFAULT.focus);
     if (confidence) confidence.textContent = normalizeText(merged.confidence, POSTGAME_DEFAULT.confidence);
 
@@ -1033,40 +1044,47 @@ function renderMatchIntel() {
 
     uiState.matchIntel.forEach(entry => {
         const card = createElement('article', {
-            className: 'pregame-card'
+            className: 'pregame-card brutalist-card'
         });
 
         const header = createElement('div', { className: 'pregame-card-header' });
         const titleWrap = createElement('div');
-        titleWrap.appendChild(createElement('h4', { text: entry.name }));
+        titleWrap.appendChild(createElement('h4', { 
+            text: entry.name,
+            style: 'font-size: 0.95rem; margin-bottom: 2px;' 
+        }));
         titleWrap.appendChild(createElement('p', {
-            className: 'pregame-card-subtitle',
-            text: entry.champion ? `Campeão: ${entry.champion}` : 'Campeão: desconhecido'
+            className: 'eyebrow',
+            text: entry.champion ? entry.champion.toUpperCase() : 'DESCONHECIDO'
         }));
 
         const rankBadge = createElement('span', {
             className: 'rank-badge',
-            text: entry.rank || '--'
+            text: (entry.rank && entry.rank.length > 10) ? entry.rank.split(' ')[0] : (entry.rank || '--')
         });
 
         header.appendChild(titleWrap);
         header.appendChild(rankBadge);
 
-        const stats = createElement('div', { className: 'pregame-stats' });
-        stats.appendChild(createElement('div', {
+        const stats = createElement('div', { 
+            className: 'pregame-stats',
+            style: 'margin-top: 12px; border-top: 1px solid var(--line); padding-top: 10px;'
+        });
+        
+        // Compact Stat Grid
+        const createStat = (label, value) => createElement('div', {
             className: 'pregame-stat',
             children: [
-                createElement('span', { className: 'metric-label', text: 'Elo' }),
-                createElement('strong', { text: entry.rank || '--' })
+                createElement('span', { className: 'eyebrow', text: label }),
+                createElement('strong', { 
+                    text: value,
+                    style: 'display: block; font-size: 1.1rem; color: var(--text-soft);' 
+                })
             ]
-        }));
-        stats.appendChild(createElement('div', {
-            className: 'pregame-stat',
-            children: [
-                createElement('span', { className: 'metric-label', text: 'Winrate' }),
-                createElement('strong', { text: entry.winrate || '--' })
-            ]
-        }));
+        });
+
+        stats.appendChild(createStat('ELO', entry.rank || '--'));
+        stats.appendChild(createStat('WINRATE', entry.winrate || '--'));
 
         card.appendChild(header);
         card.appendChild(stats);
@@ -1212,6 +1230,28 @@ function hydrateSettings(snapshot = {}) {
     }
     if (toggleHardcore && snapshot.hardcore_enabled !== undefined) {
         toggleHardcore.checked = Boolean(snapshot.hardcore_enabled);
+    }
+
+    // New Industrial Settings
+    const updateSlider = (id, value, suffix = '') => {
+        const el = document.getElementById(id);
+        const tag = document.getElementById(`${id}-value`);
+        if (el && value !== undefined) {
+            el.value = value;
+            if (tag) tag.textContent = `${value}${suffix}`;
+        }
+    };
+
+    updateSlider('macro-interval', snapshot.macro_interval, 's');
+    updateSlider('minimap-interval', snapshot.minimap_interval, 's');
+    updateSlider('economy-interval', snapshot.economy_interval, 's');
+    updateSlider('item-check-interval', snapshot.item_check_interval, 's');
+    updateSlider('farm-threshold', snapshot.farm_threshold, '%');
+    updateSlider('vision-threshold', snapshot.vision_threshold, '%');
+
+    const toggleSoloFocus = document.getElementById('solo-focus');
+    if (toggleSoloFocus && snapshot.solo_focus !== undefined) {
+        toggleSoloFocus.checked = Boolean(snapshot.solo_focus);
     }
 
     if (snapshot.voice_personality) {
@@ -1401,6 +1441,39 @@ function bindSettings() {
         toggleHardcore.addEventListener('change', event => {
             if (window.pywebview && window.pywebview.api) {
                 window.pywebview.api.toggle_hardcore(event.target.checked);
+            }
+        });
+    }
+
+    // New Industrial Binds
+    const bindSlider = (id, apiFunc, suffix = '') => {
+        const el = document.getElementById(id);
+        const tag = document.getElementById(`${id}-value`);
+        if (el) {
+            el.addEventListener('input', (e) => {
+                const val = e.target.value;
+                if (tag) tag.textContent = `${val}${suffix}`;
+            });
+            el.addEventListener('change', (e) => {
+                if (window.pywebview && window.pywebview.api && window.pywebview.api[apiFunc]) {
+                    window.pywebview.api[apiFunc](e.target.value);
+                }
+            });
+        }
+    };
+
+    bindSlider('macro-interval', 'set_macro_interval', 's');
+    bindSlider('minimap-interval', 'set_minimap_interval', 's');
+    bindSlider('economy-interval', 'set_economy_interval', 's');
+    bindSlider('item-check-interval', 'set_item_check_interval', 's');
+    bindSlider('farm-threshold', 'set_farm_threshold', '%');
+    bindSlider('vision-threshold', 'set_vision_threshold', '%');
+
+    const toggleSoloFocus = document.getElementById('solo-focus');
+    if (toggleSoloFocus) {
+        toggleSoloFocus.addEventListener('change', (e) => {
+            if (window.pywebview && window.pywebview.api) {
+                window.pywebview.api.toggle_solo_focus(e.target.checked);
             }
         });
     }

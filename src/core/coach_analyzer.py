@@ -50,6 +50,8 @@ def analyze_economy(
     creep_score: int,
     ward_score: float,
     hardcore_enabled: bool,
+    farm_threshold: float = 0.6,
+    vision_threshold: float = 5.0,
 ) -> list[EconomySignal]:
     if not hardcore_enabled or game_time <= 300:
         return []
@@ -58,7 +60,7 @@ def analyze_economy(
     expected_cs_value = expected_cs(minutes)
     signals: list[EconomySignal] = []
 
-    if creep_score < (expected_cs_value * 0.6):
+    if creep_score < (expected_cs_value * farm_threshold):
         signals.append(
             EconomySignal(
                 metric="farm",
@@ -83,7 +85,7 @@ def analyze_economy(
             )
         )
 
-    if minutes >= 10 and ward_score < 5:
+    if minutes >= 10 and ward_score < vision_threshold:
         signals.append(
             EconomySignal(
                 metric="vision",
