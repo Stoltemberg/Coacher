@@ -20,6 +20,7 @@ export const metadata: Metadata = {
 
 import LiquidDrip from "@/components/animations/LiquidDrip";
 import SmoothScroll from "@/components/animations/SmoothScroll";
+import { BridgeProvider } from "@/contexts/BridgeContext";
 
 export default function RootLayout({
   children,
@@ -31,12 +32,14 @@ export default function RootLayout({
       lang="pt-BR"
       className={`${outfit.variable} ${jetbrainsMono.variable} h-full antialiased selection:bg-violet-500/30`}
     >
-      <body className="min-h-full flex flex-col relative">
-        <SmoothScroll>
-          <LiquidDrip />
-          <div className="noise-overlay" />
-          {children}
-        </SmoothScroll>
+      <body className="min-h-full flex flex-col relative text-foreground selection:bg-violet-500/30">
+        <BridgeProvider>
+          <SmoothScroll>
+            <LiquidDrip />
+            <div className="noise-overlay" />
+            {children}
+          </SmoothScroll>
+        </BridgeProvider>
       </body>
     </html>
   );

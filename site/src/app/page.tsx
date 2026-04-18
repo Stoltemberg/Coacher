@@ -7,29 +7,39 @@ import PersonalityDemo from "@/components/sections/PersonalityDemo";
 import LiquidContent from "@/components/animations/LiquidContent";
 import Image from "next/image";
 
+import { useBridge } from "@/contexts/BridgeContext";
+import AppDashboard from "@/components/app/AppDashboard";
+import AuthUI from "@/components/app/AuthUI";
+import { useEffect, useState } from "react";
+
 export default function Home() {
+  const { isReady, auth } = useBridge();
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
+  if (!mounted) return null;
+
+  // If we are running inside the Python Webview
+  if (isReady) {
+    if (!auth?.authenticated) {
+      return <AuthUI />;
+    }
+    return <AppDashboard />;
+  }
+
+  // Otherwise, render the Landing Page for the web
   return (
     <LiquidContent>
       <main className="relative z-10">
-        {/* Hero */}
+        {/* ... (Previous landing page content) */}
         <KineticHero />
-
-        {/* The Core */}
-        <section id="core">
-          <CoreSection />
-        </section>
-
-        {/* Features */}
-        <section id="features">
-          <BentoFeatures />
-        </section>
-
-        {/* Personality Demo */}
-        <section id="personality">
-          <PersonalityDemo />
-        </section>
-
-        {/* Vision Demonstration */}
+        <section id="core"><CoreSection /></section>
+        <section id="features"><BentoFeatures /></section>
+        <section id="personality"><PersonalityDemo /></section>
+        
         <section id="demo" className="py-32 px-6">
           <div className="max-w-7xl mx-auto">
             <div className="relative aspect-video brutalist-border overflow-hidden group">
@@ -49,7 +59,6 @@ export default function Home() {
           </div>
         </section>
 
-        {/* Final CTA */}
         <section id="download" className="py-64 px-6 text-center">
           <div className="max-w-4xl mx-auto space-y-12">
             <h2 className="flex flex-col items-center font-black uppercase">
@@ -73,7 +82,6 @@ export default function Home() {
           </div>
         </section>
 
-        {/* Footer */}
         <footer className="py-12 px-6 border-t border-border flex flex-col md:flex-row justify-between items-center gap-8 text-[10px] font-mono text-muted-foreground uppercase tracking-[0.2em]">
           <div>© 2026 NEURAL_COACHER_PROG / TODOS OS DIREITOS RESERVADOS</div>
           <div>OTIMIZADO_PARA_VITORIA.SYS</div>

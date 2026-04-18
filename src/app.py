@@ -61,6 +61,36 @@ match_finalize_state = {
 }
 
 
+# UI State Tracking to avoid bridge flooding
+LAST_UI_STATE = {"phase": None, "champion": None, "summoner": None}
+
+def sync_ui_game_state(phase=None, champion=None):
+    global LAST_UI_STATE
+    
+    # Defaults to current known state if not provided
+    current_phase = phase or LAST_UI_STATE["phase"] or "Lobby"
+    current_champion = champion or (coach.current_champion_name if 'coach' in globals() else None)
+    current_summoner = (coach.active_player_name if 'coach' in globals() else None)
+    
+    # Only push if something meaningful changed
+    if (current_phase == LAST_UI_STATE["phase"] and 
+        current_champion == LAST_UI_STATE["champion"] and 
+        current_summoner == LAST_UI_STATE["summoner"]):
+        return
+        
+    LAST_UI_STATE["phase"] = current_phase
+    LAST_UI_STATE["champion"] = current_champion
+    LAST_UI_STATE["summoner"] = current_summoner
+    
+    if window:
+        evaluate_js_call(window, "updateGameState", current_phase, current_summoner, current_champion)
+
+
+
+
+
+
+
 def push_auth_snapshot(message=None):
     if window:
         evaluate_js_call(window, "hydrateAuthState", auth_service.snapshot(message=message))
@@ -484,6 +514,7 @@ def handle_live_event(event_type, payload):
     elif event_type == "players":
         coach.update_players(payload)
         push_jungle_intel()
+        sync_ui_game_state(phase="In Game")
         if scraper:
             scraper.process_players(payload, coach.active_player_name)
     elif event_type == "event":
@@ -779,7 +810,7 @@ async def connect(connection):
             return
 
     if window:
-        evaluate_js_call(window, "updateGameState", "Lobby", "Invocador")
+        sync_ui_game_state(phase="Lobby")
         evaluate_js_call(window, "addAILog", "Sincronizado com o Cliente do League.", "system")
         assistant.say(voice.lobby_ready(), "positive", category="draft")
 
@@ -789,7 +820,7 @@ async def disconnect(connection):
         return
     print('[LCU] Desconectado do League Client')
     if window:
-        evaluate_js_call(window, "updateGameState", "Aguardando League...")
+        sync_ui_game_state(phase="Aguardando League...")
         evaluate_js_call(window, "addAILog", "O Cliente do League foi fechado.", "urgent")
     await finalize_match_flow(connection, requested_result="unknown", source="disconnect")
 
@@ -798,6 +829,11 @@ async def disconnect(connection):
 async def champ_select_session_handler(connection, event):
     if is_app_unlocked() and api.voice_enabled:
         draft_coach.process_session(event.data)
+        
+        # Sync selected champion to main coach and UI background
+        if draft_coach.my_champ and coach.current_champion_name != draft_coach.my_champ:
+            coach.current_champion_name = draft_coach.my_champ
+            sync_ui_game_state(phase="Seleção de Campeões")
 
 # When gameflow changes
 @connector.ws.register('/lol-gameflow/v1/gameflow-phase')
@@ -825,7 +861,7 @@ async def gameflow_handler(connection, event):
         coach.reset()
         coach.deactivate_match()
         push_jungle_intel()
-        evaluate_js_call(window, "updateGameState", "Seleção de Campeões")
+        sync_ui_game_state(phase="Seleção de Campeões")
         evaluate_js_call(window, "addAILog", "Fase de Draft. Analisando picks inimigos...", "system")
         evaluate_js_call(window, "setCoachTaxonomyFocus", "draft")
         assistant.say(voice.champ_select_intro(), "neutral", category="draft")
@@ -838,7 +874,7 @@ async def gameflow_handler(connection, event):
         push_jungle_intel()
         if scraper:
             scraper.reset()
-        evaluate_js_call(window, "updateGameState", "In Game")
+        sync_ui_game_state(phase="In Game")
         evaluate_js_call(window, "addAILog", "Partida Iniciada! Assistente ouvindo...", "system")
         evaluate_js_call(window, "setCoachTaxonomyFocus", "lane")
         if api.voice_enabled:
@@ -856,9 +892,9 @@ async def gameflow_handler(connection, event):
         coach.reset()
         coach.deactivate_match()
         push_jungle_intel()
-        evaluate_js_call(window, "updateGameState", "Lobby")
+        evaluate_js_call(window, "updateGameState", "Lobby", coach.active_player_name, coach.current_champion_name)
     else:
-        evaluate_js_call(window, "updateGameState", phase)
+        evaluate_js_call(window, "updateGameState", phase, coach.active_player_name, coach.current_champion_name)
 
 def start_lcu():
     """ Run LCU Driver in the asyncio loop for this thread """
@@ -871,6 +907,7 @@ def start_lcu():
         except Exception as e:
             print(f"[LCU] Crash do LCU Driver interceptado (psutil ProcessLookupError). Retentando em 2s: {e}")
             time.sleep(2)
+
 
 def set_dpi_aware():
     """Ensure the application handles high DPI scaling correctly on Windows."""

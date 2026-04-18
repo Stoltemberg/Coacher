@@ -50,10 +50,12 @@ def evaluate_js_call(window: Any, function_name: str, *args: Any) -> bool:
 
     try:
         js_code = build_js_call(function_name, *args)
+        # On Windows, evaluate_js can sometimes raise .NET threading exceptions 
+        # that pythonnet fails to wrap properly. We catch general exceptions here.
         window.evaluate_js(js_code)
         _clear_bridge_failure(function_name)
         return True
-    except Exception as exc:
+    except (Exception, SystemError) as exc:
         _report_bridge_failure(function_name, str(exc))
         return False
 
