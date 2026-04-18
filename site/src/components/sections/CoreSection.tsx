@@ -38,7 +38,7 @@ export default function CoreSection() {
 
         <div className="space-y-8">
           <div className="inline-block py-1 px-3 border border-accent/30 bg-accent/5 text-accent text-xs font-mono uppercase tracking-widest">
-            // ANALYTICS_CORE_ACTIVE
+            {/* ANALYTICS_CORE_ACTIVE */}
           </div>
           <h2 className="text-5xl md:text-7xl">Performance Pura.</h2>
           <p className="text-xl text-muted-foreground leading-relaxed">

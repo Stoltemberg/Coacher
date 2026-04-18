@@ -556,9 +556,20 @@ class Api:
         self.item_check_interval = 45
         self.farm_threshold = 0.6
         self.vision_threshold = 5.0
+        self.ui_ready = False
 
         self.authenticated = auth_service.snapshot().get("authenticated", False)
         self._load_settings()
+
+    def notify_ui_ready(self):
+        """ Handshake: UI signals it is mounted and its bridge is ready """
+        print("[Api] UI Bridge is ready. Syncing initial state...")
+        self.ui_ready = True
+        push_auth_snapshot()
+        if self.authenticated:
+            unlock_application()
+        else:
+            lock_application()
 
     def _settings_payload(self):
         return {
@@ -959,11 +970,7 @@ def main():
     scraper = EnemyScraper(assistant, window)
 
     def on_loaded():
-        push_auth_snapshot()
-        if api.authenticated:
-            unlock_application()
-        else:
-            lock_application()
+        print("[UI] Document finish loading. Waiting for Bridge handshake...")
 
     window.events.loaded += on_loaded
     webview.start(debug=False, icon=icon_path_str, private_mode=False)

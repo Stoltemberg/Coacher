@@ -1,8 +1,7 @@
 "use client";
 
 import { useBridge } from "@/contexts/BridgeContext";
-import { motion } from "framer-motion";
-import { Activity, Bell, Cpu, User } from "lucide-react";
+import { Bell, Cpu, User } from "lucide-react";
 
 export default function NeuralStatus() {
   const { gameState, auth, isReady } = useBridge();

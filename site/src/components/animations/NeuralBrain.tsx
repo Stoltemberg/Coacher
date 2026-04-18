@@ -1,22 +1,19 @@
 "use client";
 
-import { useRef, useMemo } from "react";
+import { useRef } from "react";
 import { Canvas, useFrame } from "@react-three/fiber";
-import { Float, Sphere, MeshDistortMaterial, Points, PointMaterial } from "@react-three/drei";
+import { Sphere, Points, PointMaterial } from "@react-three/drei";
 import * as THREE from "three";
 
-function NeuralField() {
-  const count = 600;
-  const positions = useMemo(() => {
-    const pos = new Float32Array(count * 3);
-    for (let i = 0; i < count; i++) {
-      pos[i * 3] = (Math.random() - 0.5) * 15;
-      pos[i * 3 + 1] = (Math.random() - 0.5) * 15;
-      pos[i * 3 + 2] = (Math.random() - 0.5) * 15;
-    }
-    return pos;
-  }, []);
+const COUNT = 600;
+const NEURAL_POSITIONS = new Float32Array(COUNT * 3);
+for (let i = 0; i < COUNT; i++) {
+  NEURAL_POSITIONS[i * 3] = (Math.random() - 0.5) * 15;
+  NEURAL_POSITIONS[i * 3 + 1] = (Math.random() - 0.5) * 15;
+  NEURAL_POSITIONS[i * 3 + 2] = (Math.random() - 0.5) * 15;
+}
 
+function NeuralField() {
   const pointsRef = useRef<THREE.Points>(null);
 
   useFrame((state) => {
@@ -27,7 +24,7 @@ function NeuralField() {
 
   return (
     <group>
-      <Points ref={pointsRef} positions={positions} stride={3}>
+      <Points ref={pointsRef} positions={NEURAL_POSITIONS} stride={3}>
         <PointMaterial
           transparent
           color="#ffffff"

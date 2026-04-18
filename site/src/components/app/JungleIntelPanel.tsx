@@ -2,7 +2,12 @@
 
 import { useBridge } from "@/contexts/BridgeContext";
 import { motion, AnimatePresence } from "framer-motion";
-import { Compass, ShieldAlert, Target, Zap, Activity, Radar } from "lucide-react";
+import { Compass, Activity, Radar } from "lucide-react";
+
+const STATIC_BLIPS = [...Array(3)].map(() => ({
+  top: `${20 + Math.random() * 60}%`,
+  left: `${20 + Math.random() * 60}%`
+}));
 
 export default function JungleIntelPanel() {
   const { jungleIntel: intel } = useBridge();
@@ -64,7 +69,7 @@ export default function JungleIntelPanel() {
                 </div>
                 
                 {/* Random Blips */}
-                {[...Array(3)].map((_, i) => (
+                {STATIC_BLIPS.map((blip, i) => (
                   <motion.div
                     key={i}
                     animate={{ 
@@ -79,8 +84,8 @@ export default function JungleIntelPanel() {
                     }}
                     className="absolute w-1 h-1 bg-toxic rounded-full shadow-[0_0_8px_rgba(34,197,94,0.8)]"
                     style={{ 
-                      top: `${20 + Math.random() * 60}%`, 
-                      left: `${20 + Math.random() * 60}%` 
+                      top: blip.top, 
+                      left: blip.left 
                     }}
                   />
                 ))}

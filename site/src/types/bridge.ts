@@ -53,7 +53,13 @@ export interface TimelineEntry {
   text: string;
   impact: string;
   priority: string;
-  metadata: Record<string, any>;
+  metadata: Record<string, unknown>;
+}
+
+export interface JungleNote {
+  title: string;
+  clock: string;
+  detail: string;
 }
 
 export interface JungleIntel {
@@ -64,14 +70,14 @@ export interface JungleIntel {
   last_seen_source: string | null;
   probable_side: string;
   confidence: number;
-  first_gank: any | null;
+  first_gank: Record<string, unknown> | null;
   objective_presence: {
     dragon: number;
     herald: number;
     baron: number;
     horde: number;
   };
-  notes: any[];
+  notes: JungleNote[];
   last_impacted_lane: string;
 }
 
@@ -122,6 +128,7 @@ export interface PythonApi {
   set_category_preset: (preset: string) => void;
   get_auth_snapshot: () => Promise<AuthSnapshot>;
   get_settings_snapshot: () => Promise<SettingsSnapshot>;
+  notify_ui_ready: () => void;
 }
 
 declare global {

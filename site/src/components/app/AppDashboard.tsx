@@ -12,12 +12,13 @@ import { motion, AnimatePresence } from "framer-motion";
 import { Settings, LayoutDashboard, BrainCircuit, Activity } from "lucide-react";
 import SettingsPanel from "@/components/app/SettingsPanel";
 import ChampionBackground from "./ChampionBackground";
+import type { LucideIcon } from "lucide-react";
 
 export default function AppDashboard() {
   const [activeTab, setActiveTab] = useState<"dashboard" | "settings">("dashboard");
-  const { isReady, gameState } = useBridge();
+  const { gameState } = useBridge();
 
-  const navItems = [
+  const navItems: { id: "dashboard" | "settings"; icon: LucideIcon; label: string }[] = [
     { id: "dashboard", icon: LayoutDashboard, label: "COMM CENTER" },
     { id: "settings", icon: Settings, label: "NEURAL CONFIG" },
   ];
@@ -35,7 +36,7 @@ export default function AppDashboard() {
           {navItems.map((item) => (
             <button
               key={item.id}
-              onClick={() => setActiveTab(item.id as any)}
+              onClick={() => setActiveTab(item.id)}
               className={`group relative p-3 transition-all ${
                 activeTab === item.id ? 'text-toxic bg-white/5' : 'text-muted-foreground hover:text-white'
               }`}

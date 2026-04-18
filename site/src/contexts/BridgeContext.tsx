@@ -6,7 +6,6 @@ import {
   SettingsSnapshot,
   JungleIntel,
   PostGameSummary,
-  MemoryEntry,
   PythonApi
 } from "@/types/bridge";
 
@@ -37,7 +36,7 @@ export function BridgeProvider({ children }: { children: React.ReactNode }) {
     championName: null as string | null 
   });
   const [jungleIntel, setJungleIntel] = useState<JungleIntel | null>(null);
-  const [matchIntel, setMatchIntel] = useState<{name: string, champion: string, rank: string, winrate: string}[]>([]);
+  const [matchIntel, setMatchIntel] = useState<{name: string; champion: string; rank: string; winrate: string}[]>([]);
   const [summary, setSummary] = useState<PostGameSummary | null>(null);
   const [logs, setLogs] = useState<{ message: string; type: string; id: number }[]>([]);
   const [isReady, setIsReady] = useState(false);
@@ -104,7 +103,7 @@ export function BridgeProvider({ children }: { children: React.ReactNode }) {
       addLog(message, type);
     };
 
-    window.playTTSUpdate = (message, type, category) => {
+    window.playTTSUpdate = (message, type, _category) => {
       addLog(message, type || "normal");
       // Could also trigger a visual highlight for the category here
     };
@@ -120,6 +119,7 @@ export function BridgeProvider({ children }: { children: React.ReactNode }) {
         setIsReady(true);
         window.pywebview.api.get_auth_snapshot().then(setAuth);
         window.pywebview.api.get_settings_snapshot().then(setSettings);
+        window.pywebview.api.notify_ui_ready();
         addLog("Conexão estelar estabelecida com o núcleo Python.", "system");
       }
     };

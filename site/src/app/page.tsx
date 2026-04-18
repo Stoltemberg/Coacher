@@ -17,17 +17,19 @@ export default function Home() {
   const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
-    setMounted(true);
+    const frame = requestAnimationFrame(() => setMounted(true));
+    return () => cancelAnimationFrame(frame);
   }, []);
 
   if (!mounted) return null;
 
   // If we are running inside the Python Webview
   if (isReady) {
-    if (!auth?.authenticated) {
-      return <AuthUI />;
-    }
-    return <AppDashboard />;
+    return (
+      <LiquidContent>
+        {!auth?.authenticated ? <AuthUI /> : <AppDashboard />}
+      </LiquidContent>
+    );
   }
 
   // Otherwise, render the Landing Page for the web

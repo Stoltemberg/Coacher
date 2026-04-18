@@ -1,15 +1,28 @@
 "use client";
 
 import { useBridge } from "@/contexts/BridgeContext";
-import { motion } from "framer-motion";
-import { Volume2, Mic, Eye, Zap, Shield, Clock, BarChart3, Radio } from "lucide-react";
+import { Mic, Clock, BarChart3, Radio, Shield } from "lucide-react";
 
-export default function SettingsPanel() {
-  const { settings, api } = useBridge();
+interface SliderProps {
+  label: string;
+  value: number;
+  min: number;
+  max: number;
+  step: number;
+  unit: string;
+  apiFunc: string;
+}
 
-  if (!settings) return null;
+interface ToggleProps {
+  label: string;
+  checked: boolean;
+  apiFunc: string;
+  desc: string;
+}
 
-  const Slider = ({ label, id, value, min, max, step, unit, apiFunc }: any) => (
+const Slider = ({ label, value, min, max, step, unit, apiFunc }: SliderProps) => {
+  const { api } = useBridge();
+  return (
     <div className="space-y-3">
       <div className="flex justify-between items-center">
         <label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">{label}</label>
@@ -31,8 +44,11 @@ export default function SettingsPanel() {
       />
     </div>
   );
+};
 
-  const Toggle = ({ label, id, checked, apiFunc, desc }: any) => (
+const Toggle = ({ label, checked, apiFunc, desc }: ToggleProps) => {
+  const { api } = useBridge();
+  return (
     <div className="flex items-center justify-between p-4 bg-white/5 border border-border hover:border-violet-500/30 transition-colors group">
       <div className="space-y-1">
         <span className="text-[11px] font-black uppercase text-white group-hover:text-toxic transition-colors">{label}</span>
@@ -49,6 +65,12 @@ export default function SettingsPanel() {
       </button>
     </div>
   );
+};
+
+export default function SettingsPanel() {
+  const { settings, api } = useBridge();
+
+  if (!settings) return null;
 
   return (
     <div className="h-full flex flex-col p-10 max-w-5xl mx-auto overflow-y-auto scrollbar-hide gap-12">

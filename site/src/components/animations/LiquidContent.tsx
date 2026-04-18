@@ -26,13 +26,16 @@ export default function LiquidContent({ children }: { children: React.ReactNode 
   const [isMounted, setIsMounted] = useState(false);
 
   useEffect(() => {
-    setIsMounted(true);
+    const frame = requestAnimationFrame(() => setIsMounted(true));
     const checkMobile = () => {
       setIsMobile(window.innerWidth < 1024);
     };
     checkMobile();
     window.addEventListener("resize", checkMobile);
-    return () => window.removeEventListener("resize", checkMobile);
+    return () => {
+      cancelAnimationFrame(frame);
+      window.removeEventListener("resize", checkMobile);
+    };
   }, []);
 
   if (!isMounted) return <>{children}</>;

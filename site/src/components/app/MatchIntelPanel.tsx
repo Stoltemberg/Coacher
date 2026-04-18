@@ -2,7 +2,7 @@
 
 import { useBridge } from "@/contexts/BridgeContext";
 import { motion } from "framer-motion";
-import { Users, Swords } from "lucide-react";
+import { Swords } from "lucide-react";
 
 export default function MatchIntelPanel() {
   const { matchIntel } = useBridge();
