@@ -11,7 +11,7 @@ from typing import Any
 from core.voice_catalog import normalize_voice_personality, normalize_voice_preset
 
 
-def _normalize_preferred_pool(value: Any) -> list[str]:
+def _normalize_string_list(value: Any, limit: int = 20) -> list[str]:
     if isinstance(value, str):
         raw_items = value.replace("\r", "\n").replace(";", "\n").replace(",", "\n").split("\n")
     elif isinstance(value, (list, tuple, set)):
@@ -31,7 +31,7 @@ def _normalize_preferred_pool(value: Any) -> list[str]:
         seen.add(key)
         normalized.append(text)
 
-    return normalized[:20]
+    return normalized[:limit]
 
 
 DEFAULT_SETTINGS = {
@@ -48,6 +48,10 @@ DEFAULT_SETTINGS = {
     "item_check_interval": 120,
     "farm_threshold": 8.0,
     "vision_threshold": 1.2,
+    "primary_role": "mid",
+    "player_goal": "subir_elo",
+    "playstyle_profile": "equilibrado",
+    "main_champions": [],
     "preferred_champion_pool": [],
     "prioritize_pool_picks": True,
     "category_filters": {
@@ -111,12 +115,24 @@ class SettingsStore:
             merged["voice_preset"] = normalize_voice_preset(
                 merged.get("voice_preset", DEFAULT_SETTINGS["voice_preset"])
             )
-            merged["preferred_champion_pool"] = _normalize_preferred_pool(
+            merged["preferred_champion_pool"] = _normalize_string_list(
                 merged.get("preferred_champion_pool", DEFAULT_SETTINGS["preferred_champion_pool"])
+            )
+            merged["main_champions"] = _normalize_string_list(
+                merged.get("main_champions", DEFAULT_SETTINGS["main_champions"])
             )
             merged["prioritize_pool_picks"] = bool(
                 merged.get("prioritize_pool_picks", DEFAULT_SETTINGS["prioritize_pool_picks"])
             )
+            merged["primary_role"] = str(
+                merged.get("primary_role", DEFAULT_SETTINGS["primary_role"])
+            ).strip().lower() or DEFAULT_SETTINGS["primary_role"]
+            merged["player_goal"] = str(
+                merged.get("player_goal", DEFAULT_SETTINGS["player_goal"])
+            ).strip().lower() or DEFAULT_SETTINGS["player_goal"]
+            merged["playstyle_profile"] = str(
+                merged.get("playstyle_profile", DEFAULT_SETTINGS["playstyle_profile"])
+            ).strip().lower() or DEFAULT_SETTINGS["playstyle_profile"]
                 
             return merged
 
