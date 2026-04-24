@@ -58,10 +58,10 @@ export default function ChampionBackground({ championName }: ChampionBackgroundP
         {imageUrl ? (
           <motion.div
             key={imageUrl}
-            initial={{ opacity: 0, scale: 1.1 }}
-            animate={{ opacity: 0.25, scale: 1 }} // Increased opacity from 0.15 to 0.25
+            initial={{ opacity: 0, scale: 1.05 }}
+            animate={{ opacity: 0.4, scale: 1 }} // Increased opacity from 0.25 to 0.4
             exit={{ opacity: 0 }}
-            transition={{ duration: 1.5, ease: "easeOut" }}
+            transition={{ duration: 1.2, ease: "easeOut" }}
             className="w-full h-full relative"
           >
             {/* The Image - Slightly more contrast and less grayscale than before for visibility */}
@@ -82,8 +82,11 @@ export default function ChampionBackground({ championName }: ChampionBackgroundP
             key="empty"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
-            className="w-full h-full bg-black transition-colors duration-1000"
-          />
+            className="w-full h-full bg-transparent transition-colors duration-1000 flex items-center justify-center"
+          >
+            {/* Fallback Neural Grid Pattern */}
+            <div className="absolute inset-0 opacity-[0.03] bg-[linear-gradient(to_right,#adff2f_1px,transparent_1px),linear-gradient(to_bottom,#adff2f_1px,transparent_1px)] bg-[size:40px_40px]" />
+          </motion.div>
         )}
       </AnimatePresence>
     </div>

@@ -2,47 +2,55 @@
 
 import { useBridge } from "@/contexts/BridgeContext";
 import { motion, AnimatePresence } from "framer-motion";
-import { Brain, History } from "lucide-react";
+import { Brain } from "lucide-react";
 
 export default function MemoryFeed() {
   const { summary } = useBridge();
   const memories = summary?.memory || [];
 
   return (
-    <div className="flex flex-col h-full bg-black/40 brutalist-border overflow-hidden">
-      <div className="px-4 py-2 border-b border-border bg-black/60 flex justify-between items-center">
-        <span className="text-[10px] font-black tracking-widest uppercase opacity-50">
-          NEURAL_MEMORY_FEED
-        </span>
-        <Brain className="w-3 h-3 text-violet-400" />
-      </div>
-
-      <div className="flex-1 overflow-y-auto p-4 space-y-3 scrollbar-hide">
+    <div className="flex h-full flex-col overflow-hidden">
+      <div className="custom-scrollbar flex-1 space-y-3 overflow-y-auto p-4">
         <AnimatePresence initial={false}>
           {memories.map((entry, idx) => (
             <motion.article
               key={idx}
-              initial={{ opacity: 0, x: 20 }}
-              animate={{ opacity: 1, x: 0 }}
-              className="p-3 bg-white/5 border border-border group hover:border-violet-500/50 transition-colors"
+              initial={{ opacity: 0, y: 12, filter: "blur(4px)" }}
+              animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
+              transition={{ delay: idx * 0.05, type: "spring", stiffness: 200, damping: 20 }}
+              className="group relative overflow-hidden rounded-2xl border border-white/8 bg-white/[0.04] p-4 transition-all hover:border-white/15 hover:bg-white/[0.06]"
             >
-              <div className="flex items-start justify-between mb-1">
-                <h4 className="text-[10px] font-black uppercase text-violet-300">
-                  {entry.title}
-                </h4>
+              <div
+                className={`absolute bottom-0 left-0 top-0 w-[2px] opacity-50 transition-all duration-300 group-hover:opacity-100 ${
+                  entry.tone === "success"
+                    ? "bg-toxic"
+                    : entry.tone === "urgent"
+                      ? "bg-red-500"
+                      : entry.tone === "warning"
+                        ? "bg-amber-500"
+                        : "bg-violet-500/30"
+                }`}
+              />
+              <div className="absolute inset-0 bg-gradient-to-r from-white/[0.05] to-transparent opacity-0 transition-opacity group-hover:opacity-100" />
+              <div className="relative z-10 mb-1 flex items-start justify-between pl-2">
+                <h4 className="text-[11px] font-semibold text-white">{entry.title}</h4>
                 {entry.tone && (
-                  <div className={`w-1.5 h-1.5 rounded-full ${
-                    entry.tone === 'success' ? 'bg-toxic' : 
-                    entry.tone === 'urgent' ? 'bg-red-500' : 
-                    entry.tone === 'warning' ? 'bg-amber-500' : 'bg-white/20'
-                  }`} />
+                  <div
+                    className={`mt-0.5 h-1.5 w-1.5 shrink-0 rounded-full ${
+                      entry.tone === "success"
+                        ? "bg-toxic animate-pulse-toxic"
+                        : entry.tone === "urgent"
+                          ? "bg-red-500 animate-pulse"
+                          : entry.tone === "warning"
+                            ? "bg-amber-500"
+                            : "bg-white/20"
+                    }`}
+                  />
                 )}
               </div>
-              <p className="text-xs text-muted-foreground leading-relaxed">
-                {entry.note}
-              </p>
+              <p className="relative z-10 pl-2 text-[11px] leading-relaxed text-white/58">{entry.note}</p>
               {entry.meta && (
-                <span className="text-[9px] mt-2 block opacity-30 font-mono italic">
+                <span className="relative z-10 mt-2 block pl-2 text-[9px] font-mono uppercase tracking-[0.14em] text-white/30">
                   {entry.meta}
                 </span>
               )}
@@ -51,11 +59,16 @@ export default function MemoryFeed() {
         </AnimatePresence>
 
         {memories.length === 0 && (
-          <div className="h-full flex flex-col items-center justify-center opacity-20 text-center space-y-3">
-            <History className="w-8 h-8" />
-            <p className="text-[10px] uppercase tracking-tighter">
-              Nenhuma entrada de memória profunda detectada.
-            </p>
+          <div className="flex h-full flex-col items-center justify-center space-y-4 p-6">
+            <div className="flex h-20 w-20 items-center justify-center rounded-full border border-white/10 bg-white/[0.03]">
+              <Brain className="h-6 w-6 text-violet-300/45" />
+            </div>
+            <div className="text-center opacity-60">
+              <p className="text-[11px] font-semibold text-white/80">Memoria vazia</p>
+              <p className="mx-auto mt-2 max-w-[180px] text-[10px] leading-relaxed text-white/40">
+                Nenhuma entrada detectada. Aguardando primeira partida.
+              </p>
+            </div>
           </div>
         )}
       </div>

@@ -35,6 +35,29 @@ export interface SettingsSnapshot {
   item_check_interval: number;
   farm_threshold: number;
   vision_threshold: number;
+  preferred_champion_pool: string[];
+  prioritize_pool_picks: boolean;
+  voice_catalog?: {
+    personalities: Array<{
+      id: string;
+      label: string;
+      engine: string;
+      tier: string;
+      description: string;
+      provider: string;
+    }>;
+    presets: Array<{
+      id: string;
+      label: string;
+      description: string;
+    }>;
+    tiers: Array<{
+      id: string;
+      label: string;
+      monthly_price_brl: number;
+      highlights: string[];
+    }>;
+  };
 }
 
 export interface MemoryEntry {
@@ -81,6 +104,19 @@ export interface JungleIntel {
   last_impacted_lane: string;
 }
 
+export interface DraftRecommendationsSnapshot {
+  role: string;
+  enemy_preview: string[];
+  recommendations: Array<{
+    champion: string;
+    score: number;
+    reasons: string[];
+    comp_style: string;
+    build_focus: string[];
+    power_spikes: string[];
+  }>;
+}
+
 export interface PostGameSummary {
   title: string;
   result: string;
@@ -124,6 +160,8 @@ export interface PythonApi {
   set_farm_threshold: (value: number) => void;
   set_vision_threshold: (value: number) => void;
   set_voice_personality: (personality: string) => void;
+  set_preferred_champion_pool: (pool: string[]) => void;
+  toggle_prioritize_pool_picks: (state: boolean) => void;
   set_category_enabled: (category: string, state: boolean) => void;
   set_category_preset: (preset: string) => void;
   get_auth_snapshot: () => Promise<AuthSnapshot>;
@@ -140,6 +178,7 @@ declare global {
     updateGameState: (phase: string, summonerName?: string | null, championName?: string | null) => void;
     hydrateSettings: (snapshot: SettingsSnapshot) => void;
     updateJungleIntel: (payload: JungleIntel) => void;
+    updateDraftRecommendations: (payload: DraftRecommendationsSnapshot | null) => void;
     updatePostGameSummary: (summary: PostGameSummary) => void;
     appendPostGameMemory: (entry: MemoryEntry) => void;
     addAILog: (message: string, type?: string) => void;

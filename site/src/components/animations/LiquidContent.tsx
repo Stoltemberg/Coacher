@@ -6,7 +6,7 @@ import { useEffect, useState } from "react";
 export default function LiquidContent({ children }: { children: React.ReactNode }) {
   const { scrollYProgress } = useScroll();
   const scrollVelocity = useVelocity(scrollYProgress);
-  const shouldReduceMotion = useReducedMotion();
+  useReducedMotion();
   
   // Transform velocity into distortion scale
   // Faster scroll = more distortion
@@ -17,7 +17,7 @@ export default function LiquidContent({ children }: { children: React.ReactNode 
   );
 
   // Smooth out the scale
-  const smoothScale = useSpring(distortionScale, {
+  useSpring(distortionScale, {
     damping: 30,
     stiffness: 200
   });
@@ -59,7 +59,7 @@ export default function LiquidContent({ children }: { children: React.ReactNode 
             <motion.feDisplacementMap 
               in="SourceGraphic" 
               in2="noise" 
-              scale={shouldReduceMotion ? 0 : smoothScale} 
+              scale={0} 
               xChannelSelector="R" 
               yChannelSelector="G" 
             />
@@ -67,12 +67,9 @@ export default function LiquidContent({ children }: { children: React.ReactNode 
         </defs>
       </svg>
 
-      <motion.div 
-        style={{ filter: "url(#liquid-distort)" }}
-        className="will-change-transform"
-      >
+      <div className="will-change-transform">
         {children}
-      </motion.div>
+      </div>
     </>
   );
 }

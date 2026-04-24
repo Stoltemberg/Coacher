@@ -1,4 +1,3 @@
-import type { Metadata } from "next";
 import { Outfit, JetBrains_Mono } from "next/font/google";
 import "./globals.css";
 
@@ -13,32 +12,63 @@ const jetbrainsMono = JetBrains_Mono({
   subsets: ["latin"],
 });
 
-export const metadata: Metadata = {
-  title: "Coacher | LoL Intelligence",
-  description: "Real-time League of Legends coaching with a personality. Dominate the Rift.",
-};
-
-import LiquidDrip from "@/components/animations/LiquidDrip";
-import SmoothScroll from "@/components/animations/SmoothScroll";
 import { BridgeProvider } from "@/contexts/BridgeContext";
+import type { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: {
+    default: "Coacher - O Melhor Coach de LoL com IA",
+    template: "%s | Coacher"
+  },
+  description: "Evolua no League of Legends. Treine com um coach que lê draft, matchup e macro em tempo real.",
+  keywords: ["Coach LoL", "League of Legends Coach", "Análise de partida LoL", "Subir de elo no LoL", "Coach IA"],
+  openGraph: {
+    title: "Coacher - O Melhor Coach de LoL com IA",
+    description: "Evolua no League of Legends. Treine com um coach que lê draft, matchup e macro em tempo real.",
+    url: "https://coacher.gg",
+    siteName: "Coacher",
+    type: "website"
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Coacher - O Melhor Coach de LoL com IA",
+    description: "Evolua no League of Legends. Treine com um coach que lê draft, matchup e macro em tempo real."
+  }
+};
 
 export default function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const schemaMarkup = {
+    "@context": "https://schema.org",
+    "@type": "SoftwareApplication",
+    "name": "Coacher",
+    "applicationCategory": "GameApplication",
+    "operatingSystem": "Windows",
+    "description": "Treinador de inteligência artificial para League of Legends que analisa draft, matchup e macro em tempo real.",
+    "offers": {
+      "@type": "Offer",
+      "price": "0.00",
+      "priceCurrency": "BRL"
+    }
+  };
+
   return (
     <html
       lang="pt-BR"
-      className={`${outfit.variable} ${jetbrainsMono.variable} h-full antialiased selection:bg-violet-500/30`}
+      className={`${outfit.variable} ${jetbrainsMono.variable} h-full antialiased`}
     >
-      <body className="min-h-full flex flex-col relative text-foreground selection:bg-violet-500/30">
+      <head>
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(schemaMarkup) }}
+        />
+      </head>
+      <body className="min-h-full flex flex-col relative text-foreground selection:bg-toxic/30 bg-[#050508]">
         <BridgeProvider>
-          <SmoothScroll>
-            <LiquidDrip />
-            <div className="noise-overlay" />
-            {children}
-          </SmoothScroll>
+          {children}
         </BridgeProvider>
       </body>
     </html>

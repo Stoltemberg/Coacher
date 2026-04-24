@@ -1,132 +1,247 @@
 "use client";
 
-import { useBridge } from "@/contexts/BridgeContext";
-import NeuralStatus from "./NeuralStatus";
-import NeuralLogChannel from "./NeuralLogChannel";
-import JungleIntelPanel from "./JungleIntelPanel";
-import MemoryFeed from "./MemoryFeed";
-import MatchIntelPanel from "./MatchIntelPanel";
-import NeuralBrain from "../animations/NeuralBrain";
 import { useState } from "react";
-import { motion, AnimatePresence } from "framer-motion";
-import { Settings, LayoutDashboard, BrainCircuit, Activity } from "lucide-react";
-import SettingsPanel from "@/components/app/SettingsPanel";
+import { AnimatePresence, motion, Variants } from "framer-motion";
+import {
+  Activity,
+  Database,
+  LayoutDashboard,
+  Logs,
+  ShieldCheck,
+  Settings,
+  Target,
+  Terminal,
+  X,
+} from "lucide-react";
+
+import { useBridge } from "@/contexts/BridgeContext";
+
 import ChampionBackground from "./ChampionBackground";
-import type { LucideIcon } from "lucide-react";
+import JungleIntelPanel from "./JungleIntelPanel";
+import MatchIntelPanel from "./MatchIntelPanel";
+import MemoryFeed from "./MemoryFeed";
+import NeuralLogChannel from "./NeuralLogChannel";
+import NeuralStatus from "./NeuralStatus";
+import SettingsPanel from "./SettingsPanel";
+import { HudPanel } from "./HudPanel";
+import StatusBar from "../layout/StatusBar";
+
+const sidebarVariants: Variants = {
+  hidden: { opacity: 0, x: -20 },
+  visible: {
+    opacity: 1,
+    x: 0,
+    transition: { staggerChildren: 0.05, delayChildren: 0.1 },
+  },
+};
 
 export default function AppDashboard() {
+  const { auth, gameState, logs } = useBridge();
   const [activeTab, setActiveTab] = useState<"dashboard" | "settings">("dashboard");
-  const { gameState } = useBridge();
+  const [logsOpen, setLogsOpen] = useState(false);
+  const isChampSelect = /sele/i.test(gameState.phase) && /campe/i.test(gameState.phase);
 
-  const navItems: { id: "dashboard" | "settings"; icon: LucideIcon; label: string }[] = [
-    { id: "dashboard", icon: LayoutDashboard, label: "COMM CENTER" },
-    { id: "settings", icon: Settings, label: "NEURAL CONFIG" },
+  const navItems = [
+    { id: "dashboard", icon: LayoutDashboard, label: "Painel", desc: "workspace da partida" },
+    { id: "settings", icon: Settings, label: "Configuracoes", desc: "ajustes do coach" },
   ];
 
   return (
-    <div className="flex flex-col h-screen w-screen overflow-hidden selection:bg-toxic/30 relative">
-      <NeuralBrain />
-      
-      {/* Top Header */}
-      <NeuralStatus />
+    <div className="app-shell bg-[#050508] text-white selection:bg-toxic/30">
+      <div className="app-backdrop" />
+      <StatusBar />
 
-      <div className="flex flex-1 overflow-hidden">
-        {/* Sidebar Nav */}
-        <aside className="w-16 border-r border-border bg-black/60 flex flex-col items-center py-8 gap-8 z-20">
-          {navItems.map((item) => (
-            <button
-              key={item.id}
-              onClick={() => setActiveTab(item.id)}
-              className={`group relative p-3 transition-all ${
-                activeTab === item.id ? 'text-toxic bg-white/5' : 'text-muted-foreground hover:text-white'
-              }`}
-            >
-              <item.icon className="w-5 h-5" />
-              <span className="absolute left-16 px-2 py-1 bg-violet-600 text-white text-[8px] font-black uppercase tracking-widest opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap z-50">
-                {item.label}
-              </span>
-              {activeTab === item.id && (
-                <motion.div 
-                  layoutId="activeNav"
-                  className="absolute left-0 top-0 bottom-0 w-1 bg-toxic shadow-[0_0_10px_#adff2f]"
-                />
-              )}
-            </button>
-          ))}
-          
-          <div className="mt-auto flex flex-col items-center gap-4 opacity-40">
-            <BrainCircuit className="w-4 h-4" />
-            <Activity className="w-4 h-4" />
+      <div className="relative z-10 flex flex-1 overflow-hidden">
+        <motion.aside
+          initial="hidden"
+          animate="visible"
+          variants={sidebarVariants}
+          className="m-4 mr-0 flex w-[290px] flex-col rounded-[30px] border border-white/8 bg-[rgba(13,15,20,0.82)] backdrop-blur-2xl"
+        >
+          <div className="flex-1 space-y-6 p-5 pt-6">
+            <div className="app-surface rounded-[26px] px-4 py-4">
+              <div className="mb-3 text-[10px] font-mono uppercase tracking-[0.18em] text-white/45">
+                Sessao atual
+              </div>
+              <div className="text-lg font-semibold text-white">
+                {auth?.authenticated ? auth.user?.display_name || "Conta ativa" : "Visitante"}
+              </div>
+              <div className="mt-1 text-[11px] leading-6 text-white/45">
+                {gameState.summonerName || "Aguardando nome do invocador"}
+              </div>
+            </div>
+
+            <nav className="space-y-4">
+              {navItems.map((item) => (
+                <button
+                  key={item.id}
+                  onClick={() => setActiveTab(item.id as "dashboard" | "settings")}
+                  className={`relative w-full overflow-hidden rounded-[26px] border p-4 text-left transition-all ${
+                    activeTab === item.id
+                      ? "border-white/15 bg-white/[0.08] text-white"
+                      : "border-white/8 bg-white/[0.03] text-white/55 hover:bg-white/[0.06]"
+                  }`}
+                >
+                  <div className="flex items-center gap-4">
+                    <item.icon
+                      className={`h-4 w-4 ${activeTab === item.id ? "text-toxic" : "text-white/40"}`}
+                    />
+                    <div>
+                      <p className="text-[11px] font-semibold">{item.label}</p>
+                      <p className="text-[10px] text-white/40">{item.desc}</p>
+                    </div>
+                  </div>
+                  {activeTab === item.id && (
+                    <div className="absolute inset-y-3 left-0 w-1 rounded-r-full bg-toxic shadow-[0_0_15px_hsl(var(--toxic))]" />
+                  )}
+                </button>
+              ))}
+            </nav>
           </div>
-        </aside>
 
-        {/* Dynamic Content Area */}
-        <main className="flex-1 relative z-10 overflow-hidden">
+          <div className="soft-divider bg-black/10 p-5">
+            <div className="flex items-center gap-3">
+              <div className="h-2 w-2 animate-pulse rounded-full bg-toxic shadow-[0_0_12px_rgba(173,255,47,0.7)]" />
+              <span className="text-[10px] font-mono uppercase tracking-[0.18em] text-white/55">
+                Bridge sincronizada
+              </span>
+            </div>
+          </div>
+        </motion.aside>
+
+        <main className="flex min-w-0 flex-1 flex-col overflow-hidden px-4 pb-4 pt-0">
           <AnimatePresence mode="wait">
             {activeTab === "dashboard" ? (
               <motion.div
                 key="dashboard"
-                initial={{ opacity: 0, scale: 0.98 }}
-                animate={{ opacity: 1, scale: 1 }}
-                exit={{ opacity: 0, scale: 1.02 }}
-                className="h-full p-6 grid grid-cols-1 md:grid-cols-12 grid-rows-6 gap-6"
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                className="flex flex-1 flex-col gap-4 overflow-hidden py-4"
               >
-                {/* Visual Engine (Center) */}
-                <div className="md:col-span-8 row-span-4 bg-black/20 brutalist-border relative group overflow-hidden">
-                  <ChampionBackground championName={gameState.championName} />
-                   <div className="absolute top-4 left-4 flex flex-col gap-1">
-                      <span className="text-[10px] font-black tracking-widest opacity-30 uppercase italic">NEURAL_ENGINE_V4.8</span>
-                      <div className="flex gap-1">
-                        {[1, 2, 3, 4, 5].map(i => <div key={i} className="w-1 h-3 bg-toxic/20" />)}
-                      </div>
-                   </div>
-                   
-                   {/* Match Intel Overlay */}
-                   <div className="absolute top-20 left-4 w-64 z-20">
-                      <MatchIntelPanel />
-                   </div>
+                {isChampSelect ? (
+                  <div className="grid min-h-0 flex-1 grid-cols-12 gap-4">
+                    <div className="col-span-12 flex min-h-0 flex-col gap-4 xl:col-span-8">
+                      <div className="min-h-0 flex-[1.2]">
+                        <HudPanel title="Modo tatico" icon={ShieldCheck} idSuffix="DRFT" className="h-full">
+                          <div className="relative flex h-full min-h-0 flex-col overflow-hidden bg-[#050508]">
+                            <ChampionBackground championName={gameState.championName} />
+                            <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_top_left,_rgba(173,255,47,0.12),_transparent_26%),linear-gradient(145deg,_rgba(5,5,8,0.35)_0%,_rgba(5,5,8,0.88)_72%)]" />
 
-                   <div className="absolute inset-0 flex items-center justify-center p-20 pointer-events-none group-hover:scale-105 transition-transform duration-1000">
-                      <div className="w-full h-full border-[0.5px] border-white/5 rounded-full animate-spin-slow flex items-center justify-center">
-                         <div className="w-3/4 h-3/4 border-[0.5px] border-toxic/10 rounded-full animate-reverse-spin flex items-center justify-center">
-                            <div className="w-1/2 h-1/2 border border-violet-500/20 rounded-full flex items-center justify-center">
-                               <span className="text-4xl font-black text-white/5 tracking-tighter">COACHER.</span>
+                            <div className="relative z-10 flex items-center justify-between gap-4 px-5 py-4">
+                              <div className="max-w-xl">
+                                <div className="text-[10px] font-mono uppercase tracking-[0.2em] text-toxic/80">
+                                  Selecao de Campeoes
+                                </div>
+                                <h2 className="mt-2 text-2xl font-semibold tracking-[-0.05em] text-white">
+                                  Prioridade total para leitura do draft e picks recomendados.
+                                </h2>
+                                <p className="mt-2 text-[11px] leading-6 text-white/50">
+                                  O intel inimigo sobe para o centro da tela enquanto o restante do dashboard vira apoio tatico.
+                                </p>
+                              </div>
+                              <div className="hidden rounded-[24px] border border-white/10 bg-black/20 px-4 py-3 text-right xl:block">
+                                <div className="text-[9px] font-mono uppercase tracking-[0.16em] text-white/35">
+                                  fase atual
+                                </div>
+                                <div className="mt-2 text-sm font-semibold text-white">{gameState.phase}</div>
+                                <div className="mt-1 text-[10px] text-white/45">
+                                  {gameState.championName || "Campeao ainda nao travado"}
+                                </div>
+                              </div>
                             </div>
-                         </div>
+
+                            <div className="relative z-10 min-h-0 flex-1 px-5 pb-5">
+                              <MatchIntelPanel tacticalMode />
+                            </div>
+                          </div>
+                        </HudPanel>
                       </div>
-                   </div>
 
-                   {/* Live Phase Text */}
-                   <div className="absolute bottom-6 left-6">
-                      <h2 className="text-5xl font-black italic tracking-tighter text-white/10 uppercase mb-1">
-                        {gameState.phase.split(' ').join('_')}
-                      </h2>
-                      <p className="text-[10px] font-mono tracking-[0.5em] text-toxic/40">LINK_STABLE // NO_THREATS_DETECTED</p>
-                   </div>
-                </div>
+                      <div className="min-h-0 flex-[0.8]">
+                        <HudPanel title="Estado da partida" icon={Activity} idSuffix="CORE" className="h-full">
+                          <NeuralStatus />
+                        </HudPanel>
+                      </div>
+                    </div>
 
-                {/* Right Panel: Memory Feed */}
-                <div className="md:col-span-4 row-span-4">
-                  <MemoryFeed />
-                </div>
+                    <div className="col-span-12 flex min-h-0 flex-col gap-4 xl:col-span-4">
+                      <div className="min-h-0 flex-1">
+                        <HudPanel title="Leitura de selva" icon={Target} idSuffix="TAC" className="h-full">
+                          <JungleIntelPanel />
+                        </HudPanel>
+                      </div>
+                      <div className="min-h-0 flex-1">
+                        <HudPanel title="Memoria da sessao" icon={Database} idSuffix="MEM" className="h-full">
+                          <MemoryFeed />
+                        </HudPanel>
+                      </div>
+                    </div>
+                  </div>
+                ) : (
+                  <div className="grid min-h-0 flex-1 grid-cols-12 gap-4">
+                    <div className="col-span-12 flex h-full min-h-0 flex-col gap-4 xl:col-span-8">
+                      <div className="min-h-0 flex-1">
+                        <HudPanel title="Visao da partida" icon={Activity} idSuffix="CORE" className="h-full">
+                          <div className="relative h-full w-full overflow-hidden bg-[#050508]">
+                            <ChampionBackground championName={gameState.championName} />
+                            <div className="pointer-events-none absolute inset-0 z-10 bg-[radial-gradient(circle_at_top_left,_rgba(255,255,255,0.08),_transparent_30%),linear-gradient(180deg,_rgba(5,5,8,0.05)_0%,_rgba(5,5,8,0.65)_100%)]" />
 
-                {/* Bottom Left: Logs */}
-                <div className="md:col-span-7 row-span-2">
-                  <NeuralLogChannel />
-                </div>
+                            <div className="absolute right-5 top-5 z-20 w-[320px] max-w-[calc(100%-2.5rem)]">
+                              <MatchIntelPanel />
+                            </div>
 
-                {/* Bottom Right: Jungle Intel */}
-                <div className="md:col-span-5 row-span-2">
-                  <JungleIntelPanel />
-                </div>
+                            <div className="absolute bottom-0 left-0 right-0 z-30">
+                              <NeuralStatus />
+                            </div>
+                          </div>
+                        </HudPanel>
+                      </div>
+                    </div>
+
+                    <div className="col-span-12 flex min-h-0 flex-col gap-4 xl:col-span-4">
+                      <div className="min-h-0 flex-1">
+                        <HudPanel title="Memoria da sessao" icon={Database} idSuffix="MEM" className="h-full">
+                          <MemoryFeed />
+                        </HudPanel>
+                      </div>
+                      <div className="min-h-0 flex-1">
+                        <HudPanel title="Leitura de selva" icon={Target} idSuffix="TAC" className="h-full">
+                          <JungleIntelPanel />
+                        </HudPanel>
+                      </div>
+                    </div>
+                  </div>
+                )}
+
+                <button
+                  type="button"
+                  onClick={() => setLogsOpen(true)}
+                  className="h-[220px] shrink-0 rounded-[28px] text-left transition-transform duration-200 hover:-translate-y-0.5"
+                >
+                  <HudPanel title="Message log" icon={Terminal} idSuffix="LOG" className="h-full">
+                    <div className="flex h-full flex-col">
+                      <div className="soft-divider flex items-center justify-between px-4 py-3">
+                        <div className="flex items-center gap-2 text-[10px] font-mono uppercase tracking-[0.18em] text-white/45">
+                          <Logs className="h-3.5 w-3.5 text-toxic" />
+                          clique para abrir todos os logs
+                        </div>
+                        <span className="rounded-full border border-white/10 bg-white/[0.04] px-3 py-1 text-[9px] font-mono uppercase tracking-[0.16em] text-white/45">
+                          {logs.length} eventos
+                        </span>
+                      </div>
+                      <NeuralLogChannel limit={6} compact />
+                    </div>
+                  </HudPanel>
+                </button>
               </motion.div>
             ) : (
               <motion.div
                 key="settings"
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: -20 }}
-                className="h-full"
+                initial={{ opacity: 0, x: 20 }}
+                animate={{ opacity: 1, x: 0 }}
+                exit={{ opacity: 0, x: -20 }}
+                className="flex-1 overflow-hidden"
               >
                 <SettingsPanel />
               </motion.div>
@@ -135,11 +250,42 @@ export default function AppDashboard() {
         </main>
       </div>
 
-      {/* Decorative Corner Bits */}
-      <div className="fixed top-0 left-0 w-8 h-8 border-t-2 border-l-2 border-white/10 pointer-events-none" />
-      <div className="fixed top-0 right-0 w-8 h-8 border-t-2 border-r-2 border-white/10 pointer-events-none" />
-      <div className="fixed bottom-0 left-0 w-8 h-8 border-b-2 border-l-2 border-white/10 pointer-events-none" />
-      <div className="fixed bottom-0 right-0 w-8 h-8 border-b-2 border-r-2 border-white/10 pointer-events-none" />
+      <AnimatePresence>
+        {logsOpen && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="absolute inset-0 z-[300] flex items-center justify-center bg-black/70 p-6 backdrop-blur-sm"
+          >
+            <motion.div
+              initial={{ opacity: 0, y: 18, scale: 0.98 }}
+              animate={{ opacity: 1, y: 0, scale: 1 }}
+              exit={{ opacity: 0, y: 18, scale: 0.98 }}
+              className="app-surface flex h-[80vh] w-full max-w-5xl flex-col overflow-hidden rounded-[32px]"
+            >
+              <div className="soft-divider flex items-center justify-between px-6 py-5">
+                <div>
+                  <div className="text-[10px] font-mono uppercase tracking-[0.2em] text-white/45">
+                    historico completo
+                  </div>
+                  <div className="mt-1 text-2xl font-semibold tracking-[-0.05em] text-white">
+                    Message log
+                  </div>
+                </div>
+                <button
+                  type="button"
+                  onClick={() => setLogsOpen(false)}
+                  className="flex h-11 w-11 items-center justify-center rounded-full border border-white/10 bg-white/[0.04] text-white/65 transition-colors hover:bg-white hover:text-black"
+                >
+                  <X className="h-4 w-4" />
+                </button>
+              </div>
+              <NeuralLogChannel />
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </div>
   );
 }

@@ -1,173 +1,255 @@
 "use client";
 
-import { useBridge } from "@/contexts/BridgeContext";
+import type { ComponentType, FormEvent } from "react";
 import { useState } from "react";
-import { motion, AnimatePresence } from "framer-motion";
-import { Lock, User, AtSign, Loader2, ArrowRight } from "lucide-react";
+import { motion, AnimatePresence, Variants } from "framer-motion";
+import { ArrowRight, Lock, Mail, Shield, UserRound } from "lucide-react";
+
+import { useBridge } from "@/contexts/BridgeContext";
+
+const containerVariants: Variants = {
+  hidden: { opacity: 1, y: 0, scale: 1 },
+  visible: {
+    opacity: 1,
+    y: 0,
+    scale: 1,
+    transition: {
+      duration: 0.8,
+      ease: [0.16, 1, 0.3, 1],
+      staggerChildren: 0.1,
+      delayChildren: 0.3,
+    },
+  },
+};
+
+const itemVariants: Variants = {
+  hidden: { opacity: 1, x: 0 },
+  visible: {
+    opacity: 1,
+    x: 0,
+    transition: { duration: 0.6 },
+  },
+};
+
+const lineVariants: Variants = {
+  hidden: { width: "100%", opacity: 1 },
+  visible: {
+    width: "100%",
+    opacity: 1,
+    transition: { duration: 0.8 },
+  },
+};
+
+interface FieldProps {
+  icon: ComponentType<{ className?: string }>;
+  label: string;
+  placeholder: string;
+  type?: string;
+  value: string;
+  onChange: (value: string) => void;
+}
+
+function Field({ icon: Icon, label, placeholder, type = "text", value, onChange }: FieldProps) {
+  return (
+    <motion.div variants={itemVariants} className="space-y-1">
+      <label className="ml-1 text-[10px] font-black uppercase tracking-[0.2em] text-white/55">
+        {label}
+      </label>
+      <div className="group relative">
+        <Icon className="absolute left-4 top-1/2 h-4 w-4 -translate-y-1/2 text-toxic/30 transition-colors group-focus-within:text-toxic" />
+        <input
+          type={type}
+          placeholder={placeholder}
+          value={value}
+          onChange={(e) => onChange(e.target.value)}
+          className="w-full rounded-2xl border border-white/10 bg-white/[0.03] p-4 pl-12 text-sm text-white outline-none transition-all placeholder:text-white/20 focus:border-toxic/40 focus:bg-white/[0.05]"
+        />
+      </div>
+    </motion.div>
+  );
+}
 
 export default function AuthUI() {
-  const { auth, api } = useBridge();
-  const [mode, setMode] = useState<"login" | "signup">("login");
+  const { api } = useBridge();
+  const [isLogin, setIsLogin] = useState(true);
   const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
   const [displayName, setDisplayName] = useState("");
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
+  const [password, setPassword] = useState("");
+  const [error, setError] = useState("");
+  const [isShaking, setIsShaking] = useState(false);
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
-    if (!api) return;
-    
-    setLoading(true);
-    setError(null);
+
+    if (!email || !password || (!isLogin && !displayName.trim())) {
+      setError(
+        isLogin
+          ? "Preencha email e senha para entrar."
+          : "Preencha nome, email e senha para criar a conta."
+      );
+      return;
+    }
 
     try {
-      if (mode === "signup") {
-        await api.register_user(email, password, displayName);
+      setError("");
+      if (isLogin) {
+        await api?.login_user(email.trim(), password);
       } else {
-        await api.login_user(email, password);
+        await api?.register_user(email.trim(), password, displayName.trim());
       }
-    } catch {
-      setError("FALHA NA CONEXÃO NEURAL");
-    } finally {
-      setLoading(false);
+    } catch (err: unknown) {
+      const message = err instanceof Error ? err.message : "Nao foi possivel autenticar agora.";
+      setError(message);
+      setIsShaking(true);
+      setTimeout(() => setIsShaking(false), 400);
     }
   };
 
   return (
-    <div className="fixed inset-0 w-full h-full flex items-center justify-center p-6 bg-[#050505] text-white selection:bg-violet-500/30 overflow-hidden">
-      {/* Dynamic Background */}
-      <div className="absolute inset-0 z-0">
-        <div className="absolute top-1/4 left-1/4 w-[500px] h-[500px] bg-violet-600/10 rounded-full blur-[120px] animate-pulse" />
-        <div className="absolute bottom-1/4 right-1/4 w-[500px] h-[500px] bg-toxic/5 rounded-full blur-[120px] animate-pulse delay-700" />
-        <div className="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/carbon-fibre.png')] opacity-[0.03]" />
-      </div>
+    <div className="fixed inset-0 flex h-screen w-screen items-center justify-center overflow-hidden bg-[#050508] p-6">
+      <div className="app-backdrop absolute inset-0 z-0" />
 
-      {/* Scratched Overlay Effect */}
-      <div className="absolute inset-0 z-1 pointer-events-none opacity-20">
-        <div className="absolute top-0 left-[20%] w-px h-full bg-gradient-to-b from-transparent via-white/10 to-transparent" />
-        <div className="absolute top-0 left-[80%] w-px h-full bg-gradient-to-b from-transparent via-white/10 to-transparent" />
-      </div>
-
-      <motion.div 
-        initial={{ opacity: 0, y: 30 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.8, ease: "easeOut" }}
-        className="w-full max-sm z-10 mx-auto"
+      <motion.div
+        initial="hidden"
+        animate="visible"
+        variants={containerVariants}
+        className={`app-surface relative z-10 grid w-full max-w-6xl overflow-hidden rounded-[32px] lg:grid-cols-[1.1fr_0.9fr] ${isShaking ? "animate-shake" : ""}`}
       >
-        {/* Main Glassmorphism Card */}
-        <div className="relative group brutalist-border bg-black/90 backdrop-blur-3xl p-8 space-y-8 border-white/5 shadow-[0_0_50px_-12px_rgba(139,92,246,0.3)]">
-          {/* Neural Pulse Corners */}
-          <div className="absolute -top-px -left-px w-8 h-8 border-t border-l border-toxic/60" />
-          <div className="absolute -bottom-px -right-px w-8 h-8 border-b border-r border-violet-500/60" />
-          
-          <header className="text-center space-y-3">
-            <h2 className="text-3xl font-black italic tracking-tighter leading-none text-white lg:text-4xl">
-              {mode === 'login' ? 'NEURAL_LINK' : 'INITIAL_SYNC'}
-            </h2>
-            <div className="flex items-center justify-center gap-2">
-              <div className="h-px w-4 bg-toxic/30" />
-              <p className="text-[9px] font-mono tracking-[0.3em] text-muted-foreground uppercase">
-                {mode === 'login' ? 'AUTENTICAÇÃO_NÍVEL_1' : 'REGISTRO_DE_SUMMONER'}
-              </p>
-              <div className="h-px w-4 bg-toxic/30" />
-            </div>
-          </header>
+        <div className="relative overflow-hidden px-8 py-10 lg:px-12 lg:py-14">
+          <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_left,_rgba(173,255,47,0.08),_transparent_34%),radial-gradient(circle_at_bottom_right,_rgba(139,92,246,0.1),_transparent_34%)]" />
+          <div className="relative z-10 flex h-full flex-col justify-between">
+            <div className="space-y-8">
+              <motion.div variants={itemVariants} className="inline-flex items-center gap-3 rounded-full border border-white/10 bg-white/[0.04] px-4 py-2">
+                <div className="flex h-9 w-9 items-center justify-center rounded-full bg-white text-sm font-black text-black">
+                  C
+                </div>
+                <div>
+                  <div className="text-[10px] font-black uppercase tracking-[0.28em] text-white">
+                    COACHER
+                  </div>
+                  <div className="text-[10px] text-white/45">Desktop coach system</div>
+                </div>
+              </motion.div>
 
-          <form onSubmit={handleSubmit} className="space-y-5">
-            <div className="space-y-3">
-              <AnimatePresence mode="wait">
-                {mode === "signup" && (
-                  <motion.div 
-                    initial={{ height: 0, opacity: 0 }}
-                    animate={{ height: "auto", opacity: 1 }}
-                    exit={{ height: 0, opacity: 0 }}
-                    className="relative group overflow-hidden"
+              <div className="space-y-5">
+                <motion.p variants={itemVariants} className="text-[11px] font-mono uppercase tracking-[0.32em] text-toxic/70">
+                  League performance workspace
+                </motion.p>
+                <motion.h1 variants={itemVariants} className="max-w-md text-5xl font-black tracking-[-0.06em] text-white md:text-6xl">
+                  Entra e volta para a fila com o mesmo ambiente da plataforma.
+                </motion.h1>
+                <motion.p variants={itemVariants} className="max-w-xl text-base leading-7 text-white/55">
+                  O coach desktop herda a mesma assinatura visual do site: superficies escuras, luz controlada e foco total na leitura da partida.
+                </motion.p>
+              </div>
+            </div>
+
+            <motion.div variants={itemVariants} className="grid gap-4 pt-10 sm:grid-cols-3">
+              {[
+                ["Sessao segura", "Login persistente por usuario"],
+                ["Telemetria viva", "LCU, memoria e configuracoes"],
+                ["Mesmo produto", "Site e app com a mesma identidade"],
+              ].map(([title, note]) => (
+                <div key={title} className="rounded-3xl border border-white/10 bg-white/[0.04] p-4">
+                  <div className="mb-2 text-[11px] font-semibold text-white">{title}</div>
+                  <div className="text-[11px] leading-6 text-white/45">{note}</div>
+                </div>
+              ))}
+            </motion.div>
+          </div>
+        </div>
+
+        <div className="relative px-8 py-10 lg:px-12 lg:py-14">
+          <div className="absolute inset-0 bg-black/20" />
+          <div className="relative z-10">
+            <header className="mb-8 space-y-4">
+              <motion.div variants={itemVariants} className="flex items-center gap-3">
+                <div className="flex h-12 w-12 items-center justify-center rounded-2xl border border-toxic/20 bg-toxic/10">
+                  <Shield className="h-5 w-5 text-toxic" />
+                </div>
+                <div>
+                  <h1 className="text-3xl font-black tracking-tight text-white">
+                    {isLogin ? "Entrar no Coacher" : "Criar acesso"}
+                  </h1>
+                  <p className="mt-1 text-sm text-white/45">
+                    {isLogin
+                      ? "Usa tua conta para liberar o coach nesta maquina."
+                      : "Cria tua conta para salvar memoria, configuracoes e historico."}
+                  </p>
+                </div>
+              </motion.div>
+              <motion.div variants={lineVariants} className="h-px w-full bg-gradient-to-r from-white/20 to-transparent" />
+            </header>
+
+            <form onSubmit={handleSubmit} className="space-y-6">
+              <div className="space-y-4">
+                {!isLogin && (
+                  <Field
+                    icon={UserRound}
+                    label="Nome de exibicao"
+                    placeholder="Como voce quer aparecer no app"
+                    value={displayName}
+                    onChange={setDisplayName}
+                  />
+                )}
+
+                <Field
+                  icon={Mail}
+                  label="Email"
+                  placeholder="voce@exemplo.com"
+                  type="email"
+                  value={email}
+                  onChange={setEmail}
+                />
+
+                <Field
+                  icon={Lock}
+                  label="Senha"
+                  placeholder="Sua senha"
+                  type="password"
+                  value={password}
+                  onChange={setPassword}
+                />
+              </div>
+
+              <AnimatePresence>
+                {error && (
+                  <motion.div
+                    initial={{ opacity: 0, height: 0 }}
+                    animate={{ opacity: 1, height: "auto" }}
+                    exit={{ opacity: 0, height: 0 }}
+                    className="rounded-2xl border border-red-500/20 bg-red-500/10 p-4 text-center text-[11px] font-medium text-red-300"
                   >
-                    <User className="absolute left-4 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-muted-foreground group-focus-within:text-toxic transition-colors" />
-                    <input
-                      type="text"
-                      placeholder="IDENTIDADE_VISUAL"
-                      value={displayName}
-                      onChange={(e) => setDisplayName(e.target.value)}
-                      required
-                      className="w-full h-12 bg-white/5 border border-white/10 px-10 text-[11px] font-mono text-white placeholder:text-muted-foreground/30 focus:border-toxic/50 focus:bg-white/10 outline-none transition-all"
-                    />
+                    {error}
                   </motion.div>
                 )}
               </AnimatePresence>
 
-              <div className="relative group">
-                <AtSign className="absolute left-4 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-muted-foreground group-focus-within:text-violet-400 transition-colors" />
-                <input
-                  type="email"
-                  placeholder="CANAL_DE_DADOS (EMAIL)"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  required
-                  className="w-full h-12 bg-white/5 border border-white/10 px-10 text-[11px] font-mono text-white placeholder:text-muted-foreground/30 focus:border-violet-500/50 focus:bg-white/10 outline-none transition-all"
-                />
-              </div>
-
-              <div className="relative group">
-                <Lock className="absolute left-4 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-muted-foreground group-focus-within:text-violet-400 transition-colors" />
-                <input
-                  type="password"
-                  placeholder="CHAVE_CRIPTOGRAFICA"
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  required
-                  className="w-full h-12 bg-white/5 border border-white/10 px-10 text-[11px] font-mono text-white placeholder:text-muted-foreground/30 focus:border-violet-500/50 focus:bg-white/10 outline-none transition-all"
-                />
-              </div>
-            </div>
-
-            <AnimatePresence>
-              {(error || auth?.message) && (
-                <motion.div 
-                  initial={{ opacity: 0, scale: 0.9 }}
-                  animate={{ opacity: 1, scale: 1 }}
-                  className="p-3 bg-red-500/5 border border-red-500/20 text-red-400 text-[9px] font-bold uppercase tracking-widest text-center"
-                >
-                  {error || auth?.message}
-                </motion.div>
-              )}
-            </AnimatePresence>
-
-            <button
-              type="submit"
-              disabled={loading}
-              className="group relative w-full h-14 bg-white text-black font-black text-xs uppercase overflow-hidden hover:bg-[#adff2f] transition-all duration-300 active:scale-[0.97]"
-            >
-              <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent -translate-x-full group-hover:animate-shimmer" />
-              {loading ? (
-                  <Loader2 className="w-5 h-5 animate-spin mx-auto" />
-              ) : (
-                <div className="flex items-center justify-center gap-2">
-                  <span>{mode === 'login' ? 'INICIAR_PROCESSO' : 'FINALIZAR_SYNC'}</span>
-                  <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+              <motion.button
+                variants={itemVariants}
+                type="submit"
+                className="group relative w-full overflow-hidden rounded-full bg-white px-6 py-5 transition-all duration-300 hover:bg-toxic"
+              >
+                <div className="relative z-10 flex items-center justify-center gap-3 text-xs font-black uppercase tracking-widest text-black">
+                  <span>{isLogin ? "Entrar" : "Criar conta"}</span>
+                  <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
                 </div>
-              )}
-            </button>
-          </form>
+              </motion.button>
 
-          <footer className="text-center">
-            <button
-              onClick={() => setMode(mode === "login" ? "signup" : "login")}
-              className="text-[9px] font-mono text-muted-foreground hover:text-white transition-colors uppercase tracking-widest"
-            >
-              {mode === "login" ? "REGISTRAR_NOVO_NÓ" : "VOLTAR_AO_LOGIN"}
-            </button>
-          </footer>
-        </div>
+              <motion.div variants={itemVariants} className="flex justify-center">
+                <button
+                  onClick={() => setIsLogin(!isLogin)}
+                  className="border-b border-transparent pb-1 text-[10px] font-mono uppercase tracking-[0.24em] text-white/45 transition-colors hover:border-white/20 hover:text-white"
+                >
+                  {isLogin ? "Criar conta nova" : "Voltar para login"}
+                </button>
+              </motion.div>
+            </form>
 
-        {/* Footer info panel */}
-        <div className="mt-8 px-2 flex justify-between items-center opacity-25">
-          <div className="flex items-center gap-2">
-            <div className="w-1.5 h-1.5 rounded-full bg-toxic animate-pulse" />
-            <span className="text-[8px] font-mono uppercase tracking-tighter">SECURE_TUNNEL_ESTABLISHED</span>
+            <div className="mt-8 rounded-3xl border border-white/10 bg-white/[0.04] p-4 text-[11px] leading-6 text-white/45">
+              O login libera o app Python, inicia a conexao com o cliente do League e carrega tuas preferencias salvas.
+            </div>
           </div>
-          <span className="text-[8px] font-mono uppercase tracking-tighter">BUILD_V4.2.0RC</span>
         </div>
       </motion.div>
     </div>
