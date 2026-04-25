@@ -107,10 +107,35 @@ const normalizeChampionName = (value: string) =>
 export default function SettingsPanel() {
   const { settings, updateSettings, setCategoryEnabled } = useBridge();
   const [poolInput, setPoolInput] = useState("");
+  const [mainsInput, setMainsInput] = useState("");
 
   if (!settings) return null;
 
   const preferredPool = settings.preferred_champion_pool ?? [];
+  const mainChampions = settings.main_champions ?? [];
+
+  const roleOptions = [
+    { id: "top", label: "Top" },
+    { id: "jungle", label: "Jungle" },
+    { id: "mid", label: "Mid" },
+    { id: "bottom", label: "ADC" },
+    { id: "support", label: "Support" },
+  ];
+
+  const goalOptions = [
+    { id: "subir_elo", label: "Subir elo" },
+    { id: "consistencia", label: "Mais consistencia" },
+    { id: "dominar_pool", label: "Dominar pool" },
+    { id: "competitivo", label: "Competitivo" },
+  ];
+
+  const playstyleOptions = [
+    { id: "equilibrado", label: "Equilibrado" },
+    { id: "agressivo", label: "Agressivo" },
+    { id: "seguro", label: "Seguro" },
+    { id: "macro", label: "Macro" },
+    { id: "mecanico", label: "Mecanico" },
+  ];
 
   const commitPoolEntry = () => {
     const normalized = normalizeChampionName(poolInput);
@@ -139,6 +164,36 @@ export default function SettingsPanel() {
     updateSettings(
       "preferred_champion_pool",
       preferredPool.filter((champion) => champion !== championToRemove)
+    );
+  };
+
+  const commitMainChampion = () => {
+    const normalized = normalizeChampionName(mainsInput);
+    if (!normalized) return;
+
+    const exists = mainChampions.some(
+      (champion) => champion.localeCompare(normalized, undefined, { sensitivity: "accent" }) === 0
+    );
+    if (exists) {
+      setMainsInput("");
+      return;
+    }
+
+    updateSettings("main_champions", [...mainChampions, normalized]);
+    setMainsInput("");
+  };
+
+  const handleMainInputKeyDown = (event: KeyboardEvent<HTMLInputElement>) => {
+    if (event.key === "Enter" || event.key === ",") {
+      event.preventDefault();
+      commitMainChampion();
+    }
+  };
+
+  const removeMainChampion = (championToRemove: string) => {
+    updateSettings(
+      "main_champions",
+      mainChampions.filter((champion) => champion !== championToRemove)
     );
   };
 
@@ -279,6 +334,128 @@ export default function SettingsPanel() {
                   </button>
                 ))}
               </div>
+            </div>
+          </div>
+        </motion.section>
+
+        <motion.section variants={itemVariants} className="app-surface space-y-6 rounded-[32px] p-7">
+          <SectionHeading
+            icon={BarChart3}
+            title="Perfil do jogador"
+            note="Isso vira a base da V1 para personalizar leitura, metas e foco de treino."
+          />
+
+          <div className="grid gap-4 xl:grid-cols-3">
+            <div className="space-y-3 rounded-3xl border border-white/8 bg-white/[0.03] p-4">
+              <span className="text-[10px] font-black uppercase tracking-[0.2em] text-white/55">
+                Role principal
+              </span>
+              <div className="grid grid-cols-2 gap-2">
+                {roleOptions.map((role) => (
+                  <button
+                    key={role.id}
+                    onClick={() => updateSettings("primary_role", role.id)}
+                    className={`rounded-2xl border px-3 py-3 text-[11px] font-semibold transition-all ${
+                      settings.primary_role === role.id
+                        ? "border-toxic/35 bg-toxic/10 text-white"
+                        : "border-white/8 bg-white/[0.04] text-white/60 hover:bg-white/[0.08]"
+                    }`}
+                  >
+                    {role.label}
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            <div className="space-y-3 rounded-3xl border border-white/8 bg-white/[0.03] p-4">
+              <span className="text-[10px] font-black uppercase tracking-[0.2em] text-white/55">
+                Objetivo atual
+              </span>
+              <div className="grid gap-2">
+                {goalOptions.map((goal) => (
+                  <button
+                    key={goal.id}
+                    onClick={() => updateSettings("player_goal", goal.id)}
+                    className={`rounded-2xl border px-3 py-3 text-left text-[11px] font-semibold transition-all ${
+                      settings.player_goal === goal.id
+                        ? "border-toxic/35 bg-toxic/10 text-white"
+                        : "border-white/8 bg-white/[0.04] text-white/60 hover:bg-white/[0.08]"
+                    }`}
+                  >
+                    {goal.label}
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            <div className="space-y-3 rounded-3xl border border-white/8 bg-white/[0.03] p-4">
+              <span className="text-[10px] font-black uppercase tracking-[0.2em] text-white/55">
+                Estilo de jogo
+              </span>
+              <div className="grid grid-cols-2 gap-2">
+                {playstyleOptions.map((style) => (
+                  <button
+                    key={style.id}
+                    onClick={() => updateSettings("playstyle_profile", style.id)}
+                    className={`rounded-2xl border px-3 py-3 text-[11px] font-semibold transition-all ${
+                      settings.playstyle_profile === style.id
+                        ? "border-toxic/35 bg-toxic/10 text-white"
+                        : "border-white/8 bg-white/[0.04] text-white/60 hover:bg-white/[0.08]"
+                    }`}
+                  >
+                    {style.label}
+                  </button>
+                ))}
+              </div>
+            </div>
+          </div>
+
+          <div className="space-y-3 rounded-3xl border border-white/8 bg-white/[0.03] p-4">
+            <div className="flex items-center justify-between gap-3">
+              <label className="text-[10px] font-black uppercase tracking-[0.2em] text-white/55">
+                Campeoes principais
+              </label>
+              <span className="rounded-full border border-white/10 bg-white/[0.04] px-3 py-1 text-[9px] font-mono uppercase tracking-[0.14em] text-white/45">
+                {mainChampions.length} salvo{mainChampions.length === 1 ? "" : "s"}
+              </span>
+            </div>
+
+            <div className="flex flex-wrap gap-2">
+              {mainChampions.length > 0 ? (
+                mainChampions.map((champion) => (
+                  <button
+                    key={champion}
+                    type="button"
+                    onClick={() => removeMainChampion(champion)}
+                    className="inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/[0.05] px-3 py-1.5 text-[11px] font-semibold text-white transition-colors hover:border-toxic/30 hover:bg-toxic/10"
+                  >
+                    {champion}
+                    <X className="h-3 w-3 text-white/55" />
+                  </button>
+                ))
+              ) : (
+                <p className="text-[11px] leading-6 text-white/42">
+                  Marca teus mains para o coach começar a personalizar leitura e treino pela tua realidade.
+                </p>
+              )}
+            </div>
+
+            <div className="flex flex-col gap-3 sm:flex-row">
+              <input
+                type="text"
+                value={mainsInput}
+                onChange={(event) => setMainsInput(event.target.value)}
+                onKeyDown={handleMainInputKeyDown}
+                placeholder="Ex.: Orianna, Jinx, Wukong"
+                className="h-12 flex-1 rounded-2xl border border-white/10 bg-black/20 px-4 text-sm text-white outline-none transition-colors placeholder:text-white/22 focus:border-toxic/50"
+              />
+              <button
+                type="button"
+                onClick={commitMainChampion}
+                className="h-12 rounded-2xl border border-white/10 bg-white/[0.06] px-5 text-[10px] font-black uppercase tracking-[0.18em] text-white transition-all hover:border-white/20 hover:bg-white hover:text-black"
+              >
+                Adicionar main
+              </button>
             </div>
           </div>
         </motion.section>

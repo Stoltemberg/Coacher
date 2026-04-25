@@ -32,6 +32,7 @@ from core.champ_select import ChampSelectCoach
 from core.league_knowledge import LeagueKnowledgeBase
 from core.match_analyzer import confidence_label, duration_label
 from core.minerva_voice import MinervaVoice
+from core.performance_snapshot import build_performance_snapshot
 from core.scraper import EnemyScraper
 from core.settings_store import SettingsStore
 from core.ui_bridge import evaluate_js_call
@@ -83,6 +84,12 @@ class CoacherApp:
             "preferred_champion_pool": [],
             "prioritize_pool_picks": True,
         }
+        self.player_profile = {
+            "primary_role": "mid",
+            "player_goal": "subir_elo",
+            "playstyle_profile": "equilibrado",
+            "main_champions": [],
+        }
         
         self.auth_service = SupabaseAuthService(
             os.getenv("SUPABASE_URL"),
@@ -117,8 +124,13 @@ class CoacherApp:
         
         self.sync_settings()
 
+    def current_account_key(self):
+        snapshot = self.auth_service.snapshot()
+        user = snapshot.get("user") or {}
+        return user.get("id") or user.get("email") or "__default__"
+
     def sync_settings(self):
-        s = self.settings_store.get_all()
+        s = self.settings_store.get_all(self.current_account_key())
         # Sync Assistant
         self.assistant.volume = s.get("volume", 80)
         self.assistant.tts_mode = "smart" if not s.get("hardcore_enabled") else "full"
@@ -140,6 +152,32 @@ class CoacherApp:
             "preferred_champion_pool": list(s.get("preferred_champion_pool", [])),
             "prioritize_pool_picks": bool(s.get("prioritize_pool_picks", True)),
         }
+        self.player_profile = {
+            "primary_role": s.get("primary_role", "mid"),
+            "player_goal": s.get("player_goal", "subir_elo"),
+            "playstyle_profile": s.get("playstyle_profile", "equilibrado"),
+            "main_champions": list(s.get("main_champions", [])),
+        }
+
+    def push_settings_snapshot(self):
+        if not self.window:
+            return
+        snap = self.settings_store.get_all(self.current_account_key())
+        if not snap.get("category_filters"):
+            snap["category_filters"] = DEFAULT_CATEGORY_FILTERS
+        snap["voice_catalog"] = voice_catalog_snapshot()
+        evaluate_js_call(self.window, "hydrateSettings", snap)
+
+    def reset_runtime_state(self, *, phase="Lobby"):
+        if self.live_api:
+            self.live_api.stop()
+            self.live_api = None
+        self.draft_coach.reset()
+        self.coach.reset()
+        self.coach.deactivate_match()
+        self.last_ui_state = {"phase": None, "champion": None, "summoner": None}
+        self.push_draft_recommendations(None)
+        self.sync_ui_game_state(phase=phase, champion=None)
 
     def is_authenticated(self):
         return self.auth_service.snapshot().get("authenticated", False)
@@ -170,6 +208,27 @@ class CoacherApp:
     def push_draft_recommendations(self, payload):
         if self.window:
             evaluate_js_call(self.window, "updateDraftRecommendations", payload)
+
+    def _ui_phase_label(self, phase):
+        labels = {
+            "None": "Lobby",
+            "Lobby": "Lobby",
+            "Matchmaking": "Em fila",
+            "ReadyCheck": "Pronto Check",
+            "ChampSelect": "Seleção de Campeões",
+            "InProgress": "Em Partida",
+            "WaitingForStats": "Pós-jogo",
+            "PreEndOfGame": "Pós-jogo",
+            "EndOfGame": "Partida Finalizada",
+        }
+        return labels.get(str(phase or "").strip(), str(phase or "Lobby"))
+
+    def push_performance_snapshot(self):
+        if not self.window:
+            return
+        history_snapshot = self.coach.memory.build_history_snapshot(limit_matches=12)
+        performance_snapshot = build_performance_snapshot(history_snapshot, self.player_profile)
+        evaluate_js_call(self.window, "updatePerformanceSnapshot", performance_snapshot)
 
     async def on_lcu_ready(self, connection):
         if not self.is_authenticated(): return
@@ -203,12 +262,17 @@ class CoacherApp:
         if not self.is_authenticated(): return
         phase = event.data
         print(f'[LCU] Gameflow: {phase}')
+
+        self.sync_ui_game_state(phase=self._ui_phase_label(phase))
         
         if phase == "ChampSelect":
             self.coach.reset()
             self.draft_coach.reset()
             self.sync_ui_game_state(phase="Seleção de Campeões")
             self.assistant.say(self.voice.champ_select_intro(), "neutral", category="draft")
+        elif phase in {"Lobby", "Matchmaking", "ReadyCheck", "None"}:
+            self.draft_coach.reset()
+            self.sync_ui_game_state(phase=self._ui_phase_label(phase))
         elif phase == "InProgress":
             self.coach.activate_match()
             self.sync_ui_game_state(phase="Em Partida")
@@ -257,6 +321,7 @@ class CoacherApp:
                 self.match_finalize_state.update({"summary": summary, "result": result, "finalized": True, "finalizing": False})
 
             self.push_postgame_summary(summary)
+            self.push_performance_snapshot()
             return summary
         finally:
             with self.match_finalize_lock: self.match_finalize_state["finalizing"] = False
@@ -270,16 +335,33 @@ class CoacherApp:
     def push_postgame_summary(self, summary):
         if not self.window: return
         timeline = self.coach.memory.build_postgame_timeline(limit=12)
+        error_entries = [
+            {"title": f"Erro {index + 1}", "note": note, "tone": "warning"}
+            for index, note in enumerate(summary.improvements[:3])
+        ]
+        strength_entries = [
+            {"title": "Ponto forte", "note": note, "tone": "success"}
+            for note in summary.strengths[:2]
+        ]
         payload = {
             "title": summary.headline,
             "result": "Vitória" if summary.result == "win" else "Derrota",
             "duration": duration_label(summary.stats.get("duration_seconds", 0)),
             "scoreline": f"{summary.stats.get('positive', 0)}+ / {summary.stats.get('negative', 0)}-",
-            "focus": "Análise Tática",
+            "focus": summary.next_steps[0] if summary.next_steps else "Análise Tática",
             "confidence": confidence_label(summary.stats.get("entries", 0)),
             "reads": [summary.opening, summary.coach_note],
-            "memory": [{"title": "Forte", "note": s, "tone": "positive"} for s in summary.strengths[:2]],
-            "timeline": timeline
+            "memory": error_entries + strength_entries,
+            "timeline": timeline,
+            "insights": {
+                "headline": summary.headline,
+                "opening": summary.opening,
+                "strengths": summary.strengths,
+                "improvements": summary.improvements,
+                "key_moments": summary.key_moments,
+                "next_steps": summary.next_steps,
+                "adaptive": summary.stats.get("adaptive", {}),
+            },
         }
         evaluate_js_call(self.window, "updatePostGameSummary", payload)
 
@@ -299,6 +381,7 @@ class Api:
     def notify_ui_ready(self):
         self._app.push_auth_snapshot()
         self._app.sync_ui_game_state()
+        self._app.push_performance_snapshot()
         if self._app.is_authenticated() and not self._app.lcu_started:
             threading.Thread(target=self._app.start_lcu_loop, daemon=True).start()
             self._app.lcu_started = True
@@ -307,7 +390,7 @@ class Api:
         return self._app.auth_service.snapshot()
 
     def get_settings_snapshot(self):
-        snap = self._app.settings_store.get_all()
+        snap = self._app.settings_store.get_all(self._app.current_account_key())
         # Safety check: if filters are somehow empty or missing despite defaults
         if not snap.get("category_filters"):
             from core.settings_store import DEFAULT_SETTINGS
@@ -315,75 +398,102 @@ class Api:
         snap["voice_catalog"] = voice_catalog_snapshot()
         return snap
 
+    def get_performance_snapshot(self):
+        history_snapshot = self._app.coach.memory.build_history_snapshot(limit_matches=12)
+        return build_performance_snapshot(history_snapshot, self._app.player_profile)
+
     def login_user(self, email, password):
         res = self._app.auth_service.sign_in(email, password)
+        if res.get("authenticated"):
+            self._app.sync_settings()
         if res.get("authenticated") and not self._app.lcu_started:
             threading.Thread(target=self._app.start_lcu_loop, daemon=True).start()
             self._app.lcu_started = True
+        self._app.push_settings_snapshot()
+        self._app.push_performance_snapshot()
         self._app.push_auth_snapshot()
         return res
     
     def register_user(self, email, password, display_name):
         res = self._app.auth_service.sign_up(email, password, display_name)
+        if res.get("authenticated"):
+            self._app.sync_settings()
+        self._app.push_settings_snapshot()
+        self._app.push_performance_snapshot()
         self._app.push_auth_snapshot()
         return res
 
     def logout_user(self):
         res = self._app.auth_service.sign_out()
+        self._app.sync_settings()
+        self._app.reset_runtime_state()
+        self._app.push_settings_snapshot()
         self._app.push_auth_snapshot()
         return res
 
     # --- Settings Bridge ---
     def set_volume(self, value): 
-        self._app.settings_store.update("volume", value)
+        self._app.settings_store.update("volume", value, self._app.current_account_key())
         self._app.sync_settings()
     def toggle_voice(self, state): 
-        self._app.settings_store.update("voice_enabled", state)
+        self._app.settings_store.update("voice_enabled", state, self._app.current_account_key())
         self._app.sync_settings()
     def toggle_objectives(self, state): 
-        self._app.settings_store.update("objectives_enabled", state)
+        self._app.settings_store.update("objectives_enabled", state, self._app.current_account_key())
         self._app.sync_settings()
     def toggle_hardcore(self, state): 
-        self._app.settings_store.update("hardcore_enabled", state)
+        self._app.settings_store.update("hardcore_enabled", state, self._app.current_account_key())
         self._app.sync_settings()
     def set_voice_preset(self, preset): 
-        self._app.settings_store.update("voice_preset", normalize_voice_preset(preset))
+        self._app.settings_store.update("voice_preset", normalize_voice_preset(preset), self._app.current_account_key())
         self._app.sync_settings()
     def toggle_solo_focus(self, state): 
-        self._app.settings_store.update("solo_focus", state)
+        self._app.settings_store.update("solo_focus", state, self._app.current_account_key())
         self._app.sync_settings()
     def set_macro_interval(self, val): 
-        self._app.settings_store.update("macro_interval", val)
+        self._app.settings_store.update("macro_interval", val, self._app.current_account_key())
         self._app.sync_settings()
     def set_minimap_interval(self, val): 
-        self._app.settings_store.update("minimap_interval", val)
+        self._app.settings_store.update("minimap_interval", val, self._app.current_account_key())
         self._app.sync_settings()
     def set_economy_interval(self, val): 
-        self._app.settings_store.update("economy_interval", val)
+        self._app.settings_store.update("economy_interval", val, self._app.current_account_key())
         self._app.sync_settings()
     def set_item_check_interval(self, val): 
-        self._app.settings_store.update("item_check_interval", val)
+        self._app.settings_store.update("item_check_interval", val, self._app.current_account_key())
         self._app.sync_settings()
     def set_farm_threshold(self, val): 
-        self._app.settings_store.update("farm_threshold", val)
+        self._app.settings_store.update("farm_threshold", val, self._app.current_account_key())
         self._app.sync_settings()
     def set_vision_threshold(self, val): 
-        self._app.settings_store.update("vision_threshold", val)
+        self._app.settings_store.update("vision_threshold", val, self._app.current_account_key())
         self._app.sync_settings()
     def set_voice_personality(self, p): 
-        self._app.settings_store.update("voice_personality", normalize_voice_personality(p))
+        self._app.settings_store.update("voice_personality", normalize_voice_personality(p), self._app.current_account_key())
         self._app.sync_settings()
     def set_preferred_champion_pool(self, pool):
-        self._app.settings_store.update("preferred_champion_pool", pool)
+        self._app.settings_store.update("preferred_champion_pool", pool, self._app.current_account_key())
         self._app.sync_settings()
     def toggle_prioritize_pool_picks(self, state):
-        self._app.settings_store.update("prioritize_pool_picks", state)
+        self._app.settings_store.update("prioritize_pool_picks", state, self._app.current_account_key())
+        self._app.sync_settings()
+    def set_primary_role(self, role):
+        self._app.settings_store.update("primary_role", role, self._app.current_account_key())
+        self._app.sync_settings()
+    def set_player_goal(self, goal):
+        self._app.settings_store.update("player_goal", goal, self._app.current_account_key())
+        self._app.sync_settings()
+    def set_playstyle_profile(self, profile):
+        self._app.settings_store.update("playstyle_profile", profile, self._app.current_account_key())
+        self._app.sync_settings()
+    def set_main_champions(self, champions):
+        self._app.settings_store.update("main_champions", champions, self._app.current_account_key())
         self._app.sync_settings()
     
     def set_category_enabled(self, category, state):
-        filters = self._app.settings_store.get("category_filters", {})
+        filters = self._app.settings_store.get("category_filters", {}, self._app.current_account_key())
         filters[category] = state
-        self._app.settings_store.update("category_filters", filters)
+        self._app.settings_store.update("category_filters", filters, self._app.current_account_key())
         self._app.sync_settings()
     
     def set_category_preset(self, preset):

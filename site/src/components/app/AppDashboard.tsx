@@ -36,10 +36,17 @@ const sidebarVariants: Variants = {
 };
 
 export default function AppDashboard() {
-  const { auth, gameState, logs } = useBridge();
+  const { auth, gameState, logs, settings, summary, performance } = useBridge();
   const [activeTab, setActiveTab] = useState<"dashboard" | "settings">("dashboard");
   const [logsOpen, setLogsOpen] = useState(false);
   const isChampSelect = /sele/i.test(gameState.phase) && /campe/i.test(gameState.phase);
+  const profileSummary = [
+    settings?.primary_role ? `role ${settings.primary_role}` : null,
+    settings?.player_goal ? settings.player_goal.replaceAll("_", " ") : null,
+    settings?.playstyle_profile ? settings.playstyle_profile.replaceAll("_", " ") : null,
+  ]
+    .filter(Boolean)
+    .join(" • ");
 
   const navItems = [
     { id: "dashboard", icon: LayoutDashboard, label: "Painel", desc: "workspace da partida" },
@@ -70,6 +77,70 @@ export default function AppDashboard() {
                 {gameState.summonerName || "Aguardando nome do invocador"}
               </div>
             </div>
+
+            <div className="app-surface rounded-[26px] px-4 py-4">
+              <div className="mb-3 text-[10px] font-mono uppercase tracking-[0.18em] text-white/45">
+                Perfil V1
+              </div>
+              <div className="text-sm font-semibold text-white">
+                {profileSummary || "Perfil ainda nao configurado"}
+              </div>
+              <div className="mt-1 text-[11px] leading-6 text-white/45">
+                {settings?.main_champions?.length
+                  ? `mains: ${settings.main_champions.slice(0, 3).join(", ")}`
+                  : "Define tua role, objetivo e mains para o coach sair do generico."}
+              </div>
+            </div>
+
+            {performance ? (
+              <div className="app-surface rounded-[26px] px-4 py-4">
+                <div className="mb-3 text-[10px] font-mono uppercase tracking-[0.18em] text-white/45">
+                  Evolucao V2
+                </div>
+                <div className="text-sm font-semibold text-white">{performance.record}</div>
+                <div className="mt-1 text-[11px] leading-6 text-white/45">
+                  {Math.round(performance.win_rate * 100)}% WR • {performance.matches_played} partidas
+                </div>
+                <div className="mt-4 space-y-2">
+                  {performance.metrics.slice(0, 3).map((metric) => (
+                    <div key={metric.id} className="rounded-2xl border border-white/8 bg-white/[0.03] px-3 py-3">
+                      <div className="flex items-center justify-between gap-3">
+                        <span className="text-[11px] font-semibold text-white">{metric.label}</span>
+                        <span
+                          className={`text-[10px] font-mono uppercase tracking-[0.14em] ${
+                            metric.status === "ahead"
+                              ? "text-toxic"
+                              : metric.status === "close"
+                                ? "text-amber-300"
+                                : "text-red-300"
+                          }`}
+                        >
+                          {metric.status === "ahead" ? "acima" : metric.status === "close" ? "perto" : "abaixo"}
+                        </span>
+                      </div>
+                      <div className="mt-1 text-[10px] text-white/45">
+                        score {metric.current.toFixed(2)} • alvo {metric.target.toFixed(2)}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            ) : null}
+
+            {summary?.insights?.improvements?.length ? (
+              <div className="app-surface rounded-[26px] px-4 py-4">
+                <div className="mb-3 text-[10px] font-mono uppercase tracking-[0.18em] text-white/45">
+                  3 erros principais
+                </div>
+                <div className="space-y-2">
+                  {summary.insights.improvements.slice(0, 3).map((item) => (
+                    <div key={item} className="rounded-2xl border border-white/8 bg-white/[0.03] px-3 py-3 text-[11px] leading-6 text-white/68">
+                      {item}
+                    </div>
+                  ))}
+                </div>
+              </div>
+            ) : null}
 
             <nav className="space-y-4">
               {navItems.map((item) => (

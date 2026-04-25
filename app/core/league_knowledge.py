@@ -380,6 +380,14 @@ class PickRecommendation:
     power_spikes: tuple[str, ...]
 
 
+@dataclass(slots=True)
+class BanRecommendation:
+    champion: str
+    role: str
+    score: float
+    reasons: tuple[str, ...]
+
+
 class LeagueKnowledgeBase:
     def __init__(
         self,
@@ -706,6 +714,62 @@ class LeagueKnowledgeBase:
                     comp_style=guidance.get("comp_style", comp_style),
                     build_focus=tuple(guidance.get("build_focus", [])[:2]),
                     power_spikes=tuple(guidance.get("power_spikes", [])[:2]),
+                )
+            )
+
+        recommendations.sort(key=lambda item: item.score, reverse=True)
+        return recommendations[: max(1, limit)]
+
+    def recommend_bans(
+        self,
+        enemy_team: list[Any],
+        *,
+        role: str | None = None,
+        current_pick: Any | None = None,
+        preferred_pool: list[str] | None = None,
+        banned: list[Any] | None = None,
+        limit: int = 3,
+    ) -> list[BanRecommendation]:
+        normalized_role = self._normalize_role(role or "")
+        enemy_profiles = [self.get_champion(enemy) for enemy in enemy_team]
+        enemy_profiles = [champ for champ in enemy_profiles if champ]
+        enemy_names = {_normalize_name(champ.name) for champ in enemy_profiles}
+        banned_names = {_normalize_name(name) for name in (banned or [])}
+        current = self.get_champion(current_pick) if current_pick else None
+        current_name = _normalize_name(current.name) if current else ""
+        preferred_profiles = [self.get_champion(champion) for champion in (preferred_pool or [])]
+        preferred_profiles = [champ for champ in preferred_profiles if champ]
+
+        recommendations: list[BanRecommendation] = []
+        for candidate_name in self._draft_candidate_pool(normalized_role):
+            candidate = self.get_champion(candidate_name)
+            if not candidate:
+                continue
+
+            normalized_candidate = _normalize_name(candidate.name)
+            if (
+                normalized_candidate in banned_names
+                or normalized_candidate in enemy_names
+                or normalized_candidate == current_name
+            ):
+                continue
+
+            score, reasons = self._score_ban_candidate(
+                candidate,
+                enemy_profiles,
+                role=normalized_role,
+                current_pick=current,
+                preferred_pool=preferred_profiles,
+            )
+            if not reasons:
+                continue
+
+            recommendations.append(
+                BanRecommendation(
+                    champion=candidate.name,
+                    role=normalized_role or "flex",
+                    score=score,
+                    reasons=tuple(reasons[:3]),
                 )
             )
 
@@ -1393,6 +1457,66 @@ class LeagueKnowledgeBase:
 
         return score, reasons[:3]
 
+    def _score_ban_candidate(
+        self,
+        candidate: ChampionKnowledge,
+        enemy_profiles: list[ChampionKnowledge],
+        *,
+        role: str | None = None,
+        current_pick: ChampionKnowledge | None = None,
+        preferred_pool: list[ChampionKnowledge] | None = None,
+    ) -> tuple[float, list[str]]:
+        score = 35.0
+        reasons: list[str] = []
+        role_key = self._normalize_role(role or "")
+
+        if current_pick:
+            insight = self.get_lane_matchup_insight(current_pick.name, candidate.name, role=role_key) or {}
+            verdict = str(insight.get("verdict", "")).strip().lower()
+            danger = str(insight.get("danger", "")).strip()
+            if verdict in {"perigoso", "delicado", "all-in ou nada"}:
+                score += 10
+                reasons.append(f"te pune direto se vier de {candidate.name}")
+            elif verdict in {"explosivo", "skill"}:
+                score += 5
+                reasons.append(f"pode deixar a lane instavel contra teu {current_pick.name}")
+            if danger:
+                reasons.append(danger)
+
+        pool_hits = 0
+        for pool_champion in preferred_pool or []:
+            insight = self.get_lane_matchup_insight(pool_champion.name, candidate.name, role=role_key) or {}
+            verdict = str(insight.get("verdict", "")).strip().lower()
+            if verdict in {"perigoso", "delicado", "all-in ou nada", "explosivo"}:
+                pool_hits += 1
+        if pool_hits:
+            score += pool_hits * 3
+            reasons.insert(0, f"incomoda {pool_hits} campeoes da tua pool")
+
+        projected_threats = self._threat_counts([*enemy_profiles, candidate])
+        if candidate.name in _HARD_CC_CHAMPS and projected_threats["hard_cc"] >= 3:
+            score += 4
+            reasons.append("fecha uma draft chata de controle")
+        if candidate.archetype == "assassin" and projected_threats["assassin"] >= 2:
+            score += 3
+            reasons.append("empilha burst e pickoff do lado deles")
+        if candidate.archetype in {"tank", "juggernaut"} and projected_threats["tank"] >= 2:
+            score += 3
+            reasons.append("engrossa demais a front line inimiga")
+        if candidate.name in _SUSTAIN_CHAMPS and projected_threats["sustain"] >= 2:
+            score += 2
+            reasons.append("obriga tua comp a responder cura cedo")
+
+        seen = set()
+        unique_reasons = []
+        for reason in reasons:
+            normalized = str(reason or "").strip().lower()
+            if not normalized or normalized in seen:
+                continue
+            seen.add(normalized)
+            unique_reasons.append(reason)
+        return score, unique_reasons[:3]
+
     def _resolve_duo_bonus(self, champion_name: Any, role: str, allies: list[dict[str, Any]]) -> bool:
         if role not in {"bottom", "support"}:
             return False
@@ -1446,4 +1570,4 @@ def _merge_unique(primary: list[str], secondary: list[str]) -> list[str]:
     return merged
 
 
-__all__ = ["ChampionKnowledge", "ItemKnowledge", "LeagueKnowledgeBase"]
+__all__ = ["BanRecommendation", "ChampionKnowledge", "ItemKnowledge", "LeagueKnowledgeBase"]

@@ -701,6 +701,7 @@ class PlayerMemory:
                     "headline": "Sem historico suficiente ainda",
                     "recurring_strengths": [],
                     "recurring_improvements": [],
+                    "avg_scores": {},
                     "recent_memory": [],
                 }
 
@@ -758,6 +759,7 @@ class PlayerMemory:
                 "recurring_strengths": recurring_strengths,
                 "recurring_improvements": recurring_improvements,
                 "adaptive_profile": adaptive_profile,
+                "avg_scores": avg_scores,
                 "recent_memory": recent_memory[:limit_recent],
             }
 

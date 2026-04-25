@@ -6,6 +6,7 @@ import {
   AuthSnapshot,
   DraftRecommendationsSnapshot,
   JungleIntel,
+  PerformanceSnapshot,
   PostGameSummary,
   PythonApi,
   SettingsSnapshot,
@@ -20,6 +21,7 @@ interface BridgeContextType {
     championName: string | null;
   };
   jungleIntel: JungleIntel | null;
+  performance: PerformanceSnapshot | null;
   draftRecommendations: DraftRecommendationsSnapshot | null;
   matchIntel: { name: string; champion: string; rank: string; winrate: string }[];
   summary: PostGameSummary | null;
@@ -41,6 +43,7 @@ export function BridgeProvider({ children }: { children: React.ReactNode }) {
     championName: null as string | null,
   });
   const [jungleIntel, setJungleIntel] = useState<JungleIntel | null>(null);
+  const [performance, setPerformance] = useState<PerformanceSnapshot | null>(null);
   const [draftRecommendations, setDraftRecommendations] = useState<DraftRecommendationsSnapshot | null>(null);
   const [matchIntel, setMatchIntel] = useState<
     { name: string; champion: string; rank: string; winrate: string }[]
@@ -90,6 +93,10 @@ export function BridgeProvider({ children }: { children: React.ReactNode }) {
     window.hydrateSettings = (snapshot) => {
       console.log("[Bridge] hydrateSettings", snapshot);
       setSettings(snapshot);
+    };
+
+    window.updatePerformanceSnapshot = (snapshot) => {
+      setPerformance(snapshot);
     };
 
     window.updateJungleIntel = (payload) => {
@@ -144,6 +151,9 @@ export function BridgeProvider({ children }: { children: React.ReactNode }) {
           console.log("[Bridge] Settings sync complete");
           setSettings(snapshot);
         });
+        window.pywebview.api.get_performance_snapshot().then((snapshot) => {
+          setPerformance(snapshot);
+        });
         window.pywebview.api.notify_ui_ready();
         addLog("Núcleo do Coacher online.", "system");
         addLog("Conexão local estabelecida com o app desktop.", "system");
@@ -181,7 +191,16 @@ export function BridgeProvider({ children }: { children: React.ReactNode }) {
         vision_threshold: "set_vision_threshold",
         voice_preset: "set_voice_preset",
         voice_personality: "set_voice_personality",
+        primary_role: "set_primary_role",
+        player_goal: "set_player_goal",
+        playstyle_profile: "set_playstyle_profile",
       };
+
+      if (key === "main_champions") {
+        api.set_main_champions(value as string[]);
+        api.get_performance_snapshot().then(setPerformance);
+        return;
+      }
 
       if (key === "preferred_champion_pool") {
         api.set_preferred_champion_pool(value as string[]);
@@ -197,6 +216,9 @@ export function BridgeProvider({ children }: { children: React.ReactNode }) {
       if (funcName) {
         const handler = api[funcName] as unknown as ((payload: unknown) => void) | undefined;
         handler?.(value);
+        if (key === "primary_role" || key === "player_goal" || key === "playstyle_profile") {
+          api.get_performance_snapshot().then(setPerformance);
+        }
       }
     }
   }, []);
@@ -223,6 +245,7 @@ export function BridgeProvider({ children }: { children: React.ReactNode }) {
     settings,
     gameState,
     jungleIntel,
+    performance,
     draftRecommendations,
     matchIntel,
     summary,

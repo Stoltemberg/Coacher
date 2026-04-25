@@ -6,6 +6,23 @@ from typing import Any
 from .match_analyzer import expected_cs
 
 
+ROLE_CS_PER_MINUTE = {
+    "top": 6.6,
+    "jungle": 5.3,
+    "mid": 6.8,
+    "bottom": 7.2,
+    "support": 1.2,
+}
+
+ROLE_VISION_PER_MINUTE = {
+    "top": 1.0,
+    "jungle": 1.25,
+    "mid": 1.0,
+    "bottom": 0.9,
+    "support": 1.8,
+}
+
+
 @dataclass(slots=True)
 class EconomySignal:
     metric: str
@@ -50,6 +67,7 @@ def analyze_economy(
     creep_score: int,
     ward_score: float,
     hardcore_enabled: bool,
+    role: str | None = None,
     farm_threshold: float = 0.6,
     vision_threshold: float = 5.0,
 ) -> list[EconomySignal]:
@@ -57,10 +75,12 @@ def analyze_economy(
         return []
 
     minutes = game_time / 60.0
-    expected_cs_value = expected_cs(minutes)
+    role_key = str(role or "").strip().lower()
+    expected_cs_value = expected_cs(minutes, cs_per_minute=ROLE_CS_PER_MINUTE.get(role_key, 6.5))
+    effective_vision_threshold = max(vision_threshold, ROLE_VISION_PER_MINUTE.get(role_key, 1.0) * minutes)
     signals: list[EconomySignal] = []
 
-    if creep_score < (expected_cs_value * farm_threshold):
+    if role_key != "support" and creep_score < (expected_cs_value * farm_threshold):
         signals.append(
             EconomySignal(
                 metric="farm",
@@ -72,7 +92,7 @@ def analyze_economy(
                 expected=round(expected_cs_value, 1),
             )
         )
-    elif creep_score > expected_cs_value:
+    elif role_key != "support" and creep_score > expected_cs_value:
         signals.append(
             EconomySignal(
                 metric="farm",
@@ -85,7 +105,7 @@ def analyze_economy(
             )
         )
 
-    if minutes >= 10 and ward_score < vision_threshold:
+    if minutes >= 10 and ward_score < effective_vision_threshold:
         signals.append(
             EconomySignal(
                 metric="vision",
@@ -94,7 +114,21 @@ def analyze_economy(
                 category="macro",
                 severity="negative",
                 actual=ward_score,
-                target="Comprar controle e preparar entradas antes do rio.",
+                target="Comprar controle e preparar entradas antes do rio."
+                if role_key != "support"
+                else "Suporte precisa liderar visão e setup de objetivo.",
+            )
+        )
+    elif role_key == "support" and minutes >= 10 and ward_score >= (effective_vision_threshold * 1.15):
+        signals.append(
+            EconomySignal(
+                metric="vision",
+                score=0.85,
+                note=f"Visão forte para suporte: {ward_score} de ward score aos {int(minutes)} minutos.",
+                category="macro",
+                severity="positive",
+                actual=ward_score,
+                target="Continua liderando setup de visão e cobertura de objetivo.",
             )
         )
 

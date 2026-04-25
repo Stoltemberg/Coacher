@@ -196,6 +196,25 @@ class CoachBrain:
             "coach_mode": self.coach_mode,
         }
 
+    def _normalize_role_for_economy(self, role):
+        if self.knowledge:
+            return self.knowledge._normalize_role(role or "")
+        token = str(role or "").strip().lower().replace(" ", "_")
+        aliases = {
+            "adc": "bottom",
+            "bot": "bottom",
+            "bottom": "bottom",
+            "utility": "support",
+            "sup": "support",
+            "support": "support",
+            "jg": "jungle",
+            "jungle": "jungle",
+            "mid": "mid",
+            "middle": "mid",
+            "top": "top",
+        }
+        return aliases.get(token, token)
+
     def _determine_coach_mode(self):
         phase = (self.current_phase or "").lower()
         if phase in {"lobby", "champ_select", "champselect"}:
@@ -677,11 +696,13 @@ class CoachBrain:
 
         if self.game_time > 300 and (self.game_time - self.last_farm_eval) > self.settings.economy_interval:
             self.last_farm_eval = self.game_time
+            normalized_role = self._normalize_role_for_economy(self.my_position)
             for signal in self.coach_service.economy_signals(
                 game_time=self.game_time,
                 creep_score=cs,
                 ward_score=wards,
                 hardcore_enabled=self.hardcore_enabled,
+                role=normalized_role,
                 farm_threshold=self.settings.farm_threshold,
                 vision_threshold=self.settings.vision_threshold,
             ):
@@ -691,9 +712,11 @@ class CoachBrain:
                 elif signal.metric == "farm" and signal.severity == "positive":
                     self._announce(self.voice.high_farm(cs, minutes), "positive", category="farm_eval")
                     self._push_memory_entry("Farm consistente", f"{cs} CS aos {int(minutes)} min. Boa conversão de recurso.", "positive")
-                elif signal.metric == "vision":
+                elif signal.metric == "vision" and signal.severity == "negative":
                     self._announce(self.voice.low_vision(wards), "negative", category="vision_eval")
                     self._push_memory_entry("Visão fraca", f"{wards} de visão até agora. O mapa ficou mais cego do que devia.", "negative")
+                elif signal.metric == "vision" and signal.severity == "positive":
+                    self._push_memory_entry("Visão forte", f"{wards} de visão aos {int(minutes)} min. Boa liderança de setup e cobertura.", "positive")
 
                 self.memory.record_evaluation(
                     signal.metric,
@@ -705,12 +728,12 @@ class CoachBrain:
                     expected=signal.expected,
                     target=signal.target,
                     severity=signal.severity,
-                    metadata={"game_time": self.game_time},
+                    metadata={"game_time": self.game_time, "role": normalized_role},
                 )
                 self._process_adaptive_signal(
                     signal.category,
                     signal.severity,
-                    {"game_time": self.game_time, "metric": signal.metric},
+                    {"game_time": self.game_time, "metric": signal.metric, "role": normalized_role},
                 )
 
         self.jungle_tracker.ingest_roster(

@@ -37,6 +37,22 @@ class CounterPickPackage:
     recommendations: list[dict[str, Any]]
 
 
+@dataclass(slots=True)
+class BanRecommendationPackage:
+    role: str
+    enemy_preview: list[str]
+    recommendations: list[dict[str, Any]]
+
+
+@dataclass(slots=True)
+class LockedDraftPlanPackage:
+    champion: str
+    role: str
+    enemy_anchor: str
+    matchup: dict[str, Any]
+    guidance: dict[str, Any]
+
+
 class CoachService:
     def __init__(self, knowledge=None):
         self.knowledge = knowledge
@@ -131,6 +147,43 @@ class CoachService:
             ],
         )
 
+    def recommend_bans(
+        self,
+        enemy_team: list[Any],
+        *,
+        role: str | None = None,
+        current_pick: Any | None = None,
+        preferred_pool: list[str] | None = None,
+        banned: list[Any] | None = None,
+        limit: int = 3,
+    ) -> Optional[BanRecommendationPackage]:
+        if not self.knowledge:
+            return None
+
+        recommendations = self.knowledge.recommend_bans(
+            enemy_team,
+            role=role,
+            current_pick=current_pick,
+            preferred_pool=preferred_pool,
+            banned=banned,
+            limit=limit,
+        )
+        if not recommendations:
+            return None
+
+        return BanRecommendationPackage(
+            role=self.knowledge._normalize_role(role or "") or "flex",
+            enemy_preview=[self.knowledge.get_champion_name(enemy) for enemy in enemy_team],
+            recommendations=[
+                {
+                    "champion": item.champion,
+                    "score": item.score,
+                    "reasons": list(item.reasons),
+                }
+                for item in recommendations
+            ],
+        )
+
     def build_lane_matchup_package(
         self,
         my_champion: Any,
@@ -142,6 +195,41 @@ class CoachService:
             return None
         return self.knowledge.get_lane_matchup_insight(my_champion, enemy_champion, role=role)
 
+    def build_locked_draft_plan(
+        self,
+        my_champion: Any,
+        enemy_team: list[Any],
+        *,
+        role: str | None = None,
+        enemy_anchor: Any | None = None,
+        allies: list[dict[str, Any]] | None = None,
+    ) -> Optional[LockedDraftPlanPackage]:
+        if not self.knowledge:
+            return None
+
+        guidance = self.knowledge.get_draft_guidance(my_champion, enemy_team, role=role)
+        if not guidance:
+            return None
+
+        anchor = enemy_anchor
+        if not anchor:
+            enemy_names = [self.knowledge.get_champion_name(enemy) for enemy in enemy_team]
+            anchor = enemy_names[0] if enemy_names else None
+        if not anchor:
+            return None
+
+        matchup = self.knowledge.get_lane_matchup_insight(my_champion, anchor, role=role)
+        if not matchup:
+            return None
+
+        return LockedDraftPlanPackage(
+            champion=guidance.get("champion", ""),
+            role=self.knowledge._normalize_role(role or "") or "flex",
+            enemy_anchor=matchup.get("enemy_champion", str(anchor)),
+            matchup=matchup,
+            guidance=guidance,
+        )
+
     def economy_signals(
         self,
         *,
@@ -149,6 +237,7 @@ class CoachService:
         creep_score: int,
         ward_score: float,
         hardcore_enabled: bool,
+        role: str | None = None,
         farm_threshold: float = 0.6,
         vision_threshold: float = 5.0,
     ) -> list[EconomySignal]:
@@ -157,6 +246,7 @@ class CoachService:
             creep_score=creep_score,
             ward_score=ward_score,
             hardcore_enabled=hardcore_enabled,
+            role=role,
             farm_threshold=farm_threshold,
             vision_threshold=vision_threshold,
         )

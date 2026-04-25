@@ -594,8 +594,46 @@ class MinervaVoice:
         lead_reason = "; ".join((top.get("reasons") or [])[:2])
         role_text = f" pra {role_label}" if role_label and role_label != "flex" else ""
         return self._pick(
-            f"Contra essa comp, minhas melhores respostas{role_text} sao {names}. Se quiser a linha mais limpa, abre de {top.get('champion')} por {lead_reason}.",
-            f"Leitura de counter{role_text}: {names}. O pick que mais conversa com o draft deles agora e {top.get('champion')} por {lead_reason}.",
+            f"Contra essa comp, minhas melhores respostas{role_text} sao {names}. Meu melhor pick agora e {top.get('champion')} por {lead_reason}.",
+            f"Leitura de counter{role_text}: {names}. Se tu quer a linha mais limpa, o melhor pick agora e {top.get('champion')} por {lead_reason}.",
+        )
+
+    def draft_best_pick(self, role_label, recommendation):
+        pick = recommendation or {}
+        champion_name = pick.get("champion", "")
+        reasons = "; ".join((pick.get("reasons") or [])[:2])
+        build_focus = "; ".join((pick.get("build_focus") or [])[:2])
+        role_text = f" pra {role_label}" if role_label and role_label != "flex" else ""
+        build_text = f" E ja entra pensando em {build_focus}." if build_focus else ""
+        return self._pick(
+            f"Se tu quer a melhor resposta{role_text}, vai de {champion_name}. Motivo: {reasons}.{build_text}",
+            f"Meu melhor pick{role_text} agora e {champion_name}. Isso te da {reasons}.{build_text}",
+        )
+
+    def draft_best_ban(self, role_label, recommendation, current_pick=None):
+        ban = recommendation or {}
+        champion_name = ban.get("champion", "")
+        reasons = "; ".join((ban.get("reasons") or [])[:2])
+        role_text = f" pra {role_label}" if role_label and role_label != "flex" else ""
+        current_text = f" contra teu {current_pick}" if current_pick else ""
+        return self._pick(
+            f"Se ainda der tempo de banir{role_text}, meu corte mais limpo{current_text} e {champion_name}. Motivo: {reasons}.",
+            f"Ban que mais limpa essa draft{role_text}{current_text}: {champion_name}. Tira isso da mesa porque {reasons}.",
+        )
+
+    def draft_locked_matchup_plan(self, champion_name, enemy_anchor, matchup, guidance):
+        verdict = matchup.get("verdict", "skill")
+        plan = matchup.get("plan", "")
+        danger = matchup.get("danger", "")
+        first_reset = guidance.get("first_reset_focus") or matchup.get("first_reset_focus", "")
+        opening = guidance.get("opening_plan", "")
+        build_focus = "; ".join((guidance.get("build_focus") or [])[:2])
+        reset_text = f" Primeiro reset em {first_reset}." if first_reset else ""
+        opening_text = f" Abre o jogo por {opening}." if opening else ""
+        build_text = f" Builda em {build_focus}." if build_focus else ""
+        return self._pick(
+            f"Travou {champion_name}. Contra {enemy_anchor}, esse matchup ta {verdict}. Faz isto: {plan}. Nao cai em {danger}.{reset_text}",
+            f"{champion_name} confirmado. Plano contra {enemy_anchor}: {plan}. O perigo real e {danger}.{opening_text}{build_text}",
         )
 
     def opening_plan(self, champion_name, opening_plan):

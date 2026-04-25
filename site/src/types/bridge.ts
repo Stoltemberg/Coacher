@@ -35,6 +35,10 @@ export interface SettingsSnapshot {
   item_check_interval: number;
   farm_threshold: number;
   vision_threshold: number;
+  primary_role: string;
+  player_goal: string;
+  playstyle_profile: string;
+  main_champions: string[];
   preferred_champion_pool: string[];
   prioritize_pool_picks: boolean;
   voice_catalog?: {
@@ -105,6 +109,7 @@ export interface JungleIntel {
 }
 
 export interface DraftRecommendationsSnapshot {
+  stage?: "pick" | "locked";
   role: string;
   enemy_preview: string[];
   recommendations: Array<{
@@ -115,6 +120,45 @@ export interface DraftRecommendationsSnapshot {
     build_focus: string[];
     power_spikes: string[];
   }>;
+  best_ban?: {
+    champion: string;
+    score: number;
+    reasons: string[];
+  } | null;
+  ban_recommendations?: Array<{
+    champion: string;
+    score: number;
+    reasons: string[];
+  }>;
+  locked_plan?: {
+    champion: string;
+    enemy_anchor: string;
+    verdict: string;
+    plan: string;
+    danger: string;
+    opening_plan: string;
+    first_reset_focus: string;
+    build_focus: string[];
+  } | null;
+}
+
+export interface PerformanceSnapshot {
+  headline: string;
+  matches_played: number;
+  record: string;
+  win_rate: number;
+  role: string;
+  goal: string;
+  metrics: Array<{
+    id: string;
+    label: string;
+    current: number;
+    target: number;
+    delta: number;
+    status: "ahead" | "close" | "behind";
+  }>;
+  strongest_areas: string[];
+  focus_areas: string[];
 }
 
 export interface PostGameSummary {
@@ -160,12 +204,17 @@ export interface PythonApi {
   set_farm_threshold: (value: number) => void;
   set_vision_threshold: (value: number) => void;
   set_voice_personality: (personality: string) => void;
+  set_primary_role: (role: string) => void;
+  set_player_goal: (goal: string) => void;
+  set_playstyle_profile: (profile: string) => void;
+  set_main_champions: (champions: string[]) => void;
   set_preferred_champion_pool: (pool: string[]) => void;
   toggle_prioritize_pool_picks: (state: boolean) => void;
   set_category_enabled: (category: string, state: boolean) => void;
   set_category_preset: (preset: string) => void;
   get_auth_snapshot: () => Promise<AuthSnapshot>;
   get_settings_snapshot: () => Promise<SettingsSnapshot>;
+  get_performance_snapshot: () => Promise<PerformanceSnapshot>;
   notify_ui_ready: () => void;
 }
 
@@ -177,6 +226,7 @@ declare global {
     hydrateAuthState: (snapshot: AuthSnapshot) => void;
     updateGameState: (phase: string, summonerName?: string | null, championName?: string | null) => void;
     hydrateSettings: (snapshot: SettingsSnapshot) => void;
+    updatePerformanceSnapshot: (snapshot: PerformanceSnapshot) => void;
     updateJungleIntel: (payload: JungleIntel) => void;
     updateDraftRecommendations: (payload: DraftRecommendationsSnapshot | null) => void;
     updatePostGameSummary: (summary: PostGameSummary) => void;

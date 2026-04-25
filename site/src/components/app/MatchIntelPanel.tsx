@@ -37,6 +37,8 @@ export default function MatchIntelPanel({ tacticalMode = false }: MatchIntelPane
     return right.score - left.score;
   });
   const visiblePicks = tacticalMode ? recommendedPicks.slice(0, 4) : recommendedPicks.slice(0, 3);
+  const bestBan = draftRecommendations?.best_ban;
+  const lockedPlan = draftRecommendations?.locked_plan;
 
   if ((!matchIntel || matchIntel.length === 0) && !hasRecommendations) {
     return (
@@ -147,6 +149,75 @@ export default function MatchIntelPanel({ tacticalMode = false }: MatchIntelPane
                   )}
                 </div>
               ))}
+            </div>
+          </div>
+        ) : null}
+
+        {tacticalMode && bestBan ? (
+          <div className="rounded-2xl border border-amber-400/20 bg-amber-400/10 p-4">
+            <div className="mb-2 flex items-center gap-2">
+              <ShieldCheck className="h-4 w-4 text-amber-300" />
+              <span className="text-[10px] font-black uppercase tracking-[0.18em] text-white/75">
+                melhor ban agora
+              </span>
+            </div>
+            <div className="flex items-center justify-between gap-3">
+              <div>
+                <div className="text-sm font-semibold text-white">{bestBan.champion}</div>
+                <div className="mt-1 text-[10px] text-white/48">{(bestBan.reasons || []).slice(0, 2).join(" | ")}</div>
+              </div>
+              <div className="rounded-full border border-white/10 bg-white/[0.05] px-2.5 py-1 text-[9px] font-mono uppercase tracking-[0.14em] text-amber-200">
+                {Math.round(bestBan.score)}
+              </div>
+            </div>
+          </div>
+        ) : null}
+
+        {tacticalMode && lockedPlan ? (
+          <div className="rounded-2xl border border-white/10 bg-white/[0.05] p-4">
+            <div className="mb-2 flex items-center gap-2">
+              <Sparkles className="h-4 w-4 text-toxic" />
+              <span className="text-[10px] font-black uppercase tracking-[0.18em] text-white/75">
+                plano depois do lock
+              </span>
+            </div>
+            <div className="space-y-3">
+              <div>
+                <div className="text-sm font-semibold text-white">
+                  {lockedPlan.champion} vs {lockedPlan.enemy_anchor}
+                </div>
+                <div className="mt-1 text-[10px] uppercase tracking-[0.14em] text-toxic/80">
+                  matchup {lockedPlan.verdict}
+                </div>
+              </div>
+              <div className="text-[11px] leading-6 text-white/72">
+                {lockedPlan.plan}
+              </div>
+              <div className="text-[10px] text-white/45">
+                cuidado: {lockedPlan.danger}
+              </div>
+              <div className="grid gap-2 lg:grid-cols-2">
+                <div className="rounded-2xl border border-white/8 bg-black/20 px-3 py-3">
+                  <div className="text-[9px] uppercase tracking-[0.12em] text-white/35">opening</div>
+                  <div className="mt-1 text-[10px] text-white/68">{lockedPlan.opening_plan}</div>
+                </div>
+                <div className="rounded-2xl border border-white/8 bg-black/20 px-3 py-3">
+                  <div className="text-[9px] uppercase tracking-[0.12em] text-white/35">primeiro reset</div>
+                  <div className="mt-1 text-[10px] text-white/68">{lockedPlan.first_reset_focus}</div>
+                </div>
+              </div>
+              {lockedPlan.build_focus?.length ? (
+                <div className="flex flex-wrap gap-2">
+                  {lockedPlan.build_focus.map((focus) => (
+                    <span
+                      key={focus}
+                      className="rounded-full border border-white/10 bg-white/[0.04] px-2.5 py-1 text-[9px] uppercase tracking-[0.12em] text-white/55"
+                    >
+                      {focus}
+                    </span>
+                  ))}
+                </div>
+              ) : null}
             </div>
           </div>
         ) : null}

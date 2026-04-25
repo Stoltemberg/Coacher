@@ -22,6 +22,9 @@ export const metadata: Metadata = {
   },
   description: "Evolua no League of Legends. Treine com um coach que lê draft, matchup e macro em tempo real.",
   keywords: ["Coach LoL", "League of Legends Coach", "Análise de partida LoL", "Subir de elo no LoL", "Coach IA"],
+  verification: {
+    google: "-VKbAP2NTN8EiKybVj3xM7B1EGgUdxXz4FYcNA5pSXo"
+  },
   openGraph: {
     title: "Coacher - O Melhor Coach de LoL com IA",
     description: "Evolua no League of Legends. Treine com um coach que lê draft, matchup e macro em tempo real.",
