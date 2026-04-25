@@ -3,10 +3,12 @@
 import { motion } from "framer-motion";
 import Image from "next/image";
 
-import KineticHero from "@/components/animations/KineticHero";
-import BentoFeatures from "@/components/sections/BentoFeatures";
-import CoreSection from "@/components/sections/CoreSection";
-import PersonalityDemo from "@/components/sections/PersonalityDemo";
+import dynamic from "next/dynamic";
+
+const KineticHero = dynamic(() => import("@/components/animations/KineticHero"));
+const BentoFeatures = dynamic(() => import("@/components/sections/BentoFeatures"));
+const CoreSection = dynamic(() => import("@/components/sections/CoreSection"));
+const PersonalityDemo = dynamic(() => import("@/components/sections/PersonalityDemo"));
 
 const sectionTransition = {
   duration: 0.9,
