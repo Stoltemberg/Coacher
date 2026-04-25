@@ -66,7 +66,7 @@ export default function Home() {
             transition={{ duration: 1.05, ease: [0.16, 1, 0.3, 1] }}
           >
             <Image
-              src="/gameplay_overlay.png"
+              src="/gameplay_overlay.webp"
               alt="Demonstração do overlay de gameplay"
               fill
               sizes="(max-width: 1280px) 100vw, 1200px"
