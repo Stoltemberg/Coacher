@@ -29,6 +29,17 @@ class CoachBrain:
         self.coaching_active = False
         self.current_phase = "lobby"
         self.current_champion_name = None
+        self.active_player_level = 0
+        self.active_player_gold = 0.0
+        self.active_player_health_ratio = 1.0
+        self.active_player_resource_ratio = 1.0
+        self.active_player_abilities = {}
+        self.active_player_runes = {}
+        self.active_keystone = ""
+        self.active_rune_style = ""
+        self.active_secondary_style = ""
+        self.last_primary_spell_key = ""
+        self.last_primary_spell_rank = 0
         self.summary_callback = None
         self.memory_callback = None
         self.match_started = False
@@ -94,12 +105,26 @@ class CoachBrain:
         
         self.game_time = 0.0
         self.current_assists = -1
+        self.active_player_level = 0
+        self.active_player_gold = 0.0
+        self.active_player_health_ratio = 1.0
+        self.active_player_resource_ratio = 1.0
+        self.active_player_abilities = {}
+        self.active_player_runes = {}
+        self.active_keystone = ""
+        self.active_rune_style = ""
+        self.active_secondary_style = ""
+        self.last_primary_spell_key = ""
+        self.last_primary_spell_rank = 0
         self.last_farm_eval = 0
         self.lane_matchup_announced = False
         self.detailed_matchup_announced = False
         self.early_build_plan_announced = False
         self.opening_plan_announced = False
         self.mid_game_job_announced = False
+        self.runes_announced = False
+        self.last_ultimate_rank = 0
+        self.last_gold_window_bucket = 0
         self.my_position = ""
         
         self.ally_drags = 0
@@ -487,13 +512,329 @@ class CoachBrain:
                 self._announce(self.voice.minimap_reminder(), category="minimap")
 
     def update_active_player(self, data):
+        self._ingest_active_player_payload(data)
+
+    def update_active_player_abilities(self, data):
+        if not isinstance(data, dict):
+            return
+
+        snapshot = {}
+        for slot in ("Q", "W", "E", "R"):
+            payload = data.get(slot) or {}
+            snapshot[slot] = {
+                "name": payload.get("displayName") or payload.get("rawDisplayName") or slot,
+                "level": int(payload.get("abilityLevel") or 0),
+            }
+
+        previous_rank = self.last_ultimate_rank
+        current_rank = snapshot.get("R", {}).get("level", 0)
+        self.active_player_abilities = snapshot
+        self.last_ultimate_rank = current_rank
+        self._maybe_announce_primary_spell_spike(snapshot)
+
+        if (
+            self.coaching_active
+            and self.current_champion_name
+            and current_rank > previous_rank
+            and current_rank > 0
+        ):
+            ultimate_name = snapshot.get("R", {}).get("name", "ultimate")
+            if self._is_low_combat_state():
+                call_text = self.voice.constrained_ultimate_spike_call(
+                    self.current_champion_name,
+                    ultimate_name,
+                    current_rank,
+                    health_ratio=self.active_player_health_ratio,
+                    resource_ratio=self.active_player_resource_ratio,
+                )
+            else:
+                call_text = self.voice.ultimate_spike_call(
+                    self.current_champion_name,
+                    ultimate_name,
+                    current_rank,
+                )
+            self._announce(
+                call_text,
+                "positive",
+                category="power_spike",
+            )
+
+    def _maybe_announce_primary_spell_spike(self, snapshot):
+        if not (self.coaching_active and self.current_champion_name):
+            return
+
+        best_key = ""
+        best_level = 0
+        best_name = ""
+        priority = {"Q": 3, "E": 2, "W": 1}
+
+        for slot in ("Q", "W", "E"):
+            payload = snapshot.get(slot) or {}
+            level = int(payload.get("level") or 0)
+            if level <= 0:
+                continue
+            if (
+                level > best_level
+                or (level == best_level and priority.get(slot, 0) > priority.get(best_key, 0))
+            ):
+                best_key = slot
+                best_level = level
+                best_name = payload.get("name") or slot
+
+        if best_level not in {3, 5}:
+            return
+
+        if best_key == self.last_primary_spell_key and best_level <= self.last_primary_spell_rank:
+            return
+
+        self.last_primary_spell_key = best_key
+        self.last_primary_spell_rank = best_level
+        if self._is_low_combat_state():
+            call_text = self.voice.constrained_primary_spell_spike_call(
+                self.current_champion_name,
+                best_name,
+                best_level,
+                role=self.my_position,
+                health_ratio=self.active_player_health_ratio,
+                resource_ratio=self.active_player_resource_ratio,
+            )
+        else:
+            call_text = self.voice.primary_spell_spike_call(
+                self.current_champion_name,
+                best_name,
+                best_level,
+                role=self.my_position,
+            )
+        self._announce(
+            call_text,
+            "neutral",
+            category="power_spike",
+        )
+
+    def _is_low_combat_state(self):
+        return self.active_player_health_ratio <= 0.42 or self.active_player_resource_ratio <= 0.24
+
+    def update_active_player_runes(self, data):
+        if not isinstance(data, dict):
+            return
+
+        keystone = self._extract_named_value(data.get("keystone"))
+        primary_style = self._extract_named_value(
+            data.get("primaryRuneTree") or data.get("primaryRuneStyle")
+        )
+        secondary_style = self._extract_named_value(
+            data.get("secondaryRuneTree") or data.get("secondaryRuneStyle")
+        )
+
+        if not any([keystone, primary_style, secondary_style]):
+            return
+
+        current_key = (keystone, primary_style, secondary_style)
+        previous_key = (self.active_keystone, self.active_rune_style, self.active_secondary_style)
+
+        self.active_keystone = keystone
+        self.active_rune_style = primary_style
+        self.active_secondary_style = secondary_style
+        self.active_player_runes = {
+            "keystone": keystone,
+            "primary_style": primary_style,
+            "secondary_style": secondary_style,
+        }
+
+        if (
+            self.coaching_active
+            and not self.runes_announced
+            and current_key != previous_key
+            and self.current_champion_name
+            and self.game_time <= 240
+        ):
+            self._announce(
+                self.voice.rune_identity_call(
+                    self.current_champion_name,
+                    keystone,
+                    primary_style,
+                    secondary_style,
+                    role=self.my_position,
+                ),
+                "neutral",
+                category="opening_plan",
+            )
+            self.runes_announced = True
+
+    def update_all_game_data(self, data):
+        if not isinstance(data, dict):
+            return
+
+        active_player = data.get("activePlayer") or {}
+        if isinstance(active_player, dict):
+            self._ingest_active_player_payload(active_player)
+
+        game_data = data.get("gameData") or {}
+        if isinstance(game_data, dict):
+            self.update_game_stats(game_data)
+
+    def update_player_summoner_spells(self, data):
+        if not isinstance(data, dict):
+            return
+        self.jungle_tracker.ingest_summoner_spells(
+            data,
+            self.our_team,
+            self.player_to_team,
+            self.player_to_champ,
+        )
+        self._sync_state()
+
+    def _ingest_active_player_payload(self, data):
+        if not isinstance(data, dict):
+            return
+
         if "summonerName" in data and not self.active_player_name:
             raw_name = data["summonerName"]
             self.active_player_name = raw_name.split('#')[0].strip()
             self.memory.player_name = self.active_player_name
             self.memory.current_match.player_name = self.active_player_name
             self._announce(self.voice.player_identified(), category="identity")
-            self._sync_state()
+
+        previous_gold = self.active_player_gold
+        current_gold = float(data.get("currentGold") or 0.0)
+        self.active_player_gold = current_gold
+        self.active_player_level = int(data.get("level") or self.active_player_level or 0)
+        self.active_player_health_ratio = self._extract_ratio(
+            data,
+            numerator_keys=("currentHealth", "health"),
+            denominator_keys=("maxHealth",),
+            nested_key="championStats",
+            nested_numerator_keys=("currentHealth", "health"),
+            nested_denominator_keys=("maxHealth",),
+            default=self.active_player_health_ratio,
+        )
+        self.active_player_resource_ratio = self._extract_ratio(
+            data,
+            numerator_keys=("resourceValue", "currentMana", "mana", "currentEnergy", "energy"),
+            denominator_keys=("resourceMax", "maxMana", "maxEnergy"),
+            nested_key="championStats",
+            nested_numerator_keys=("resourceValue", "currentMana", "mana", "currentEnergy", "energy"),
+            nested_denominator_keys=("resourceMax", "maxMana", "maxEnergy"),
+            default=self.active_player_resource_ratio,
+        )
+
+        if self.coaching_active and self.current_champion_name:
+            self._maybe_announce_gold_reset_window(previous_gold, current_gold)
+
+        self._sync_state()
+
+    def _extract_named_value(self, payload):
+        if isinstance(payload, dict):
+            return (
+                payload.get("displayName")
+                or payload.get("rawDisplayName")
+                or payload.get("name")
+                or ""
+            )
+        if isinstance(payload, str):
+            return payload
+        return ""
+
+    def _extract_ratio(
+        self,
+        payload,
+        *,
+        numerator_keys,
+        denominator_keys,
+        nested_key=None,
+        nested_numerator_keys=(),
+        nested_denominator_keys=(),
+        default=1.0,
+    ):
+        if not isinstance(payload, dict):
+            return default
+
+        numerator = self._extract_numeric(payload, numerator_keys)
+        denominator = self._extract_numeric(payload, denominator_keys)
+
+        if (numerator is None or denominator in {None, 0}) and nested_key:
+            nested_payload = payload.get(nested_key) or {}
+            if isinstance(nested_payload, dict):
+                numerator = self._extract_numeric(nested_payload, nested_numerator_keys or numerator_keys)
+                denominator = self._extract_numeric(nested_payload, nested_denominator_keys or denominator_keys)
+
+        if numerator is None or denominator in {None, 0}:
+            return default
+
+        return max(0.0, min(1.0, float(numerator) / float(denominator)))
+
+    def _extract_numeric(self, payload, keys):
+        for key in keys:
+            if key in payload and payload.get(key) is not None:
+                try:
+                    return float(payload.get(key))
+                except (TypeError, ValueError):
+                    continue
+        return None
+
+    def _gold_window_bucket(self, gold_value):
+        role = self._normalize_role_for_economy(self.my_position)
+        thresholds = [1600, 1300, 1100, 900, 700]
+        if role == "support":
+            thresholds = [1300, 1100, 900, 700, 500]
+        elif role == "jungle":
+            thresholds = [1500, 1200, 1000, 800, 650]
+
+        for threshold in thresholds:
+            if gold_value >= threshold:
+                return threshold
+        return 0
+
+    def _maybe_announce_gold_reset_window(self, previous_gold, current_gold):
+        if self.game_time < 180:
+            return
+
+        previous_bucket = self._gold_window_bucket(previous_gold)
+        current_bucket = self._gold_window_bucket(current_gold)
+
+        if current_bucket == 0:
+            self.last_gold_window_bucket = 0
+            return
+
+        if current_bucket <= self.last_gold_window_bucket or current_bucket <= previous_bucket:
+            return
+
+        build_focus = []
+        if self.knowledge and self.current_champion_name and self.player_to_team:
+            live_package = self.coach_service.build_live_package(
+                self.current_champion_name,
+                self.player_to_team,
+                self.player_to_champ,
+                our_team=self.our_team,
+                role=self.my_position,
+            )
+            if live_package:
+                build_focus = live_package.build_focus
+
+        low_state = self.active_player_health_ratio <= 0.42 or self.active_player_resource_ratio <= 0.24
+        if low_state:
+            call_text = self.voice.forced_reset_window(
+                self.current_champion_name,
+                current_gold,
+                health_ratio=self.active_player_health_ratio,
+                resource_ratio=self.active_player_resource_ratio,
+                build_focus=build_focus,
+                role=self.my_position,
+            )
+        else:
+            call_text = self.voice.gold_reset_window(
+                self.current_champion_name,
+                current_gold,
+                build_focus=build_focus,
+                role=self.my_position,
+            )
+
+        self._announce(
+            call_text,
+            "neutral",
+            category="build_plan",
+        )
+        self.last_gold_window_bucket = current_bucket
 
     def _get_counter_item_suggestion(self, need_type):
         """Sugere um item especifico baseado no campeao do jogador e na necessidade."""
@@ -560,6 +901,28 @@ class CoachBrain:
         self.memory.current_match.player_name = self.active_player_name
         self.memory.current_match.champion_name = self.current_champion_name
         self.memory.current_match.role = self.my_position
+
+        if (
+            self.coaching_active
+            and not self.runes_announced
+            and self.active_keystone
+            and self.game_time <= 240
+        ):
+            self._announce(
+                self.voice.rune_identity_call(
+                    self.current_champion_name,
+                    self.active_keystone,
+                    self.active_rune_style,
+                    self.active_secondary_style,
+                    role=self.my_position,
+                ),
+                "neutral",
+                category="opening_plan",
+            )
+            self.runes_announced = True
+
+        if self.coaching_active and self.active_player_gold and self.last_gold_window_bucket == 0:
+            self._maybe_announce_gold_reset_window(0.0, self.active_player_gold)
 
         scores = active_player.get("scores", {})
         assists = scores.get("assists", 0)

@@ -25,6 +25,45 @@
               "plan": "joga no limite da wave, usa alcance da Q para bater curto e nao entrega furia gratis pro Renekton",
               "danger": "nivel 3 a 6 com dash duplo e troca curta colada",
               "spike_race": "se tu segurar o early, teu sustain e tua teamfight crescem melhor no primeiro item"
+            },
+            "camille": {
+              "verdict": "skill de spacing",
+              "plan": "quebra o ritmo da entrada dela com borda de Q e nao entrega parede limpa para engage curta virar all-in longo",
+              "danger": "gancho na parede com tua primeira Q torta ou wave ruim",
+              "spike_race": "ela cresce no pickoff e na side limpa; tu cresces quando a luta alonga e o sustain fica jogavel",
+              "lane_windows": [
+                "niveis 1-3: usa alcance e wave para bater antes da parede virar amea?a real",
+                "nivel 6: tua ult fica boa se a luta come?ar no teu espa?o, n?o no dela",
+                "primeiro item: teu spike precisa impedir que ela dite a side sozinha"
+              ],
+              "recommended_setup": "setup de consistencia e luta longa costuma render mais que greed de burst seco contra side lane explosiva",
+              "first_item_plan": "o primeiro item precisa manter teu sustain e tua resposta a engage curta sem perder press?o de wave"
+            },
+            "ornn": {
+              "verdict": "favoravel se tu cobrares cedo",
+              "plan": "usa borda de Q e sustain para empurrar o Ornn para trades desconfort?veis antes da lane virar s? front-to-back",
+              "danger": "bater sem crit?rio em cima da wave e tomar contra-engage limpa",
+              "spike_race": "tu cobras mais cedo na lane; ele cresce muito quando estabiliza o primeiro item e a partida frontaliza",
+              "lane_windows": [
+                "niveis 1-3: castiga o espa?o e n?o deixa a lane ficar totalmente neutra",
+                "nivel 6: respeita a resposta dele quando tua wave estiver torta",
+                "primeiro item: teu spike precisa manter o top pressionado antes da primeira grande fight"
+              ],
+              "recommended_setup": "setup de press?o de lane e luta longa vale mais que greed de burst sem continuidade contra tanque escal?vel",
+              "first_item_plan": "o primeiro item precisa sustentar tua press?o e impedir que a rota vire descanso para o Ornn"
+            },
+            "fiora": {
+              "verdict": "skill de spacing e disciplina",
+              "plan": "usa a borda da Q para cobrar espa?o sem entregar troca elegante demais para a Fiora, e n?o alonga luta quando a vital est? boa para ela",
+              "danger": "riposta boa em skill telegr?fica com wave ruim e sustain ainda n?o estabilizado",
+              "spike_race": "tu cresces bem na luta longa e no sustain; ela cresce melhor quando o duelo fica limpo e a side abre cedo",
+              "lane_windows": [
+                "niveis 1-3: bate antes na wave e evita dar janela perfeita de riposta",
+                "nivel 6: tua ult vale muito se a luta come?ar no teu espa?o, n?o no dela",
+                "primeiro item: teu spike precisa manter a side disput?vel antes do split dela ficar confort?vel"
+              ],
+              "recommended_setup": "setup de consist?ncia e luta longa vale mais que greed de burst seco contra duelista de side",
+              "first_item_plan": "o primeiro item precisa sustentar tua press?o de lane e te manter vivo na side contra o primeiro timing forte dela"
             }
           }
         }
@@ -54,13 +93,40 @@
               "verdict": "skill explosivo",
               "plan": "abusa alcance no early, segura o charme para negar a entrada dele e chama jungle quando a wave voltar pro teu lado",
               "danger": "nivel 6 sem flash ou sem spell defensiva",
-              "spike_race": "teu mapa abre no nivel 6; o dele tambem, entao quem gastar cooldown torto primeiro sangra"
+              "spike_race": "teu mapa abre no nivel 6; o dele tambem, entao quem gastar cooldown torto primeiro sangra",
+              "lane_windows": [
+                "niveis 1-3: bate primeiro na wave e nao entrega sombra com a lane no meio",
+                "nivel 6: segura charme ou recurso defensivo para a ult dele, nao para poke bobo",
+                "primeiro item: libera push e lateral para punir o momento em que o Zed some do mid"
+              ],
+              "recommended_setup": "setup defensivo e janela de sobrevivencia valem mais que greed de lane quando o Zed fecha nivel 6",
+              "first_item_plan": "teu primeiro item precisa garantir wave, burst e uma resposta segura ao all-in"
             },
             "syndra": {
               "verdict": "pressionavel com paciencia",
               "plan": "desvia do stun, limpa wave sem tomar poke dobrado e joga a lane para reset e roam, nao para duelo eterno no mid",
               "danger": "stun conectado com wave parada no meio",
-              "spike_race": "Syndra domina range cedo; tu cresce muito quando o ult te libera para pickoff lateral"
+              "spike_race": "Syndra domina range cedo; tu cresce muito quando o ult te libera para pickoff lateral",
+              "lane_windows": [
+                "niveis 1-3: evita stun reto na wave e troca so quando ela gastar esfera torta",
+                "nivel 6: tua lane abre quando tu consegues limpar e sumir primeiro",
+                "primeiro item: transforma push em roam antes dela estabilizar o mid"
+              ],
+              "recommended_setup": "setup de lane e recurso costuma valer mais que greed de dano seco contra range pesado",
+              "first_item_plan": "o primeiro item tem que te dar wave e presenca de mapa, nao so duelo frontal"
+            },
+            "viktor": {
+              "verdict": "skill de push e mapa",
+              "plan": "não fica parada trocando spell na wave; empurra no timing certo e transforma o reset em lateral antes do Viktor estabilizar a zona",
+              "danger": "perder vida demais no poke e deixar o mid travar no range dele",
+              "spike_race": "o Viktor cresce na lane controlada; tu cresces quando a partida abre pickoff e mapa",
+              "lane_windows": [
+                "niveis 1-3: joga pela wave sem tomar poke dobrado",
+                "nivel 6: tua janela boa é punir o reset ruim e sair primeiro do mid",
+                "primeiro item: usa push e burst para obrigar resposta lateral"
+              ],
+              "recommended_setup": "setup de lane e presença de mapa vale mais que greed de duelo prolongado contra zoneamento",
+              "first_item_plan": "o primeiro item precisa liberar wave e roam antes do Viktor controlar o mid inteiro"
             }
           }
         }
@@ -91,6 +157,58 @@
               "plan": "usa a tropa para negar ancora, pressiona cedo e nao anda no corredor sem trap pronta",
               "danger": "hook sem minion na frente e all-in com jungle junto",
               "spike_race": "teu controle de lane vem antes; se ele achar engage limpa, a rota desanda rapido"
+            },
+            "leona": {
+              "verdict": "forte se tu respeitares o nivel 2",
+              "plan": "abusa alcance e wave grande, mas não pisa no corredor sem minion e trap pronta quando a Leona quiser encurtar a lane",
+              "danger": "nivel 2 perdido ou flash engage sem resposta",
+              "spike_race": "tu controlas o push cedo; ela manda na engage curta se a wave quebrar",
+              "lane_windows": [
+                "niveis 1-2: ganha o push antes dela ganhar a janela de all-in",
+                "primeiro recall: volta com dano e controle para manter a lane longa",
+                "nivel 6: teu spacing precisa continuar perfeito mesmo com ult disponível"
+              ],
+              "recommended_setup": "setup de lane e segurança vale mais que greed de all-in quando o outro lado vive de engage reta",
+              "first_item_plan": "o primeiro item precisa manter teu controle de wave sem te deixar exposta na volta"
+            },
+            "jinx": {
+              "verdict": "forte cedo",
+              "plan": "empurra com disciplina, transforma alcance em placa e n?o deixa a Jinx chegar inteira ao primeiro item de gra?a",
+              "danger": "gastar trap ou spacing torto e deixar a lane virar luta longa limpa para ela",
+              "spike_race": "tu mandas no push e no range cedo; ela cresce mais quando a fight alonga e os itens entram",
+              "lane_windows": [
+                "niveis 1-3: usa alcance para ditar wave e HP sem se expor ao peel inimigo",
+                "primeiro recall: volta com dano para continuar cobrando placa e espa?o",
+                "primeiro item: teu spike precisa converter lane em mapa antes da escalada dela"
+              ],
+              "recommended_setup": "setup de lane forte e seguran?a contra engage vale mais que greed de highlight quando tua vantagem ? controle",
+              "first_item_plan": "o primeiro item precisa manter tua press?o de push e torre sem te deixar vulner?vel na volta"
+            },
+            "draven": {
+              "verdict": "skill de press?o",
+              "plan": "usa alcance e wave para castigar a rota, mas n?o entrega troca curta limpa quando o machado dele j? est? preparado",
+              "danger": "perder o n?vel 2 ou andar reto sem minion escudo contra burst cedo",
+              "spike_race": "tu controlas melhor o push e a placa; ele controla melhor a troca curta e o snowball bruto",
+              "lane_windows": [
+                "niveis 1-3: range e wave precisam trabalhar juntos para n?o deixar o all-in dele f?cil",
+                "primeiro recall: volta com dano para continuar pressionando sem flipar troca curta ruim",
+                "primeiro item: teu spike precisa virar mapa antes que a snowball dele decida a lane"
+              ],
+              "recommended_setup": "setup de lane forte e seguran?a contra burst cedo vale mais que greed de highlight quando o outro lado quer snowball",
+              "first_item_plan": "o primeiro item precisa manter tua press?o de push e torre sem te transformar em alvo f?cil para all-in"
+            },
+            "thresh": {
+              "verdict": "skill de spacing e brush",
+              "plan": "usa range, trap e wave para negar a hook limpa, mas sem virar est?tua previs?vel na press?o de lane",
+              "danger": "tomar hook depois de gastar trap torta ou perder minion escudo cedo",
+              "spike_race": "tu mandas no push e na placa cedo; ele manda quando a pickoff limpa quebra teu controle da rota",
+              "lane_windows": [
+                "niveis 1-2: range e wave precisam impedir que a brush vire reino dele",
+                "primeiro recall: volta com dano e controle para continuar pressionando sem flipar o corredor",
+                "nivel 6: teu spacing precisa continuar perfeito quando a play dele ganhar mais follow-up"
+              ],
+              "recommended_setup": "setup de lane forte e seguran?a contra pickoff vale mais que greed de highlight contra suporte de hook",
+              "first_item_plan": "o primeiro item precisa manter teu controle de wave e torre sem te deixar vendida ? primeira hook limpa"
             }
           }
         }
@@ -115,7 +233,74 @@
           "situational_items": [
             "seguro defensivo se muito engage vier na tua direção",
             "anti-heal se o suporte inimigo sustentar demais"
-          ]
+          ],
+          "matchups": {
+            "jinx": {
+              "verdict": "favoravel cedo",
+              "plan": "cobra o nível 2, força troca curta com machado ativo e não deixa a Jinx respirar até o primeiro reset",
+              "danger": "se acomodar demais e deixar a lane virar fight longa controlada",
+              "spike_race": "tu queres quebrar a rota antes do primeiro item; ela cresce muito se sobreviver até dois itens",
+              "lane_windows": [
+                "niveis 1-3: obriga respeito no push e no HP trade",
+                "primeiro recall: volta com dano para manter o pé no pescoço",
+                "primeiro item: teu spike precisa virar torre, drag ou mapa"
+              ],
+              "recommended_setup": "setup agressivo e de snowball vale mais que conforto passivo quando a matchup é tua cedo",
+              "first_item_plan": "teu primeiro item precisa continuar a pressão e não deixar a rota estabilizar"
+            },
+            "thresh": {
+              "verdict": "forte se tu respeitares a play",
+              "plan": "mantem pressão de lane, mas não entrega a alma numa hook limpa com follow-up completo",
+              "danger": "machado mal posicionado que te puxa para a jogada deles",
+              "spike_race": "tu mandas no dano cedo; ele manda se a lane virar play limpa e não trocação seca",
+              "lane_windows": [
+                "niveis 1-2: pressiona sem andar reto na brush dele",
+                "primeiro recall: dano e vida para continuar exigindo respeito sem virar alvo fácil",
+                "nivel 6: tua luta fica boa se tu não fores o primeiro a ser pego"
+              ],
+              "recommended_setup": "setup agressivo com margem de erro vale mais que greed cega contra suporte de pickoff",
+              "first_item_plan": "teu primeiro item precisa te manter ameaçador sem te obrigar a flipar cada machado"
+            },
+            "caitlyn": {
+              "verdict": "skill de disciplina e dist?ncia",
+              "plan": "n?o deixa o range dela te cozinhar de gra?a; disputa espa?o cedo e transforma qualquer erro de spacing em troca curta pesada",
+              "danger": "aceitar push eterno e perder HP demais antes da primeira janela de all-in",
+              "spike_race": "ela manda mais no push e na placa; tu mandas mais na troca curta e no snowball se achares a entrada certa",
+              "lane_windows": [
+                "niveis 1-3: disputa espa?o sem andar reto em trap e range livre",
+                "primeiro recall: dano e vida para continuar amea?ando all-in real",
+                "primeiro item: teu spike precisa transformar qualquer passo torto dela em ouro e mapa"
+              ],
+              "recommended_setup": "setup agressivo com margem de sobreviv?ncia vale mais que passividade contra lane de alcance alto",
+              "first_item_plan": "o primeiro item precisa manter teu snowball vivo sem te obrigar a flipar machado em posi??o ruim"
+            },
+            "nautilus": {
+              "verdict": "explosivo se tu respeitares a janela de engage",
+              "plan": "mant?m press?o de lane e castiga o espa?o, mas n?o deixa machado e posicionamento te venderem para a ?ncora limpa",
+              "danger": "andar sem minion escudo e tomar engage completa antes de trocar o suficiente",
+              "spike_race": "tu mandas no dano seco cedo; ele manda se a lane virar uma ?nica engage limpa com follow-up inteiro",
+              "lane_windows": [
+                "niveis 1-2: pressiona sem andar reto na wave e no brush dele",
+                "primeiro recall: volta com dano e vida para continuar amea?ando sem virar alvo f?cil",
+                "nivel 6: tua luta precisa come?ar no teu burst, n?o na ?ncora dele"
+              ],
+              "recommended_setup": "setup agressivo com margem de sobreviv?ncia vale mais que greed cega contra engage dura de pickoff",
+              "first_item_plan": "o primeiro item precisa manter teu snowball vivo sem te obrigar a flipar cada machado em posi??o ruim"
+            },
+            "leona": {
+              "verdict": "tenso se tu deres a primeira janela",
+              "plan": "castiga cedo, mas respeita nivel 2 e n?o entrega a rota num engage limpa antes do teu dano aparecer de verdade",
+              "danger": "perder espa?o cedo e virar alvo de all-in com wave curta",
+              "spike_race": "tu mandas na troca seca e no snowball; ela manda quando finalmente encontra a entrada reta com follow-up",
+              "lane_windows": [
+                "niveis 1-2: disputa a lane sem andar no corredor da engage dela",
+                "primeiro recall: dano e vida para continuar cobrando a rota sem virar alvo f?cil",
+                "nivel 6: tua luta fica boa se tu n?o fores o primeiro a ser travado"
+              ],
+              "recommended_setup": "setup agressivo com seguran?a de posicionamento vale mais que greed de burst puro contra engage frontal",
+              "first_item_plan": "o primeiro item precisa sustentar tua press?o e te manter jog?vel quando o all-in dela vier de verdade"
+            }
+          }
         }
       }
     },
@@ -192,17 +377,57 @@
             "penetração contra front line pesada"
           ],
           "matchups": {
+            "nautilus": {
+              "verdict": "perigoso se a wave quebrar",
+              "plan": "usa minion como escudo, guarda spacing e nao entrega a primeira engage limpa antes do teu reset chegar",
+              "danger": "âncora sem tropa na frente com follow-up completo do bot inimigo",
+              "spike_race": "ele manda na entrada curta cedo; tu cresces muito mais quando a luta fica longa e teus itens entram",
+              "lane_windows": [
+                "niveis 1-3: protege wave e HP antes de qualquer troca grande",
+                "primeiro recall: volta com dano e vida para nao virar alvo de engage grátis",
+                "primeiro item: teu spike só vale se tu ainda tiver espaço para bater"
+              ],
+              "recommended_setup": "setup de segurança e kite vale mais que greed de lane contra engage de pickoff frontal",
+              "first_item_plan": "o primeiro item precisa te manter jogável e consistente na fight longa sem te vender à primeira âncora"
+            },
             "draven": {
               "verdict": "delicado cedo",
               "plan": "cede um pouco de pressao no inicio, farma vivo e so troca com wave e suporte alinhados",
               "danger": "troca curta no early com machados ativos",
-              "spike_race": "Draven quer te quebrar antes do primeiro item; teu jogo melhora muito se tu chega inteira em dois itens"
+              "spike_race": "Draven quer te quebrar antes do primeiro item; teu jogo melhora muito se tu chega inteira em dois itens",
+              "lane_windows": [
+                "niveis 1-3: aceita perder um pouco de push para nao perder a lane inteira",
+                "primeiro recall: volta com dano e vida para nao tomar dive ou all-in de graça",
+                "dois itens: tua luta fica muito melhor se tu chegou viva até esse ponto"
+              ],
+              "recommended_setup": "setup de sobrevivencia e consistencia vale mais que greed de lane contra snowball bruto",
+              "first_item_plan": "teu primeiro item precisa estabilizar a lane antes de pensar em fight longa"
             },
             "leona": {
               "verdict": "perigoso",
               "plan": "usa minion como parede, respeita o nivel 2 e deixa armadilha ou peel preparados antes de andar para frente",
               "danger": "engage reto com flash ou ângulo limpo",
-              "spike_race": "ela manda no all-in cedo; tu mandas na luta longa depois do primeiro item se sobreviveres"
+              "spike_race": "ela manda no all-in cedo; tu mandas na luta longa depois do primeiro item se sobreviveres",
+              "lane_windows": [
+                "niveis 1-2: a corrida pelo nivel 2 decide se tu pode respirar",
+                "nivel 6: sem flash ou sem peel alinhado, qualquer passo torto vira engage limpa",
+                "primeiro item: teu spike so vale se tu ainda conseguires jogar com spacing"
+              ],
+              "recommended_setup": "entra com setup de seguranca e kite para sobreviver à primeira engage forte",
+              "first_item_plan": "teu primeiro item precisa te manter viva e bater de forma consistente na fight longa"
+            },
+            "caitlyn": {
+              "verdict": "desconfortavel cedo",
+              "plan": "não deixa a lane virar só push e placa; joga pela wave viva, pelo HP preservado e pela primeira janela em que ela perder trap ou spacing",
+              "danger": "ser encurralada no alcance e chegar no reset sem recurso nenhum",
+              "spike_race": "a Caitlyn manda no range e no push cedo; tu cresces muito mais quando a fight fica longa e limpa",
+              "lane_windows": [
+                "niveis 1-3: protege wave e HP antes de pensar em trocar de volta",
+                "primeiro recall: volta com dano e vida para não virar alvo de placa e trap",
+                "primeiro item: teu spike precisa te deixar jogável mesmo sem o controle de push"
+              ],
+              "recommended_setup": "setup de consistência e segurança vale mais que greed de lane quando o outro lado vive de range e pressão",
+              "first_item_plan": "teu primeiro item precisa estabilizar a rota e preparar tua volta para fight longa"
             }
           }
         }
@@ -256,6 +481,45 @@
               "plan": "controla brush, acelera nivel 2 e puxa a fight quando a Jinx estiver sem minion escudo",
               "danger": "poke demais antes de achar a janela",
               "spike_race": "teu pico de lane e cedo; se a rota empacar, a Jinx cresce mais na luta longa"
+            },
+            "caitlyn": {
+              "verdict": "skill de wave",
+              "plan": "não entrega a brush cedo e procura a engage quando a Caitlyn perder minion escudo ou trap em lugar ruim",
+              "danger": "tomar poke demais e chegar morta na primeira janela de all-in",
+              "spike_race": "ela manda no alcance e no push; tu mandas quando finalmente encontras a entrada limpa",
+              "lane_windows": [
+                "niveis 1-2: disputa brush e nivel 2, porque sem isso tu só apanhas no range",
+                "primeiro recall: recurso e vida para voltar ameaçando engage real",
+                "nivel 6: tua fight melhora muito quando o flash dela já está sob pressão"
+              ],
+              "recommended_setup": "setup agressivo com margem de sobrevivência vale mais que greed de engage sem HP",
+              "first_item_plan": "o primeiro item precisa te levar inteira para a segunda janela de engage, não só para a primeira"
+            },
+            "lulu": {
+              "verdict": "delicado se tu entrares torto",
+              "plan": "for?a a janela antes do peel completo dela, disputa brush e n?o gasta engage quando o carry inimigo ainda pode bater livre",
+              "danger": "entrar no polymorph ou na ult dela sem burst junto",
+              "spike_race": "tu cobras cedo com engage limpa; ela cresce muito se a lane estabilizar e o carry escalar tranquilo",
+              "lane_windows": [
+                "niveis 1-2: precisa disputar espa?o antes que ela sente a lane",
+                "primeiro recall: volta com recurso para continuar amea?ando engage real",
+                "nivel 6: tua entrada precisa respeitar peel e ult, n?o s? dist?ncia"
+              ],
+              "recommended_setup": "setup agressivo com follow-up e sobreviv?ncia vale mais que greed de engage isolada contra suporte de peel forte",
+              "first_item_plan": "o primeiro item precisa te levar inteira para a pr?xima janela de engage e n?o te deixar sem segunda entrada"
+            },
+            "draven": {
+              "verdict": "explosivo se o follow-up vier certo",
+              "plan": "disputa brush, pressiona n?vel 2 e entra quando o Draven estiver comprometido no machado ou sem wave escudo",
+              "danger": "tomar dano demais antes da engage e chegar morta na ?nica janela boa da lane",
+              "spike_race": "ele domina a troca seca; tu dominas quando a entrada limpa corta o espa?o e o follow-up chega inteiro",
+              "lane_windows": [
+                "niveis 1-2: disputa espa?o cedo para n?o viver s? de poke e amea?a dele",
+                "primeiro recall: volta com recurso para continuar for?ando engage real",
+                "nivel 6: tua ult melhora muito quando a lane j? pressionou o flash ou a wave dele"
+              ],
+              "recommended_setup": "setup agressivo com margem de sobreviv?ncia vale mais que greed de engage isolada contra burst alto",
+              "first_item_plan": "o primeiro item precisa te manter viva na entrada e garantir que exista uma segunda janela se a primeira falhar"
             }
           }
         }
@@ -280,7 +544,48 @@
           "situational_items": [
             "item de peel ou cura conforme o carry da tua comp precisar",
             "seguro próprio se o outro lado estiver caçando suporte no flanco"
-          ]
+          ],
+          "matchups": {
+            "leona": {
+              "verdict": "delicado se tu errar o primeiro tempo",
+              "plan": "joga pela wave curta e pelo polymorph certo; tua lane quebra quando a Leona entra limpa no carry",
+              "danger": "nível 2 perdido ou engage sem peel guardado",
+              "spike_race": "ela manda no all-in cedo; tu cresces muito quando a rota estabiliza e o carry começa a bater livre",
+              "lane_windows": [
+                "niveis 1-2: não entrega a corrida pelo nível 2 sem contestar espaço",
+                "primeiro recall: volta com utilidade e recurso para negar a segunda entrada",
+                "nivel 6: tua ult e teu peel precisam virar luta longa favorável"
+              ],
+              "recommended_setup": "setup de peel e sobrevivência vale mais que greed de poke contra engage dura",
+              "first_item_plan": "teu primeiro item precisa fortalecer resposta e conforto do carry, não highlight vazio"
+            },
+            "jinx": {
+              "verdict": "excelente se a lane estabilizar",
+              "plan": "joga para deixar a Jinx confortável, tira o ritmo da engage inimiga e transforma a fight em front-to-back limpa",
+              "danger": "gastar peel cedo e deixar o carry sem resposta no primeiro all-in real",
+              "spike_race": "a lane cresce muito quando a Jinx chega viva nos itens; tua função é garantir esse caminho",
+              "lane_windows": [
+                "niveis 1-2: protege a wave e o HP dela sem deixar a lane abrir demais",
+                "primeiro recall: utilidade e recurso para manter o carry jogável de novo",
+                "nivel 6: tua luta melhora muito quando teu peel acompanha o reset da Jinx"
+              ],
+              "recommended_setup": "setup de peel e conforto do carry vale mais que greed de poke quando tua condição de vitória é escalar",
+              "first_item_plan": "teu primeiro item precisa fortalecer proteção e consistência de luta longa"
+            },
+            "draven": {
+              "verdict": "delicado se o early escapar",
+              "plan": "joga por peel, wave viva e resposta limpa ao primeiro all-in; teu trabalho ? impedir que o Draven transforme cada troca curta em snowball",
+              "danger": "perder o n?vel 2 e gastar peel antes da entrada real dele",
+              "spike_race": "ele manda no burst cedo; tu cresces quando a rota estabiliza e o carry consegue jogar fight longa com prote??o",
+              "lane_windows": [
+                "niveis 1-2: protege espa?o e HP do carry antes de qualquer trade ambiciosa",
+                "primeiro recall: volta com utilidade e recurso para negar a pr?xima janela de all-in",
+                "nivel 6: tua ult precisa virar a luta no primeiro engage forte, n?o depois do carry j? cair"
+              ],
+              "recommended_setup": "setup de peel e sobreviv?ncia vale mais que greed de poke contra snowball agressivo",
+              "first_item_plan": "o primeiro item precisa fortalecer tua resposta ao burst e manter teu carry confort?vel na lane"
+            }
+          }
         }
       }
     },
@@ -303,7 +608,48 @@
           "situational_items": [
             "resistência cedo contra poke ou mage support",
             "item utilitário para engatar a luta ou proteger carry"
-          ]
+          ],
+          "matchups": {
+            "caitlyn": {
+              "verdict": "punitivo se tu perder a wave",
+              "plan": "joga por brush e ângulo escondido porque a Caitlyn quer te manter longe com range e armadilha",
+              "danger": "âncora telegráfica com wave grande e jungle perto",
+              "spike_race": "ela manda no push cedo; tua janela vem quando tu quebras a distância e forças o all-in certo",
+              "lane_windows": [
+                "niveis 1-2: briga pela brush antes de pensar na âncora",
+                "primeiro recall: volta com vida e bota para não ser sufocado no alcance",
+                "nivel 6: qualquer engage limpa já pode quebrar a lane dela"
+              ],
+              "recommended_setup": "setup que te deixe chegar inteiro na primeira engage importa mais que greed de highlight",
+              "first_item_plan": "o primeiro item precisa te dar recurso para entrar e sobreviver ao poke até o objetivo"
+            },
+            "jinx": {
+              "verdict": "bom se tu controlares a frente da wave",
+              "plan": "ameaça âncora e all-in sempre que a Jinx ficar sem minion escudo ou sem peel pronto",
+              "danger": "entrar reto em armadilha, kite ou counter-engage limpo",
+              "spike_race": "tu mandas no all-in cedo; ela cresce muito se a lane empacar e virar fight longa",
+              "lane_windows": [
+                "niveis 1-2: disputa brush e a primeira janela de engage com wave favorável",
+                "primeiro recall: volta com vida e recurso para continuar cobrando o rio",
+                "nivel 6: tua luta fica muito forte se tu fores o primeiro a clicar certo"
+              ],
+              "recommended_setup": "setup agressivo com margem de sobrevivência vale mais que greed de poke quando tua lane vive de engage",
+              "first_item_plan": "o primeiro item precisa continuar tua ameaça de entrada sem te fazer morrer no retorno"
+            },
+            "draven": {
+              "verdict": "forte se a engage entrar limpa",
+              "plan": "l? o machado, controla brush e puxa a fight quando o Draven estiver comprometido demais com o dano para reposicionar",
+              "danger": "andar na wave sem HP e virar alvo do burst dele antes da tua ?ncora existir",
+              "spike_race": "ele manda no dano seco cedo; tu mandas quando a engage limpa tira o espa?o dele e quebra a lane",
+              "lane_windows": [
+                "niveis 1-2: disputa brush e n?o toma dano de gra?a antes da primeira amea?a real",
+                "primeiro recall: volta com recurso para continuar achando engage de valor",
+                "nivel 6: tua luta melhora muito quando o flash dele j? est? pressionado"
+              ],
+              "recommended_setup": "setup agressivo com resist?ncia suficiente para sobreviver ao burst vale mais que greed de pick sem follow-up",
+              "first_item_plan": "o primeiro item precisa te manter inteira para a segunda engage e n?o s? para a primeira"
+            }
+          }
         }
       }
     },
@@ -326,7 +672,61 @@
           "situational_items": [
             "anti-heal se o sustain inimigo começar a distorcer luta",
             "item de peel se a tua backline for o alvo principal"
-          ]
+          ],
+          "matchups": {
+            "thresh": {
+              "verdict": "skill de execução",
+              "plan": "mantém o ritmo de poke e sustain sem te oferecer para hook limpa; tua lane melhora quando a troca curta sai antes da play dele",
+              "danger": "perder HP demais cedo e deixar o bot viver só na ameaça de pickoff",
+              "spike_race": "ele cresce quando a jogada limpa quebra a lane; tu cresces quando a rota fica mais longa e controlada",
+              "lane_windows": [
+                "niveis 1-2: disputa wave e brush sem virar alvo reto de hook",
+                "primeiro recall: volta com mana e utilidade para manter o carry confortável",
+                "nivel 6: tua ult precisa quebrar o começo da play dele antes do follow-up entrar"
+              ],
+              "recommended_setup": "setup de sustain, peel e resposta ao pick vale mais que greed de poke solto contra suporte de hook",
+              "first_item_plan": "o primeiro item precisa manter tua lane viva e teu carry jogável contra a ameaça constante de engage"
+            },
+            "leona": {
+              "verdict": "delicado se tu gastar recurso torto",
+              "plan": "poke curto, wave estável e bolha para quebrar a primeira entrada; não dá passo grátis para engage reta",
+              "danger": "nível 2 perdido ou wave avançada sem visão",
+              "spike_race": "ela manda no all-in cedo; tu recuperas o controle quando a lane fica mais longa e teu sustain entra no tempo certo",
+              "lane_windows": [
+                "niveis 1-2: protege HP e disputa a wave sem virar alvo fácil",
+                "primeiro recall: volta com mana e utilidade para continuar negando engage",
+                "nivel 6: tua ult precisa quebrar a entrada dela antes do carry cair"
+              ],
+              "recommended_setup": "setup de peel e sobrevivência vale mais que greed de poke solto contra engage dura",
+              "first_item_plan": "teu primeiro item precisa te manter viva e buffar a resposta ao all-in"
+            },
+            "caitlyn": {
+              "verdict": "jogavel se a lane n?o quebrar cedo",
+              "plan": "mantem a wave respirando, usa sustain para negar o range puro e procura trade curta quando trap e spacing dela sairem do lugar",
+              "danger": "ser espremida em push permanente e perder HP demais antes do primeiro recall",
+              "spike_race": "ela domina alcance e placa cedo; tu cresces quando a lane fica mais longa e tua utilidade entra em rota??o",
+              "lane_windows": [
+                "niveis 1-3: protege HP e wave antes de pensar em troca grande",
+                "primeiro recall: volta com mana e utilidade para continuar viva na press?o",
+                "nivel 6: tua ult pode quebrar o controle dela se o carry ainda estiver jog?vel"
+              ],
+              "recommended_setup": "setup de sustain e resposta ao push vale mais que greed de poke solto contra lane de range forte",
+              "first_item_plan": "o primeiro item precisa segurar a lane e manter teu carry jog?vel at? a partida abrir mais espa?o"
+            },
+            "draven": {
+              "verdict": "delicado cedo, melhorando se tu segurar a rota",
+              "plan": "usa sustain e troca curta para tirar a explos?o do early dele, sem dar passo gr?tis para machado e engage simples",
+              "danger": "perder HP demais antes do primeiro recall e deixar o Draven jogar s? no medo e no burst",
+              "spike_race": "ele manda no dano seco cedo; tu respondes melhor quando a lane alonga e teu sustain volta no tempo certo",
+              "lane_windows": [
+                "niveis 1-2: protege HP e wave antes de qualquer poke ganancioso",
+                "primeiro recall: volta com mana e utilidade para continuar viva na press?o",
+                "nivel 6: tua ult precisa quebrar a entrada dele antes do reset da lane virar snowball"
+              ],
+              "recommended_setup": "setup de sustain e peel vale mais que greed de poke solto contra ADC de snowball bruto",
+              "first_item_plan": "o primeiro item precisa segurar a lane e manter teu carry jog?vel at? a partida abrir mais espa?o"
+            }
+          }
         }
       }
     },
@@ -349,7 +749,22 @@
           "situational_items": [
             "tenacidade ou resistência se o outro lado tiver muito CC",
             "item utilitário para acelerar engage ou proteger carry"
-          ]
+          ],
+          "matchups": {
+            "nautilus": {
+              "verdict": "skill de tempo",
+              "plan": "não entrega entrada reta; joga no counter-engage e entra só quando o Nautilus já gastou a âncora ou abriu torto",
+              "danger": "engage frontal sem cobertura do ADC",
+              "spike_race": "ele é mais simples e bruto cedo; tu brilhas mais quando a lane vira troca de timing e follow-up",
+              "lane_windows": [
+                "niveis 1-2: respeita a primeira âncora e segura teu engage para resposta limpa",
+                "primeiro recall: bota e visão fazem teu ângulo valer muito mais",
+                "nivel 6: tua entrada ganha muito quando a ult dele já foi gasta"
+              ],
+              "recommended_setup": "setup que preserve mobilidade e resposta ao engage costuma render mais que greed de all-in puro",
+              "first_item_plan": "o primeiro item precisa reforçar tua entrada limpa e tua saída viva"
+            }
+          }
         }
       }
     },
@@ -372,7 +787,22 @@
           "situational_items": [
             "item de peel mais forte se tua comp tiver hypercarry claro",
             "seguro próprio se o outro lado estiver colapsando na backline"
-          ]
+          ],
+          "matchups": {
+            "nautilus": {
+              "verdict": "frágil se tu deres a frente cedo",
+              "plan": "usa alcance e wave para desgastar, mas nunca anda sem resposta para a ancora e o follow-up",
+              "danger": "engage reta quando teu carry está sem espaço para bater ou recuar",
+              "spike_race": "tu mandas mais quando a lane fica longa e confortável; ele manda quando a jogada já começa grudada",
+              "lane_windows": [
+                "niveis 1-2: usa range para controlar espaço sem te oferecer para hook",
+                "primeiro recall: utilidade e pink para manter a lane longa e segura",
+                "nivel 6: teu cleanse/peel precisa quebrar a primeira entrada dele"
+              ],
+              "recommended_setup": "setup de peel e sobrevivência vale mais que greed de poke quando há engage dura do outro lado",
+              "first_item_plan": "teu primeiro item precisa manter teu carry jogável contra a primeira entrada forte"
+            }
+          }
         }
       }
     },
@@ -395,7 +825,61 @@
           "situational_items": [
             "armadura ou MR conforme a fonte principal da lane e da comp",
             "utilidade para segurar carry se o outro lado viver de dive"
-          ]
+          ],
+          "matchups": {
+            "aatrox": {
+              "verdict": "seguravel se tu estabilizares cedo",
+              "plan": "joga por wave sólida, guarda recurso para negar a borda da Q e nao deixa a lane virar troca longa no espaço dele",
+              "danger": "ser empurrado para trades repetidas antes da tua primeira defesa real entrar",
+              "spike_race": "ele cobra mais cedo na lane; tu respondes melhor quando o primeiro item segura o dano e a partida frontaliza",
+              "lane_windows": [
+                "niveis 1-3: protege HP e wave, nao compra duelo longo por ego",
+                "nivel 6: teu contra-engage vale mais quando a wave ja esta controlada",
+                "primeiro item: tua defesa precisa tirar o top do ritmo dele antes da proxima grande fight"
+              ],
+              "recommended_setup": "setup defensivo e de lane estavel vale mais que greed de punir cedo contra sustain forte",
+              "first_item_plan": "o primeiro item precisa estabilizar a rota e te levar inteiro para a primeira fight frontal"
+            },
+            "camille": {
+              "verdict": "jogavel se tu nao sangrar cedo",
+              "plan": "trava a wave, respeita a parede e não dá trade longa na janela em que a Camille te puxa para o all-in",
+              "danger": "gancho na parede com jungle perto ou lane aberta demais",
+              "spike_race": "ela cresce mais no side; tu cresces mais quando a partida vira frente de luta e objetivo",
+              "lane_windows": [
+                "niveis 1-3: joga por estabilidade e HP, nao por ego de troca",
+                "nivel 6: qualquer all-in sem wave arrumada vira dive ou perma side ruim",
+                "primeiro item: tua defesa precisa estabilizar a lane antes do mapa abrir"
+              ],
+              "recommended_setup": "setup defensivo e de lane sólida costuma render mais que greed de punir cedo",
+              "first_item_plan": "teu primeiro item precisa parar o sangramento da lane e te levar inteiro para a primeira fight"
+            },
+            "renekton": {
+              "verdict": "delicado cedo, melhorando depois",
+              "plan": "protege HP e wave no early, compra defesa real no primeiro reset e obriga o Renekton a te matar antes da luta frontal come?ar",
+              "danger": "ceder muito espa?o at? o n?vel 3 e entregar wave curta para troca limpa com f?ria",
+              "spike_race": "ele manda mais cedo na lane; tu respondes melhor quando a primeira defesa estabiliza e o jogo frontaliza",
+              "lane_windows": [
+                "niveis 1-3: aceita lane controlada sem flipar troca longa ruim",
+                "nivel 6: teu contra-engage cresce muito se tua wave j? estiver organizada",
+                "primeiro item: tua defesa precisa tirar a lane do ritmo dele antes da pr?xima grande fight"
+              ],
+              "recommended_setup": "setup defensivo e de lane est?vel vale mais que greed de punir cedo contra bully de early",
+              "first_item_plan": "o primeiro item precisa te levar inteiro para a primeira fight e parar o sangramento do top"
+            },
+            "fiora": {
+              "verdict": "desconfortavel se a side abrir cedo",
+              "plan": "joga por wave decente, reduz a pressa da lane e guarda recurso para n?o dar riposta perfeita nas tuas janelas previs?veis",
+              "danger": "troca longa com vital aberta e engage telegr?fica demais",
+              "spike_race": "ela cresce melhor no side e no duelo; tu cresces mais quando a partida vira frente de luta e objetivo",
+              "lane_windows": [
+                "niveis 1-3: prioriza HP e controle de wave antes de qualquer trade ambiciosa",
+                "nivel 6: tua engage s? vale se a Fiora n?o estiver confort?vel para ripostar e alongar a troca",
+                "primeiro item: tua defesa precisa segurar a side at? a primeira luta grande"
+              ],
+              "recommended_setup": "setup defensivo e de consist?ncia vale mais que greed de lane contra duelista de side",
+              "first_item_plan": "o primeiro item precisa estabilizar a lane e garantir tua utilidade na pr?xima fight"
+            }
+          }
         }
       }
     },
@@ -418,7 +902,61 @@
           "situational_items": [
             "armadura pesada contra tops físicos e ADC forte",
             "MR ou utilidade se o perigo vier do AP ou do flanco"
-          ]
+          ],
+          "matchups": {
+            "renekton": {
+              "verdict": "seguravel com disciplina",
+              "plan": "usa passiva e armadura para quebrar o primeiro tempo dele e nao deixa a wave abrir para dive facil",
+              "danger": "perder muita vida cedo e dar a ele uma lane curta de troca limpa com furia",
+              "spike_race": "ele manda mais cedo no top; tu respondes melhor quando o 6 e a armadura estabilizam a lane",
+              "lane_windows": [
+                "niveis 1-3: aceita controlar a lane sem flipar troca longa",
+                "nivel 6: tua ult precisa punir excesso dele e nao apagar erro teu",
+                "primeiro item: armadura e consistencia valem mais que qualquer greed de highlight"
+              ],
+              "recommended_setup": "setup estavel e de sobrevivencia vale mais que greed pura contra early bully de troca curta",
+              "first_item_plan": "o primeiro item precisa te manter de pe e tirar valor da janela curta dele"
+            },
+            "fiora": {
+              "verdict": "delicado se tu errares o timing",
+              "plan": "usa poke e passiva para reduzir o conforto dela, mas nao entrega ult limpa nem lane longa sem recurso",
+              "danger": "troca longa com vitais abertas e tua passiva ja quebrada",
+              "spike_race": "ela cresce no side e no duelo; tu cresces quando a partida pede engage simples e luta agrupada",
+              "lane_windows": [
+                "niveis 1-3: poke curto e wave controlada antes de qualquer all-in",
+                "nivel 6: tua engage precisa respeitar riposta e vital, nao so distancia",
+                "primeiro item: tua defesa tem que impedir que a side lane vire pesadelo cedo"
+              ],
+              "recommended_setup": "setup de sobrevivencia e consistencia vale mais que greed de dano quando a matchup vira side lane fina",
+              "first_item_plan": "o primeiro item precisa te manter jogavel na side e relevante na primeira fight"
+            },
+            "camille": {
+              "verdict": "seguravel com disciplina",
+              "plan": "usa poke e armadura para tirar o ritmo dela, mas não deixa a wave virar passarela para engage de parede",
+              "danger": "gancho em lane longa sem tua passiva inteira",
+              "spike_race": "tu estabilizas bem com defesa; ela cresce muito se conseguir abrir side cedo",
+              "lane_windows": [
+                "niveis 1-3: aceita lane controlada sem flipar troca longa",
+                "nivel 6: tua ult precisa punir excesso dela, não salvar erro teu",
+                "primeiro item: armadura e consistência antes de sonho de highlight"
+              ],
+              "recommended_setup": "setup estável e de sobrevivência vale mais que greed pura contra side lane agressiva",
+              "first_item_plan": "o primeiro item precisa te manter de pé e tirar valor da troca curta dela"
+            },
+            "aatrox": {
+              "verdict": "desconfort?vel cedo, melhorando com defesa",
+              "plan": "controla a wave, usa passiva para reduzir o dano inicial e n?o entrega troca longa no espa?o em que ele pode sustentar",
+              "danger": "perder muita vida antes do primeiro reset e dar ao Aatrox uma lane longa para repetir Q",
+              "spike_race": "ele cobra mais cedo na luta longa; tu respondes melhor quando a armadura entra e o jogo pede engage simples",
+              "lane_windows": [
+                "niveis 1-3: protege HP e aceita lane mais controlada sem flipar troca grande",
+                "nivel 6: tua ult vale mais para punir excesso dele do que para inventar all-in do nada",
+                "primeiro item: tua defesa precisa estabilizar o top antes da pr?xima grande fight"
+              ],
+              "recommended_setup": "setup est?vel e de sobreviv?ncia vale mais que greed de dano contra bruiser de sustain",
+              "first_item_plan": "o primeiro item precisa te manter de p? e cortar o ritmo da luta longa dele"
+            }
+          }
         }
       }
     },
@@ -446,13 +984,40 @@
               "verdict": "skill de spacing",
               "plan": "trabalha a wave, troca no limite da esfera e nao da stun gratis com passo torto para frente",
               "danger": "stun longo com jungle perto ou sem flash",
-              "spike_race": "as duas escalam bem; tu brilhas mais quando a fight fica organizada e frontal"
+              "spike_race": "as duas escalam bem; tu brilhas mais quando a fight fica organizada e frontal",
+              "lane_windows": [
+                "niveis 1-3: controla a wave sem tomar stun gratis por entrar reto",
+                "nivel 6: tua vantagem vem de spacing e fight limpa, nao de flipar all-in",
+                "primeiro item: usa tua esfera para comandar choke e reset, nao para duelo eterno"
+              ],
+              "recommended_setup": "setup que fortalece consistencia de lane e teamfight costuma render mais que greed pura",
+              "first_item_plan": "o primeiro item precisa te dar controle de espaço e conforto para objective fights"
             },
             "zed": {
               "verdict": "delicado apos 6",
               "plan": "pune antes do nivel 6, segura escudo e posiciona a wave de forma que ele nao te force all-in no meio da lane",
               "danger": "ult do Zed quando tua wave e tua visao estao tortas",
-              "spike_race": "teu valor cresce em teamfight; o dele cresce em side e pickoff cedo"
+              "spike_race": "teu valor cresce em teamfight; o dele cresce em side e pickoff cedo",
+              "lane_windows": [
+                "niveis 1-3: cobra poke cedo sem abrir a lane toda para o dash dele",
+                "nivel 6: joga com wave arrumada e recurso defensivo para nao virar reset facil",
+                "primeiro item: usa tua vantagem de controle para chamar jungle ou proteger lateral"
+              ],
+              "recommended_setup": "setup defensivo e disciplinado vale mais que greed de dano quando o Zed fecha janela de pickoff",
+              "first_item_plan": "o primeiro item precisa manter tua lane estável e tua utilidade viva para a teamfight"
+            },
+            "ahri": {
+              "verdict": "skill de prioridade",
+              "plan": "não deixa a Ahri sair do mid limpa; tua bola precisa comandar a wave e o espaço antes do roam dela aparecer",
+              "danger": "charme em corredor ou reset livre com prioridade perdida",
+              "spike_race": "as duas crescem bem no mapa; tu vales mais quando a fight fica frontal e organizada",
+              "lane_windows": [
+                "niveis 1-3: trava a wave e pune passo torto no alcance da esfera",
+                "nivel 6: teu valor está em controlar o mapa antes do roam dela, não em flipar duelo",
+                "primeiro item: usa mana e controle para continuar mandando no centro"
+              ],
+              "recommended_setup": "setup de consistência e controle vale mais que greed de chase quando a Ahri quer te puxar para o mapa",
+              "first_item_plan": "o primeiro item precisa manter tua prioridade e tua utilidade nas fights por objetivo"
             }
           }
         }
@@ -484,6 +1049,45 @@
               "plan": "joga na borda do engage dele, usa riposta para quebrar a maior janela de stack e não te prende em troca longa ruim",
               "danger": "stack demais cedo com wave torta",
               "spike_race": "ele cobra mais cedo na lane reta; tu cresces melhor quando o side e o item aparecem"
+            },
+            "ornn": {
+              "verdict": "escalavel com conforto",
+              "plan": "joga por vital, spacing e wave controlada at? a side lane come?ar a te favorecer de verdade",
+              "danger": "comprar luta desorganizada em cima do engage dele com wave ruim",
+              "spike_race": "o Ornn cresce para a fight frontal; tu cresces cada vez mais quando o mapa abre side",
+              "lane_windows": [
+                "niveis 1-3: troca limpa na vital sem transformar a lane em bagun?a",
+                "nivel 6: riposta boa quebra muito do all-in ou do contra-engage dele",
+                "primeiro item: teu spike precisa come?ar a abrir side e resposta obrigat?ria"
+              ],
+              "recommended_setup": "setup de side lane e consist?ncia de duelo vale mais que greed de teamfight cedo contra tanque escal?vel",
+              "first_item_plan": "o primeiro item precisa acelerar teu controle de side sem te deixar vendida na volta"
+            },
+            "malphite": {
+              "verdict": "skill de disciplina",
+              "plan": "atira na passiva certa, respeita o poke acumulado e for?a a luta boa quando a lane estiver comprida para ele",
+              "danger": "ult dele com tua vida j? pressionada ou com mobilidade gasta sem motivo",
+              "spike_race": "tu cresces no side e no duelo; ele cresce quando a partida pede engage simples em agrupamento",
+              "lane_windows": [
+                "niveis 1-3: mant?m HP e vital jog?vel sem flipar troca longa in?til",
+                "nivel 6: qualquer passo torto perto do range dele pode virar ult limpa",
+                "primeiro item: teu spike precisa puxar o jogo para side antes da pr?xima grande fight"
+              ],
+              "recommended_setup": "setup de side lane e seguran?a na troca vale mais que greed de burst contra engage reta",
+              "first_item_plan": "o primeiro item precisa te dar press?o de duelo e margem para sobreviver ? primeira engage forte"
+            },
+            "aatrox": {
+              "verdict": "skill fina de spacing",
+              "plan": "joga por vital e riposta limpa nas janelas mais perigosas da Q, sem transformar a lane em luta longa favor?vel ao sustain dele",
+              "danger": "troca longa no espa?o do Aatrox com vital ruim e wave torta",
+              "spike_race": "ele cobra mais cedo na luta longa; tu cresces melhor quando o side e o primeiro item ficam jog?veis",
+              "lane_windows": [
+                "niveis 1-3: troca curta na vital e sa?da r?pida antes da terceira janela da Q",
+                "nivel 6: tua riposta precisa quebrar o timing de engage e n?o s? devolver dano",
+                "primeiro item: teu spike precisa puxar o top para side antes da luta frontal longa"
+              ],
+              "recommended_setup": "setup de side lane e disciplina de duelo vale mais que greed de luta estendida contra sustain forte",
+              "first_item_plan": "o primeiro item precisa acelerar teu controle de side sem te vender ? primeira luta longa ruim"
             }
           }
         }
@@ -508,7 +1112,74 @@
           "situational_items": [
             "resistência cedo se a lane estiver te cobrando burst demais",
             "anti-heal contra sustain de side lane"
-          ]
+          ],
+          "matchups": {
+            "aatrox": {
+              "verdict": "skill de execução",
+              "plan": "usa parede e troca curta para nao deixar a luta virar sustain confortavel para ele, e sai antes da terceira janela da Q",
+              "danger": "entrar torto na parede e ficar presa no espaço em que a luta longa favorece o Aatrox",
+              "spike_race": "tu cresces no pickoff e na side limpa; ele cresce quando a luta alonga e consegue sustentar",
+              "lane_windows": [
+                "niveis 1-3: troca curta e reposicionamento antes da wave abrir demais",
+                "nivel 6: teu all-in precisa isolar valor antes do sustain dele dominar a troca",
+                "primeiro item: teu spike precisa puxar o jogo para side e nao para luta frontal longa"
+              ],
+              "recommended_setup": "setup de side lane e burst disciplinado vale mais que greed de luta estendida contra bruiser de sustain",
+              "first_item_plan": "o primeiro item precisa acelerar tua pressao de side sem te obrigar a fight longa ruim"
+            },
+            "ornn": {
+              "verdict": "escalavel se tu nao travar a lane",
+              "plan": "controla a wave, entra na troca curta e usa mobilidade para punir o Ornn antes da lane virar só front-to-back",
+              "danger": "forçar all-in ruim em cima de muita wave ou de defesa já pronta",
+              "spike_race": "tu cresces mais no side; ele cresce mais quando a partida fica frontal e organizada",
+              "lane_windows": [
+                "niveis 1-3: troca curta e wave boa, nao maratona de luta",
+                "nivel 6: teu ult precisa isolar valor, não te prender em luta perdida",
+                "primeiro item: usa teu spike para abrir side e obrigar resposta"
+              ],
+              "recommended_setup": "setup que favoreça acesso e troca curta vale mais que greed de all-in sem tempo",
+              "first_item_plan": "o primeiro item precisa acelerar tua ameaça de side lane sem te deixar morrer na volta"
+            },
+            "malphite": {
+              "verdict": "bom se tu nao deres janela de ult limpa",
+              "plan": "quebra o ritmo da lane, pune quando a passiva dele cair e não luta no ponto em que o all-in dele fica simples",
+              "danger": "ult ou counter-engage quando tu gastaste mobilidade torta",
+              "spike_race": "tu tens mais pressão de side; ele cresce mais quando o mapa pede teamfight direta",
+              "lane_windows": [
+                "niveis 1-3: usa mobilidade para vencer troca curta e negar poke limpo",
+                "nivel 6: qualquer entrada ruim tua pode virar engage pronta para ele",
+                "primeiro item: teu spike precisa abrir a lane antes da primeira grande fight"
+              ],
+              "recommended_setup": "setup de acesso e consistência na troca curta vale mais que greed de burst isolado",
+              "first_item_plan": "o primeiro item precisa te deixar pressionar side sem entregar ult fácil"
+            },
+            "renekton": {
+              "verdict": "delicado cedo, melhorando se tu sobreviveres bem",
+              "plan": "respeita a troca curta de f?ria, usa parede e wave para entrar e sair, e n?o deixa o early dele decidir a lane inteira",
+              "danger": "all-in ruim na wave dele ou troca longa depois de perder a primeira janela curta",
+              "spike_race": "ele manda mais cedo com bully de lane; tu cresces melhor quando o pickoff e a side abrem no primeiro item",
+              "lane_windows": [
+                "niveis 1-3: joga por troca curta e reposicionamento, n?o por maratona de luta",
+                "nivel 6: teu ult precisa isolar valor sem te prender numa luta j? ruim",
+                "primeiro item: teu spike precisa abrir side antes do Renekton converter o early em mapa"
+              ],
+              "recommended_setup": "setup de side lane e consist?ncia de troca curta vale mais que greed de all-in cedo contra bully explosivo",
+              "first_item_plan": "o primeiro item precisa acelerar tua press?o lateral sem te deixar vendida ? primeira resposta curta dele"
+            },
+            "fiora": {
+              "verdict": "skill muito fina",
+              "plan": "quebra o ritmo da vital com entrada e sa?da limpa, e n?o entrega uma luta elegante demais para a Fiora transformar em side controlada",
+              "danger": "gancho previs?vel e ult em janela ruim contra riposta e vital favor?vel",
+              "spike_race": "as duas crescem bem na side; a matchup gira mais em execu??o e em quem chega primeiro no item com a lane intacta",
+              "lane_windows": [
+                "niveis 1-3: troca curta e wave jog?vel antes de abrir a lane demais",
+                "nivel 6: teu all-in s? presta quando a riposta dela n?o est? confort?vel",
+                "primeiro item: teu spike precisa criar press?o lateral sem te obrigar a duelo mal lido"
+              ],
+              "recommended_setup": "setup de side lane e disciplina de execu??o vale mais que greed de burst frontal contra duelista t?cnica",
+              "first_item_plan": "o primeiro item precisa dar amea?a de side e margem para sobreviver ? primeira resposta boa dela"
+            }
+          }
         }
       }
     },
@@ -531,7 +1202,61 @@
           "situational_items": [
             "seguro defensivo contra dive e flank",
             "penetração mágica quando MR começar a cortar tua curva"
-          ]
+          ],
+          "matchups": {
+            "sylas": {
+              "verdict": "delicado se a wave abrir",
+              "plan": "usa range e wave para bater curto, mas nunca dá trade longa quando o Sylas ainda tem janela de entrada",
+              "danger": "all-in com cadeia quando a wave fica no meio e tu gastaste recurso à toa",
+              "spike_race": "teu controle cresce com item e espaço; o dele cresce quando a lane vira escaramuça",
+              "lane_windows": [
+                "niveis 1-3: usa alcance para desgastar sem deixar a troca ficar longa",
+                "nivel 6: respeita roubo de ult e nao anda sem visao lateral",
+                "primeiro item: teu valor sobe quando tu consegues empurrar e jogar por choke"
+              ],
+              "recommended_setup": "setup defensivo e de consistência vale mais que greed de duelo quando o Sylas entra bem",
+              "first_item_plan": "teu primeiro item precisa reforçar wave e espaço para evitar que o matchup vire briga corpo a corpo"
+            },
+            "yone": {
+              "verdict": "pressionavel cedo, perigoso depois",
+              "plan": "pune os primeiros níveis com range e wave, mas não dá corredor limpo quando o Yone fecha a primeira janela de engage",
+              "danger": "E mais knock-up com wave ruim ou sem flash",
+              "spike_race": "tu mandas mais no early disciplinado; ele cresce muito quando a lane abre espaço demais",
+              "lane_windows": [
+                "niveis 1-3: abusa alcance e controla o centro da lane",
+                "nivel 6: qualquer passo torto sem flash vira engage longa",
+                "primeiro item: mantém push e espaço para não fightar onde ele quer"
+              ],
+              "recommended_setup": "setup de lane segura e resposta a engage vale mais que greed de dano seco",
+              "first_item_plan": "teu primeiro item precisa manter prioridade e negar a corrida dele em troca longa"
+            },
+            "ahri": {
+              "verdict": "skill de prioridade",
+              "plan": "mantém o push honesto e não deixa a Ahri usar reset e mobilidade para sair do mid sem pagar vida ou wave",
+              "danger": "charme com corredor aberto e tua mana já pressionada",
+              "spike_race": "tu cresces com controle de lane; ela cresce quando transforma o push em mapa e pickoff",
+              "lane_windows": [
+                "niveis 1-3: controla a wave sem entregar poke duplo",
+                "nivel 6: teu espaçamento precisa negar o engage limpo do ult dela",
+                "primeiro item: usa teu spike para continuar ditando a lane e não ficar refém do roam"
+              ],
+              "recommended_setup": "setup de consistência e wave control vale mais que greed de duelo seco quando ela quer sair do mid",
+              "first_item_plan": "teu primeiro item precisa manter push e controle de espaço antes da mobilidade dela dominar o mapa"
+            },
+            "zed": {
+              "verdict": "pressionavel cedo, tenso depois",
+              "plan": "usa range e wave para punir antes do 6, mas guarda recurso para não morrer na primeira janela limpa da ult",
+              "danger": "sombra com wave torta e tua vida já baixa demais",
+              "spike_race": "tu mandas mais no setup cedo; ele cresce muito quando a lane vira acesso lateral e pickoff",
+              "lane_windows": [
+                "niveis 1-3: domina wave e poke sem abrir corredor para a sombra",
+                "nivel 6: qualquer erro de spacing teu pode virar reset dele",
+                "primeiro item: teu spike precisa manter o mid organizado antes do side dele acelerar"
+              ],
+              "recommended_setup": "setup defensivo e de lane estável vale mais que greed de dano quando o Zed fecha janela de all-in",
+              "first_item_plan": "teu primeiro item precisa sustentar controle de wave e resposta segura ao burst"
+            }
+          }
         }
       }
     },
@@ -554,7 +1279,35 @@
           "situational_items": [
             "seguro defensivo se muito pickoff vier no teu alcance",
             "penetração mágica para atravessar front line pesada"
-          ]
+          ],
+          "matchups": {
+            "sylas": {
+              "verdict": "skill duro",
+              "plan": "manda na wave cedo e desgasta com soldado, mas não entrega parede nem troca longa que deixe o Sylas colado",
+              "danger": "cadeia conectada com jungle perto ou ult roubada em objective fight",
+              "spike_race": "teu DPS sobe com setup; o dele sobe quando ele consegue te puxar para briga curta e caótica",
+              "lane_windows": [
+                "niveis 1-3: empurra e bate sem abrir espaço para entrada reta",
+                "nivel 6: tua ult pode salvar ou entregar a luta dependendo do timing",
+                "primeiro item: usa push e soldados para controlar reset e objetivo"
+              ],
+              "recommended_setup": "setup que priorize consistência e resposta ao engage vale mais que greed pura",
+              "first_item_plan": "teu primeiro item precisa sustentar wave e luta longa organizada"
+            },
+            "yone": {
+              "verdict": "pressionavel cedo",
+              "plan": "pune range e wave no early, força o Yone a farmar desconfortável e não luta em corredor aberto depois que ele ganha acesso",
+              "danger": "combo longo com E e ult quando tu avançaste demais sem flash",
+              "spike_race": "teu controle existe mais cedo; o dele acelera muito quando fecha item e encontra ângulo",
+              "lane_windows": [
+                "niveis 1-3: ganha a wave e o HP trade sem abrir flank no mid",
+                "nivel 6: teu posicionamento vale mais que tua coragem",
+                "primeiro item: transforma tua prioridade em setup, não em all-in bobo"
+              ],
+              "recommended_setup": "setup estável e resposta a dive valem mais que greed de dano seco contra engage longa",
+              "first_item_plan": "o primeiro item precisa preservar teu DPS e teu espaço ao mesmo tempo"
+            }
+          }
         }
       }
     },
@@ -577,7 +1330,35 @@
           "situational_items": [
             "seguro defensivo contra dive e flanco",
             "penetração mágica se o outro lado fechar MR cedo"
-          ]
+          ],
+          "matchups": {
+            "zed": {
+              "verdict": "delicado se tu gastar a ferramenta errada",
+              "plan": "controla wave e segura o recurso que corta a entrada dele; teu valor está em pushar e sair do mid viva",
+              "danger": "all-in quando tua wave está torta e tu gastaste peça de disengage",
+              "spike_race": "teu mapa abre primeiro; o dele te pune mais forte se ele achar ângulo de pickoff",
+              "lane_windows": [
+                "niveis 1-3: empurra sem dar corredor fácil para a sombra",
+                "nivel 6: teu erro de spacing vira kill muito rápido",
+                "primeiro item: teu spike precisa empurrar e te liberar do mid"
+              ],
+              "recommended_setup": "setup de lane segura e resposta a burst vale mais que greed de poke solto",
+              "first_item_plan": "teu primeiro item precisa sustentar push e resposta ao all-in sem te prender na rota"
+            },
+            "ahri": {
+              "verdict": "skill de mapa",
+              "plan": "não deixa a Ahri resetar e sair do mid de graça; tua pressão precisa chegar antes no rio e na lateral",
+              "danger": "charme em corredor ou roam em timing melhor que o teu",
+              "spike_race": "as duas ganham muito quando saem do mid; tu precisas abrir o mapa primeiro",
+              "lane_windows": [
+                "niveis 1-3: trabalha a wave sem tomar poke de graça",
+                "nivel 6: cada ult errada dela ou tua muda o mapa inteiro",
+                "primeiro item: prioriza mana e burst para continuar empurrando e movendo"
+              ],
+              "recommended_setup": "setup que mantenha tua lane estável e teu roam forte vale mais que greed de all-in",
+              "first_item_plan": "teu primeiro item precisa manter push e ameaça de mapa antes da Ahri ganhar o ritmo"
+            }
+          }
         }
       }
     },
@@ -600,7 +1381,35 @@
           "situational_items": [
             "seguro defensivo contra burst cedo",
             "penetração mágica se a linha de frente começar a travar teu dano"
-          ]
+          ],
+          "matchups": {
+            "viktor": {
+              "verdict": "bom se a lane encurtar",
+              "plan": "aceita tomar range cedo, mas joga pela janela em que o Viktor gasta recurso na wave e não consegue te segurar fora da cara",
+              "danger": "ficar preso em poke e wave clear sem conseguir encurtar a distância",
+              "spike_race": "ele manda mais no controle cedo; tu cresces quando a lane vira escaramuça e teu all-in entra limpo",
+              "lane_windows": [
+                "niveis 1-3: toma o mínimo de dano possível enquanto prepara a primeira troca real",
+                "nivel 6: qualquer erro de spacing dele pode virar all-in e pressão lateral",
+                "primeiro item: teu spike precisa transformar a lane em luta de verdade, não em farm espelhado"
+              ],
+              "recommended_setup": "setup que preserve entrada limpa e sustain vale mais que greed de troca longa no early",
+              "first_item_plan": "teu primeiro item precisa encurtar a distância e te deixar brigar por wave e rio"
+            },
+            "azir": {
+              "verdict": "skill duro mas jogavel",
+              "plan": "joga pelo momento em que o Azir avança demais com soldado e não respeita teu acesso de cadeia",
+              "danger": "tomar poke infinito sem conseguir quebrar o range dele",
+              "spike_race": "o Azir cresce com espaço; tu cresces quando finalmente transformas a lane em all-in ou pickoff",
+              "lane_windows": [
+                "niveis 1-3: sobrevive sem te despedaçar no range",
+                "nivel 6: teu tempo de engage precisa punir o soldado mal colocado",
+                "primeiro item: o spike tem que te dar condição real de all-in"
+              ],
+              "recommended_setup": "setup de sobrevivência e entrada limpa vale mais que greed de poke contra range pesado",
+              "first_item_plan": "teu primeiro item precisa te dar sustain e ameaça para quebrar a zona do Azir"
+            }
+          }
         }
       }
     },
@@ -623,7 +1432,35 @@
           "situational_items": [
             "seguro defensivo se muito controle estiver te esperando",
             "penetração mágica se MR cedo atrasar tua curva"
-          ]
+          ],
+          "matchups": {
+            "syndra": {
+              "verdict": "delicado cedo, forte depois",
+              "plan": "aceita o range no começo, joga pela wave curta e entra só quando a Syndra gastar stun ou abrir passo demais",
+              "danger": "ser triturada no poke antes do 6 e nunca achar a primeira janela real",
+              "spike_race": "ela manda mais no early e no range; tu cresces muito quando o 6 e o flanco entram vivos",
+              "lane_windows": [
+                "niveis 1-3: toma o mínimo de dano possível sem entregar farm demais",
+                "nivel 6: tua primeira entrada precisa punir stun gasto ou spacing torto",
+                "primeiro item: o spike precisa te dar burst e segurança para começar o pickoff"
+              ],
+              "recommended_setup": "setup de sobrevivência e entrada limpa vale mais que greed de poke contra range pesado",
+              "first_item_plan": "teu primeiro item precisa abrir a primeira janela de all-in sem te fazer evaporar na resposta"
+            },
+            "ahri": {
+              "verdict": "skill de mobilidade",
+              "plan": "não briga reta por ego; joga pela neblina, força o charme ruim e entra quando a Ahri ficar sem saída limpa",
+              "danger": "charme segurado e rota lateral mal coberta quando tu tentas forçar demais",
+              "spike_race": "as duas crescem muito no mapa; tu precisas transformar tua entrada em pickoff mais forte que o roam dela",
+              "lane_windows": [
+                "niveis 1-3: sobrevive e controla a wave sem entregar poke gratuito",
+                "nivel 6: teu tempo de engage precisa bater no cooldown errado dela",
+                "primeiro item: usa burst e lateral para pressionar mapa, não duelo no meio"
+              ],
+              "recommended_setup": "setup de lane estável e pickoff limpo vale mais que greed de troca longa nesse matchup",
+              "first_item_plan": "teu primeiro item precisa te deixar ameaçando flanco antes da Ahri comandar o mapa"
+            }
+          }
         }
       }
     },
@@ -646,7 +1483,35 @@
           "situational_items": [
             "tenacidade ou defesa se muito controle travar tua entrada",
             "penetração quando o front line começar a te segurar demais"
-          ]
+          ],
+          "matchups": {
+            "viktor": {
+              "verdict": "delicado cedo, melhor depois",
+              "plan": "aguenta o range, stacka com disciplina e só entra quando a wave ou o cooldown dele te der espaço real",
+              "danger": "tomar poke demais e tentar fightar no range dele sem recurso",
+              "spike_race": "ele manda mais no controle do early; tu cresces muito quando o acesso e o reset entram no tempo certo",
+              "lane_windows": [
+                "niveis 1-3: sobrevive sem entregar HP demais no range",
+                "nivel 6: tua entrada precisa ser limpa, porque o contra-dano dele continua alto",
+                "primeiro item: o spike precisa te dar lane longa e ameaça real de all-in"
+              ],
+              "recommended_setup": "setup de estabilidade e entrada forte vale mais que greed de troca cedo contra poke pesado",
+              "first_item_plan": "teu primeiro item precisa acelerar tua corrida e encurtar a lane contra o controle dele"
+            },
+            "azir": {
+              "verdict": "pressionavel se tu leres bem o spacing",
+              "plan": "espera a linha do soldado abrir, stacka com calma e entra só quando o Azir estiver sem espaço para te kitear reto",
+              "danger": "ult defensiva ou poke demais antes da tua primeira janela limpa",
+              "spike_race": "o Azir cresce com front-to-back organizado; tu cresces quando a lane abre ângulo de engage e side lane",
+              "lane_windows": [
+                "niveis 1-3: não dá HP de graça no alcance do soldado",
+                "nivel 6: qualquer entrada torta tua pode virar reposicionamento perfeito dele",
+                "primeiro item: usa teu spike para ameaçar all-in e obrigar respeito no mid"
+              ],
+              "recommended_setup": "setup de acesso e sobrevivência vale mais que greed de dano seco contra zoneamento longo",
+              "first_item_plan": "teu primeiro item precisa transformar tua corrida em ameaça real, não só em movimentação bonita"
+            }
+          }
         }
       }
     },
@@ -670,11 +1535,57 @@
             "resistência cedo se a lane virar pura resposta de burst"
           ],
           "matchups": {
+            "fiora": {
+              "verdict": "jogavel se tu fores disciplinado",
+              "plan": "mantém a wave no teu ritmo, usa fúria para troca curta e não entrega luta elegante demais na side para ela crescer cedo",
+              "danger": "troca longa com riposta boa e wave ruim do teu lado",
+              "spike_race": "tu cobras mais cedo com early bully; ela cresce mais quando o side e o primeiro item ficam limpos",
+              "lane_windows": [
+                "niveis 1-3: troca curta e pressão de wave antes da side lane abrir",
+                "nivel 6: teu all-in precisa vir no teu timing, não no da riposta dela",
+                "primeiro item: usa teu spike para manter o top pressionado antes da side dela escalar"
+              ],
+              "recommended_setup": "setup de troca curta e lane dominante vale mais que greed de luta longa contra duelista de side",
+              "first_item_plan": "o primeiro item precisa continuar teu early forte e negar o primeiro respiro da Fiora"
+            },
             "aatrox": {
               "verdict": "bom cedo se fores disciplinado",
               "plan": "entra na janela curta, usa furia no momento certo e sai antes da luta virar novela nas bordas da Q",
               "danger": "brigar em troca longa com sustain ativo do Aatrox",
-              "spike_race": "tu mandas mais cedo; se a lane empatar demais, o Aatrox cresce bem em luta longa"
+              "spike_race": "tu mandas mais cedo; se a lane empatar demais, o Aatrox cresce bem em luta longa",
+              "lane_windows": [
+                "niveis 1-3: joga por troca curta e furia certa, nao por luta longa no ego",
+                "nivel 6: se tu errar o timing da entrada, a ult dele alonga a luta demais",
+                "primeiro item: usa teu spike para manter o top sob pressão antes do side dele crescer"
+              ],
+              "recommended_setup": "setup que fortalece troca curta e resposta ao sustain costuma render mais que greed de all-in",
+              "first_item_plan": "o primeiro item precisa reforçar tua janela curta de luta e teu controle da wave"
+            },
+            "ornn": {
+              "verdict": "favoravel cedo",
+              "plan": "cobra o early com furia e troca curta antes que o Ornn compre lane est?vel demais para a tua matchup",
+              "danger": "deixar a wave travar e transformar teu early em poke sem consequ?ncia",
+              "spike_race": "tu mandas no come?o e no primeiro item; ele escala melhor se a lane empatar cedo demais",
+              "lane_windows": [
+                "niveis 1-3: troca curta e push disciplinado para pressionar reset ruim",
+                "nivel 6: teu all-in precisa vir antes do mapa te puxar para luta frontal ruim",
+                "primeiro item: usa o spike para cobrar placa, dive ou controle de side"
+              ],
+              "recommended_setup": "setup agressivo de lane e troca curta vale mais que greed de sustain passivo quando a matchup te pertence cedo",
+              "first_item_plan": "o primeiro item precisa continuar a press?o e n?o deixar o Ornn estabilizar em paz"
+            },
+            "malphite": {
+              "verdict": "bom se tu nao deres lane de gra?a",
+              "plan": "quebra a passiva dele antes da troca importante e n?o deixa o top virar s? poke e espera de ult",
+              "danger": "all-in ruim depois que ele j? segurou HP e armadura suficientes para te alongar a luta",
+              "spike_race": "tu cobras mais cedo; ele responde melhor quando o 6 chega e a lane j? est? controlada",
+              "lane_windows": [
+                "niveis 1-3: tira passiva, entra curto e sai antes da troca ficar ruim",
+                "nivel 6: respeita a ult dele se tua wave estiver adiantada demais",
+                "primeiro item: teu spike tem que cobrar mapa antes da primeira grande engage frontal"
+              ],
+              "recommended_setup": "setup de troca curta e press?o constante vale mais que greed de luta longa contra tanque de engage",
+              "first_item_plan": "o primeiro item precisa te manter ditando o ritmo antes do Malphite virar bot?o de teamfight"
             }
           }
         }
@@ -872,6 +1783,19 @@
               "plan": "quebra a zona da bola com push e movimentacao lateral, e nao te contenta em farmar igual espelho",
               "danger": "troca longa parada dentro do range da esfera",
               "spike_race": "as duas escalam, mas tua pressao de pickoff aparece mais cedo"
+            },
+            "viktor": {
+              "verdict": "skill de wave control",
+              "plan": "força prioridade cedo, pune quando o Viktor estiver preso na wave e não entrega stun à toa no corredor",
+              "danger": "levar poke e controle de espaço sem conseguir responder a wave",
+              "spike_race": "teu burst e pickoff aparecem primeiro; o dele cresce quando a fight fica travada em choke",
+              "lane_windows": [
+                "niveis 1-3: usa range e setup de stun para tomar o centro da lane",
+                "nivel 6: pune qualquer passo lateral ruim antes dele estabilizar o item",
+                "primeiro item: teu spike precisa virar ameaça real de pickoff, não só farm espelhado"
+              ],
+              "recommended_setup": "setup de lane e burst limpo vale mais que greed de troca longa contra controle de espaço",
+              "first_item_plan": "teu primeiro item precisa sustentar prioridade e ameaça de pickoff antes da zone dele crescer"
             }
           }
         }
@@ -896,7 +1820,48 @@
           "situational_items": [
             "resistência cedo contra poke e suporte mage",
             "item utilitário de proteção se o carry da tua comp for o centro da luta"
-          ]
+          ],
+          "matchups": {
+            "nami": {
+              "verdict": "skill de execução",
+              "plan": "ameaça hook e lanterna sem te oferecer para poke limpo; a lane vira tua quando a Nami perde o timing da bolha ou da maré",
+              "danger": "tomar poke demais antes de conseguir fazer a jogada certa",
+              "spike_race": "ela cresce quando a lane fica controlada e longa; tu cresces quando uma play limpa quebra o ritmo do bot",
+              "lane_windows": [
+                "niveis 1-2: controla brush e nao toma poke bobo antes da primeira ameaça real",
+                "primeiro recall: utilidade e vida para continuar mandando no espaço",
+                "nivel 6: tua luta melhora muito quando a maré dela já foi gasta ou lida"
+              ],
+              "recommended_setup": "setup de play limpa e resposta a poke vale mais que greed de engage sem cobertura",
+              "first_item_plan": "teu primeiro item precisa te manter ameaçando hook e protegendo a volta da lane"
+            },
+            "draven": {
+              "verdict": "janela fina",
+              "plan": "amea?a hook no machado previs?vel, mas n?o toma dano de gra?a tentando for?ar play imposs?vel",
+              "danger": "andar para brush ou wave sem recurso e virar alvo do burst dele antes da tua jogada existir",
+              "spike_race": "ele manda no dano cedo; tu mandas quando a lane respeita tua pickoff e a fight deixa de ser frontal",
+              "lane_windows": [
+                "niveis 1-2: controla brush e l? o machado, sem se doar para a troca seca",
+                "primeiro recall: utilidade e vida para continuar amea?ando hook real",
+                "nivel 6: tua play precisa pegar o tempo dele antes que o burst decida tudo"
+              ],
+              "recommended_setup": "setup de play limpa e margem de sobreviv?ncia vale mais que greed de engage cega contra snowball bruto",
+              "first_item_plan": "o primeiro item precisa te manter amea?ando pick sem te transformar em alvo f?cil para o dano dele"
+            },
+            "caitlyn": {
+              "verdict": "skill de espa?o e brush",
+              "plan": "controla brush, amea?a hook na hora em que ela perde minion escudo e n?o toma poke demais antes da primeira jogada real",
+              "danger": "ser cozinhado no range e chegar sem vida na ?nica janela boa de engage",
+              "spike_race": "ela manda no push e na placa cedo; tu mandas quando a play limpa quebra a lane e o range dela deixa de bastar",
+              "lane_windows": [
+                "niveis 1-2: disputa brush e wave sem te oferecer ? linha reta de poke",
+                "primeiro recall: volta com vida e utilidade para continuar amea?ando hook real",
+                "nivel 6: tua fight melhora muito quando trap e flash dela j? est?o sob press?o"
+              ],
+              "recommended_setup": "setup de play limpa e resist?ncia a poke vale mais que greed de engage cega contra lane de range forte",
+              "first_item_plan": "o primeiro item precisa te manter amea?ando pick sem te transformar em alvo f?cil da press?o de wave"
+            }
+          }
         }
       }
     },
@@ -931,6 +1896,32 @@
               "plan": "varia a sombra, nega o conforto do range dela e pressiona o mapa assim que limpar a wave",
               "danger": "poke demais antes do 6 e wave constantemente no meio",
               "spike_race": "tu sobes muito no 6; ela cresce mais quando a partida vira teamfight frontal"
+            },
+            "syndra": {
+              "verdict": "skill brutal",
+              "plan": "sobrevive ao controle de range e joga pela janela em que o stun sair torto ou a wave te der acesso real",
+              "danger": "stun limpa com poke acumulado antes do teu primeiro all-in",
+              "spike_race": "ela manda no push e no burst cedo; tu cresces quando a lane abre sombra e side lane",
+              "lane_windows": [
+                "niveis 1-3: toma o mínimo de dano enquanto lês o timing da esfera",
+                "nivel 6: o teu all-in precisa punir stun gasto ou passo torto",
+                "primeiro item: usa letalidade e lateral para parar de jogar a lane no seco"
+              ],
+              "recommended_setup": "setup de entrada limpa e segurança vale mais que greed de poke contra burst alto",
+              "first_item_plan": "teu primeiro item precisa abrir pickoff e aliviar a pressão frontal da lane"
+            },
+            "viktor": {
+              "verdict": "bom se tu quebrares o setup",
+              "plan": "não deixa o Viktor montar a lane em paz; joga pela sombra e pela pressão lateral assim que a wave te obedecer",
+              "danger": "ficar preso em poke e zone sem conseguir ameaçar o all-in",
+              "spike_race": "ele cresce com setup e choke; tu cresces quando finalmente jogas no nevoeiro e no acesso",
+              "lane_windows": [
+                "niveis 1-3: aceita farmar pior se isso te der HP e ameaça futura",
+                "nivel 6: a tua janela é quando ele não consegue te manter fora da cara",
+                "primeiro item: usa teu spike para empurrar e desaparecer do mapa"
+              ],
+              "recommended_setup": "setup de sobrevivência e pickoff vale mais que greed de troca seca contra zoneamento longo",
+              "first_item_plan": "teu primeiro item precisa transformar teu acesso em ameaça real, não só em dano na planilha"
             }
           }
         }

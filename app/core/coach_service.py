@@ -41,6 +41,7 @@ class CounterPickPackage:
 class BanRecommendationPackage:
     role: str
     enemy_preview: list[str]
+    stage: str
     recommendations: list[dict[str, Any]]
 
 
@@ -110,8 +111,12 @@ class CoachService:
         enemy_team: list[Any],
         *,
         role: str | None = None,
+        enemy_anchor: Any | None = None,
         allies: list[dict[str, Any]] | None = None,
+        revealed_enemies: list[dict[str, Any]] | None = None,
+        draft_window: dict[str, Any] | None = None,
         banned: list[Any] | None = None,
+        main_champions: list[str] | None = None,
         preferred_pool: list[str] | None = None,
         prioritize_pool: bool = True,
         limit: int = 3,
@@ -122,8 +127,12 @@ class CoachService:
         recommendations = self.knowledge.recommend_counter_picks(
             enemy_team,
             role=role,
+            enemy_anchor=enemy_anchor,
             allies=allies,
+            revealed_enemies=revealed_enemies,
+            draft_window=draft_window,
             banned=banned,
+            main_champions=main_champions,
             preferred_pool=preferred_pool,
             prioritize_pool=prioritize_pool,
             limit=limit,
@@ -137,11 +146,18 @@ class CoachService:
             recommendations=[
                 {
                     "champion": item.champion,
+                    "focus": item.focus,
+                    "context": item.context,
+                    "window": item.window,
                     "score": item.score,
                     "reasons": list(item.reasons),
+                    "familiarity": item.familiarity,
                     "comp_style": item.comp_style,
                     "build_focus": list(item.build_focus),
                     "power_spikes": list(item.power_spikes),
+                    "lane_plan_summary": item.lane_plan_summary,
+                    "lane_win_condition": item.lane_win_condition,
+                    "lane_fail_condition": item.lane_fail_condition,
                 }
                 for item in recommendations
             ],
@@ -152,7 +168,11 @@ class CoachService:
         enemy_team: list[Any],
         *,
         role: str | None = None,
+        stage: str = "ban",
         current_pick: Any | None = None,
+        revealed_enemies: list[dict[str, Any]] | None = None,
+        draft_window: dict[str, Any] | None = None,
+        main_champions: list[str] | None = None,
         preferred_pool: list[str] | None = None,
         banned: list[Any] | None = None,
         limit: int = 3,
@@ -163,7 +183,11 @@ class CoachService:
         recommendations = self.knowledge.recommend_bans(
             enemy_team,
             role=role,
+            stage=stage,
             current_pick=current_pick,
+            revealed_enemies=revealed_enemies,
+            draft_window=draft_window,
+            main_champions=main_champions,
             preferred_pool=preferred_pool,
             banned=banned,
             limit=limit,
@@ -174,9 +198,13 @@ class CoachService:
         return BanRecommendationPackage(
             role=self.knowledge._normalize_role(role or "") or "flex",
             enemy_preview=[self.knowledge.get_champion_name(enemy) for enemy in enemy_team],
+            stage=stage,
             recommendations=[
                 {
                     "champion": item.champion,
+                    "focus": item.focus,
+                    "context": item.context,
+                    "window": item.window,
                     "score": item.score,
                     "reasons": list(item.reasons),
                 }
@@ -207,7 +235,12 @@ class CoachService:
         if not self.knowledge:
             return None
 
-        guidance = self.knowledge.get_draft_guidance(my_champion, enemy_team, role=role)
+        guidance = self.knowledge.get_draft_guidance(
+            my_champion,
+            enemy_team,
+            role=role,
+            allies=allies,
+        )
         if not guidance:
             return None
 
@@ -221,6 +254,13 @@ class CoachService:
         matchup = self.knowledge.get_lane_matchup_insight(my_champion, anchor, role=role)
         if not matchup:
             return None
+
+        duo_synergy = self._resolve_duo_synergy(my_champion, allies or [], role)
+        jungle_synergy = self._resolve_jungle_synergy(my_champion, allies or [], role)
+        guidance = {
+            **guidance,
+            "synergy_summary": self._build_locked_synergy_summary(duo_synergy, jungle_synergy),
+        }
 
         return LockedDraftPlanPackage(
             champion=guidance.get("champion", ""),
@@ -377,3 +417,25 @@ class CoachService:
         if not jungle_ally:
             return None
         return self.knowledge.get_jungle_lane_synergy(jungle_ally.get("champion"), my_champion)
+
+    def _build_locked_synergy_summary(
+        self,
+        duo_synergy: Optional[dict[str, Any]],
+        jungle_synergy: Optional[dict[str, Any]],
+    ) -> str:
+        parts: list[str] = []
+        if duo_synergy:
+            label = str(duo_synergy.get("label") or "").strip()
+            plan = str(duo_synergy.get("plan") or "").strip()
+            if label and plan:
+                parts.append(f"na tua lane, a dupla quer {label}: {plan}")
+            elif plan:
+                parts.append(plan)
+        if jungle_synergy:
+            label = str(jungle_synergy.get("label") or "").strip()
+            plan = str(jungle_synergy.get("plan") or "").strip()
+            if label and plan:
+                parts.append(f"com teu jungler, o mapa quer {label}: {plan}")
+            elif plan:
+                parts.append(plan)
+        return " ".join(part for part in parts if part).strip()

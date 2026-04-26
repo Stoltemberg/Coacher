@@ -61,9 +61,61 @@ class JungleIntel:
 class JungleTracker:
     def __init__(self) -> None:
         self.intel = JungleIntel()
+        self.summoner_spells: dict[str, list[str]] = {}
 
     def reset(self) -> None:
         self.intel = JungleIntel()
+        self.summoner_spells = {}
+
+    def ingest_summoner_spells(
+        self,
+        spells_by_player: dict[str, dict[str, Any]],
+        our_team: str,
+        player_to_team: dict[str, str],
+        player_to_champ: dict[str, str],
+    ) -> None:
+        for raw_name, payload in (spells_by_player or {}).items():
+            player_name = _clean_name(raw_name)
+            if not player_name or not isinstance(payload, dict):
+                continue
+
+            spell_names = []
+            for slot in ("summonerSpellOne", "summonerSpellTwo"):
+                spell = payload.get(slot) or {}
+                display = str(
+                    spell.get("displayName")
+                    or spell.get("rawDisplayName")
+                    or spell.get("name")
+                    or ""
+                ).strip()
+                if display:
+                    spell_names.append(display.lower())
+
+            if spell_names:
+                self.summoner_spells[player_name] = spell_names
+
+        if self.intel.enemy_jungler_name:
+            return
+
+        for player_name, spell_names in self.summoner_spells.items():
+            if not any("smite" in spell_name.lower() for spell_name in spell_names):
+                continue
+            team = str(player_to_team.get(player_name) or "")
+            champion = str(player_to_champ.get(player_name) or "")
+            if team == our_team:
+                self.intel.our_jungler_name = player_name
+            elif team and team != our_team:
+                self.intel.enemy_jungler_name = player_name
+                self.intel.enemy_jungler_champion = champion or self.intel.enemy_jungler_champion
+                self.intel.last_seen_source = self.intel.last_seen_source or "summoner_spells"
+                if not self.intel.notes:
+                    self._push_note(
+                        title="Jungler inferido",
+                        detail=f"{champion or player_name} foi identificado como jungler inimigo pelo Smite.",
+                        event_time=0.0,
+                        tone="system",
+                    )
+        self._refresh_confidence()
 
     def ingest_roster(
         self,

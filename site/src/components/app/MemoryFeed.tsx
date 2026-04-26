@@ -48,7 +48,7 @@ export default function MemoryFeed() {
                   />
                 )}
               </div>
-              <p className="relative z-10 pl-2 text-[11px] leading-relaxed text-white/58">{entry.note}</p>
+              <p className="relative z-10 break-words pl-2 text-[11px] leading-relaxed text-white/58">{entry.note}</p>
               {entry.meta && (
                 <span className="relative z-10 mt-2 block pl-2 text-[9px] font-mono uppercase tracking-[0.14em] text-white/30">
                   {entry.meta}

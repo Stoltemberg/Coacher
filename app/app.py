@@ -151,6 +151,7 @@ class CoacherApp:
         self.draft_preferences = {
             "preferred_champion_pool": list(s.get("preferred_champion_pool", [])),
             "prioritize_pool_picks": bool(s.get("prioritize_pool_picks", True)),
+            "main_champions": list(s.get("main_champions", [])),
         }
         self.player_profile = {
             "primary_role": s.get("primary_role", "mid"),
@@ -172,11 +173,15 @@ class CoacherApp:
         if self.live_api:
             self.live_api.stop()
             self.live_api = None
+        if self.scraper:
+            self.scraper.reset()
         self.draft_coach.reset()
         self.coach.reset()
         self.coach.deactivate_match()
         self.last_ui_state = {"phase": None, "champion": None, "summoner": None}
         self.push_draft_recommendations(None)
+        if self.window:
+            evaluate_js_call(self.window, "updateJungleIntel", None)
         self.sync_ui_game_state(phase=phase, champion=None)
 
     def is_authenticated(self):
@@ -208,6 +213,10 @@ class CoacherApp:
     def push_draft_recommendations(self, payload):
         if self.window:
             evaluate_js_call(self.window, "updateDraftRecommendations", payload)
+
+    def push_jungle_intel_snapshot(self):
+        if self.window:
+            evaluate_js_call(self.window, "updateJungleIntel", self.coach.get_jungle_intel_snapshot())
 
     def _ui_phase_label(self, phase):
         labels = {
@@ -266,14 +275,20 @@ class CoacherApp:
         self.sync_ui_game_state(phase=self._ui_phase_label(phase))
         
         if phase == "ChampSelect":
+            if self.scraper:
+                self.scraper.reset()
             self.coach.reset()
             self.draft_coach.reset()
             self.sync_ui_game_state(phase="Seleção de Campeões")
             self.assistant.say(self.voice.champ_select_intro(), "neutral", category="draft")
         elif phase in {"Lobby", "Matchmaking", "ReadyCheck", "None"}:
+            if self.scraper:
+                self.scraper.reset()
             self.draft_coach.reset()
             self.sync_ui_game_state(phase=self._ui_phase_label(phase))
         elif phase == "InProgress":
+            if self.scraper:
+                self.scraper.reset()
             self.coach.activate_match()
             self.sync_ui_game_state(phase="Em Partida")
             if self.live_api: self.live_api.stop()
@@ -293,13 +308,25 @@ class CoacherApp:
         if not self.is_authenticated(): return
         if event_type == "active_player":
             self.coach.update_active_player(payload)
+        elif event_type == "active_player_abilities":
+            self.coach.update_active_player_abilities(payload)
+        elif event_type == "active_player_runes":
+            self.coach.update_active_player_runes(payload)
+        elif event_type == "all_game_data":
+            self.coach.update_all_game_data(payload)
+        elif event_type == "player_summoner_spells":
+            self.coach.update_player_summoner_spells(payload)
+            self.push_jungle_intel_snapshot()
         elif event_type == "players":
             self.coach.update_players(payload)
+            self.push_jungle_intel_snapshot()
             if self.scraper: self.scraper.process_players(payload, self.coach.active_player_name)
         elif event_type == "event":
             self.coach.process_event(payload)
+            self.push_jungle_intel_snapshot()
         elif event_type == "game_stats":
             self.coach.update_game_stats(payload)
+            self.push_jungle_intel_snapshot()
 
     async def finalize_match_flow(self, connection=None, requested_result=None, source="gameflow"):
         if not self.coach.match_started and not self.coach.memory.current_match.entries:
@@ -322,6 +349,8 @@ class CoacherApp:
 
             self.push_postgame_summary(summary)
             self.push_performance_snapshot()
+            if self.window:
+                evaluate_js_call(self.window, "updateJungleIntel", None)
             return summary
         finally:
             with self.match_finalize_lock: self.match_finalize_state["finalizing"] = False
@@ -382,6 +411,7 @@ class Api:
         self._app.push_auth_snapshot()
         self._app.sync_ui_game_state()
         self._app.push_performance_snapshot()
+        self._app.push_jungle_intel_snapshot()
         if self._app.is_authenticated() and not self._app.lcu_started:
             threading.Thread(target=self._app.start_lcu_loop, daemon=True).start()
             self._app.lcu_started = True
@@ -401,6 +431,9 @@ class Api:
     def get_performance_snapshot(self):
         history_snapshot = self._app.coach.memory.build_history_snapshot(limit_matches=12)
         return build_performance_snapshot(history_snapshot, self._app.player_profile)
+
+    def get_jungle_intel_snapshot(self):
+        return self._app.coach.get_jungle_intel_snapshot()
 
     def login_user(self, email, password):
         res = self._app.auth_service.sign_in(email, password)
@@ -530,7 +563,7 @@ def main():
         background_color='#050508'
     )
     
-    app_instance.assistant.callback_log = lambda t, ty="normal", c=None: evaluate_js_call(app_instance.window, "playTTSUpdate", t, ty, c)
+    app_instance.assistant.callback_log = lambda t, ty="normal", c=None, call=None: evaluate_js_call(app_instance.window, "playTTSUpdate", t, ty, c, call)
     app_instance.scraper = EnemyScraper(app_instance.assistant, app_instance.window)
     
     webview.start(debug=False, private_mode=True)

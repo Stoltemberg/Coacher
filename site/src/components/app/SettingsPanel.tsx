@@ -40,13 +40,13 @@ function SectionHeading({
   note: string;
 }) {
   return (
-    <div className="flex items-center gap-4">
-      <div className="flex h-11 w-11 items-center justify-center rounded-2xl border border-white/10 bg-white/[0.04]">
-        <Icon className="h-5 w-5 text-toxic" />
+    <div className="flex items-center gap-3">
+      <div className="flex h-10 w-10 items-center justify-center rounded-2xl border border-white/10 bg-white/[0.04]">
+        <Icon className="h-[18px] w-[18px] text-toxic" />
       </div>
       <div>
-        <h3 className="text-xl font-black tracking-tight text-white">{title}</h3>
-        <p className="mt-1 text-sm text-white/45">{note}</p>
+        <h3 className="text-lg font-black tracking-tight text-white">{title}</h3>
+        <p className="mt-1 text-[12px] leading-6 text-white/45">{note}</p>
       </div>
     </div>
   );
@@ -55,7 +55,7 @@ function SectionHeading({
 const Slider = ({ label, value, min, max, step, unit, settingKey }: SliderProps) => {
   const { updateSettings } = useBridge();
   return (
-    <div className="space-y-3 rounded-3xl border border-white/8 bg-white/[0.03] p-4">
+    <div className="space-y-3 rounded-[24px] border border-white/8 bg-white/[0.03] p-4">
       <div className="flex items-center justify-between gap-4">
         <label className="text-[10px] font-black uppercase tracking-[0.2em] text-white/55">
           {label}
@@ -81,7 +81,7 @@ const Slider = ({ label, value, min, max, step, unit, settingKey }: SliderProps)
 const Toggle = ({ label, checked, settingKey, desc }: ToggleProps) => {
   const { updateSettings } = useBridge();
   return (
-    <div className="group flex items-center justify-between rounded-3xl border border-white/8 bg-white/[0.04] p-4 transition-colors hover:border-white/15 hover:bg-white/[0.06]">
+    <div className="group flex items-center justify-between rounded-[24px] border border-white/8 bg-white/[0.04] p-4 transition-colors hover:border-white/15 hover:bg-white/[0.06]">
       <div className="space-y-1 pr-4">
         <span className="text-[11px] font-semibold text-white">{label}</span>
         <p className="text-[10px] uppercase tracking-[0.14em] text-white/38">{desc}</p>
@@ -134,7 +134,7 @@ export default function SettingsPanel() {
     { id: "agressivo", label: "Agressivo" },
     { id: "seguro", label: "Seguro" },
     { id: "macro", label: "Macro" },
-    { id: "mecanico", label: "Mecanico" },
+    { id: "mecanico", label: "Mecânico" },
   ];
 
   const commitPoolEntry = () => {
@@ -228,25 +228,25 @@ export default function SettingsPanel() {
     <motion.div
       initial="hidden"
       animate="visible"
-      className="custom-scrollbar h-full w-full overflow-y-auto bg-transparent px-6 pb-12 pt-2"
+      className="custom-scrollbar h-full w-full overflow-y-auto bg-transparent px-4 pb-8 pt-1"
     >
-      <header className="app-surface mb-6 rounded-[32px] px-8 py-7">
+      <header className="app-surface mb-5 rounded-[28px] px-6 py-6">
         <div className="max-w-3xl space-y-4">
           <div className="inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/[0.04] px-4 py-2 text-[10px] font-mono uppercase tracking-[0.24em] text-toxic/80">
             <Sparkles className="h-3.5 w-3.5" />
-            painel de configuracoes
+            painel de configurações
           </div>
-          <h1 className="text-4xl font-black tracking-[-0.06em] text-white">
+          <h1 className="text-3xl font-black tracking-[-0.06em] text-white">
             Ajusta o coach do teu jeito.
           </h1>
-          <p className="max-w-2xl text-sm leading-7 text-white/52">
+          <p className="max-w-2xl text-[13px] leading-6 text-white/52">
             Menos vazio, mais controle: voz, ritmo de leitura, filtros e a base para novas personalidades no futuro.
           </p>
         </div>
       </header>
 
-      <div className="grid grid-cols-1 gap-6 2xl:grid-cols-[1.08fr_0.92fr]">
-        <motion.section variants={itemVariants} className="app-surface space-y-6 rounded-[32px] p-7">
+      <div className="grid grid-cols-1 gap-4 2xl:grid-cols-[1.08fr_0.92fr]">
+        <motion.section variants={itemVariants} className="app-surface space-y-5 rounded-[28px] p-6">
           <SectionHeading
             icon={Mic}
             title="Voz e personalidade"
@@ -338,7 +338,7 @@ export default function SettingsPanel() {
           </div>
         </motion.section>
 
-        <motion.section variants={itemVariants} className="app-surface space-y-6 rounded-[32px] p-7">
+        <motion.section variants={itemVariants} className="app-surface space-y-5 rounded-[28px] p-6">
           <SectionHeading
             icon={BarChart3}
             title="Perfil do jogador"
@@ -460,7 +460,7 @@ export default function SettingsPanel() {
           </div>
         </motion.section>
 
-        <motion.section variants={itemVariants} className="app-surface space-y-6 rounded-[32px] p-7">
+        <motion.section variants={itemVariants} className="app-surface space-y-5 rounded-[28px] p-6">
           <SectionHeading
             icon={Swords}
             title="Pool preferida"
@@ -530,7 +530,7 @@ export default function SettingsPanel() {
           </div>
         </motion.section>
 
-        <motion.section variants={itemVariants} className="app-surface space-y-6 rounded-[32px] p-7">
+        <motion.section variants={itemVariants} className="app-surface space-y-5 rounded-[28px] p-6">
           <SectionHeading
             icon={Clock}
             title="Ritmo de leitura"
@@ -577,7 +577,7 @@ export default function SettingsPanel() {
           </div>
         </motion.section>
 
-        <motion.section variants={itemVariants} className="app-surface space-y-6 rounded-[32px] p-7">
+        <motion.section variants={itemVariants} className="app-surface space-y-5 rounded-[28px] p-6">
           <SectionHeading
             icon={BarChart3}
             title="Limiares de decisao"
@@ -605,7 +605,7 @@ export default function SettingsPanel() {
           </div>
         </motion.section>
 
-        <motion.section variants={itemVariants} className="app-surface space-y-6 rounded-[32px] p-7">
+        <motion.section variants={itemVariants} className="app-surface space-y-5 rounded-[28px] p-6">
           <SectionHeading
             icon={Shield}
             title="Controles de seguranca"
@@ -627,7 +627,7 @@ export default function SettingsPanel() {
           </div>
         </motion.section>
 
-        <motion.section variants={itemVariants} className="app-surface space-y-6 rounded-[32px] p-7 2xl:col-span-2">
+        <motion.section variants={itemVariants} className="app-surface space-y-5 rounded-[28px] p-6 2xl:col-span-2">
           <SectionHeading
             icon={Radio}
             title="Filtros por topico"
@@ -670,7 +670,7 @@ export default function SettingsPanel() {
         </motion.section>
       </div>
 
-      <footer className="app-surface mt-6 flex flex-col items-center justify-between gap-5 rounded-[32px] p-6 md:flex-row">
+      <footer className="app-surface mt-5 flex flex-col items-center justify-between gap-4 rounded-[28px] p-5 md:flex-row">
         <div className="flex items-center gap-5">
           <Radio className="h-7 w-7 animate-pulse text-toxic" />
           <div>

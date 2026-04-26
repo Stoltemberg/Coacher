@@ -71,6 +71,23 @@ export interface MemoryEntry {
   meta?: string;
 }
 
+export interface CoachCallSnapshot {
+  headline: string;
+  risk?: string;
+  action?: string;
+  next_step?: string;
+  type?: string;
+  category?: string | null;
+}
+
+export interface CoachLogEntry {
+  message: string;
+  type: string;
+  id: number;
+  category?: string | null;
+  call?: CoachCallSnapshot;
+}
+
 export interface TimelineEntry {
   clock: string;
   phase: string;
@@ -109,35 +126,61 @@ export interface JungleIntel {
 }
 
 export interface DraftRecommendationsSnapshot {
-  stage?: "pick" | "locked";
+  stage?: "ban" | "pick" | "locked";
   role: string;
   enemy_preview: string[];
   recommendations: Array<{
     champion: string;
+    focus?: string;
+    context?: string;
+    window?: string;
     score: number;
     reasons: string[];
+    familiarity: string;
     comp_style: string;
     build_focus: string[];
     power_spikes: string[];
+    lane_plan_summary?: string;
+    lane_win_condition?: string;
+    lane_fail_condition?: string;
   }>;
   best_ban?: {
     champion: string;
+    focus?: string;
+    context?: string;
+    window?: string;
     score: number;
     reasons: string[];
   } | null;
   ban_recommendations?: Array<{
     champion: string;
+    focus?: string;
+    context?: string;
+    window?: string;
     score: number;
     reasons: string[];
   }>;
   locked_plan?: {
     champion: string;
+    locked_focus: string;
     enemy_anchor: string;
     verdict: string;
     plan: string;
     danger: string;
+    lane_plan: string;
+    lane_windows: string[];
+    lane_win_condition: string;
+    lane_fail_condition: string;
+    recommended_setup: string;
     opening_plan: string;
     first_reset_focus: string;
+    reset_adjustment: string;
+    map_plan_summary: string;
+    fight_plan_summary: string;
+    team_plan_summary: string;
+    synergy_summary: string;
+    first_item_plan: string;
+    power_spikes: string[];
     build_focus: string[];
   } | null;
 }
@@ -215,6 +258,7 @@ export interface PythonApi {
   get_auth_snapshot: () => Promise<AuthSnapshot>;
   get_settings_snapshot: () => Promise<SettingsSnapshot>;
   get_performance_snapshot: () => Promise<PerformanceSnapshot>;
+  get_jungle_intel_snapshot: () => Promise<JungleIntel | null>;
   notify_ui_ready: () => void;
 }
 
@@ -231,8 +275,8 @@ declare global {
     updateDraftRecommendations: (payload: DraftRecommendationsSnapshot | null) => void;
     updatePostGameSummary: (summary: PostGameSummary) => void;
     appendPostGameMemory: (entry: MemoryEntry) => void;
-    addAILog: (message: string, type?: string) => void;
-    playTTSUpdate: (message: string, type?: string, category?: string | null) => void;
+    addAILog: (message: string, type?: string, category?: string | null, call?: CoachCallSnapshot) => void;
+    playTTSUpdate: (message: string, type?: string, category?: string | null, call?: CoachCallSnapshot) => void;
     addPreGameStat: (name: string, champion: string, rank: string, winrate: string) => void;
     setCoachTaxonomyFocus: (categoryId: string) => void;
   }

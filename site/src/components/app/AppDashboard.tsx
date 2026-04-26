@@ -1,362 +1,102 @@
 "use client";
 
-import { useState } from "react";
-import { AnimatePresence, motion, Variants } from "framer-motion";
-import {
-  Activity,
-  Database,
-  LayoutDashboard,
-  Logs,
-  ShieldCheck,
-  Settings,
-  Target,
-  Terminal,
-  X,
-} from "lucide-react";
+import { useMemo, useState } from "react";
+import { motion } from "framer-motion";
 
 import { useBridge } from "@/contexts/BridgeContext";
-
-import ChampionBackground from "./ChampionBackground";
-import JungleIntelPanel from "./JungleIntelPanel";
-import MatchIntelPanel from "./MatchIntelPanel";
-import MemoryFeed from "./MemoryFeed";
-import NeuralLogChannel from "./NeuralLogChannel";
-import NeuralStatus from "./NeuralStatus";
 import SettingsPanel from "./SettingsPanel";
-import { HudPanel } from "./HudPanel";
-import StatusBar from "../layout/StatusBar";
-
-const sidebarVariants: Variants = {
-  hidden: { opacity: 0, x: -20 },
-  visible: {
-    opacity: 1,
-    x: 0,
-    transition: { staggerChildren: 0.05, delayChildren: 0.1 },
-  },
-};
+import LeftSidebar from "./LeftSidebar";
+import TopNavbar from "./TopNavbar";
+import RightSidebar from "./RightSidebar";
+import PhaseTabs from "./PhaseTabs";
+import LiveCommandCenter from "./LiveCommandCenter";
+import DraftWorkspace from "./DraftWorkspace";
+import PostgameReview from "./PostgameReview";
+import ProgressionDashboard from "./ProgressionDashboard";
+import { classifyDashboardView, type DashboardView } from "./dashboard-phase";
 
 export default function AppDashboard() {
-  const { auth, gameState, logs, settings, summary, performance } = useBridge();
-  const [activeTab, setActiveTab] = useState<"dashboard" | "settings">("dashboard");
-  const [logsOpen, setLogsOpen] = useState(false);
-  const isChampSelect = /sele/i.test(gameState.phase) && /campe/i.test(gameState.phase);
-  const profileSummary = [
-    settings?.primary_role ? `role ${settings.primary_role}` : null,
-    settings?.player_goal ? settings.player_goal.replaceAll("_", " ") : null,
-    settings?.playstyle_profile ? settings.playstyle_profile.replaceAll("_", " ") : null,
-  ]
-    .filter(Boolean)
-    .join(" • ");
+  const { gameState, draftRecommendations, summary } = useBridge();
 
-  const navItems = [
-    { id: "dashboard", icon: LayoutDashboard, label: "Painel", desc: "workspace da partida" },
-    { id: "settings", icon: Settings, label: "Configuracoes", desc: "ajustes do coach" },
-  ];
+  const phaseDrivenView = useMemo(
+    () =>
+      classifyDashboardView({
+        phase: gameState.phase,
+        hasDraft: Boolean(draftRecommendations),
+        hasSummary: Boolean(summary),
+      }),
+    [draftRecommendations, gameState.phase, summary],
+  );
+
+  const [activeView, setActiveView] = useState<DashboardView>(phaseDrivenView);
+  const effectiveView =
+    activeView === "settings" || activeView === "progress" ? activeView : phaseDrivenView;
+
+  const centerView = (() => {
+    switch (effectiveView) {
+      case "draft":
+        return <DraftWorkspace />;
+      case "postgame":
+        return <PostgameReview />;
+      case "progress":
+        return <ProgressionDashboard />;
+      case "settings":
+        return <SettingsPanel />;
+      case "live":
+      default:
+        return <LiveCommandCenter />;
+    }
+  })();
 
   return (
-    <div className="app-shell bg-[#050508] text-white selection:bg-toxic/30">
-      <div className="app-backdrop" />
-      <StatusBar />
-
-      <div className="relative z-10 flex flex-1 overflow-hidden">
-        <motion.aside
-          initial="hidden"
-          animate="visible"
-          variants={sidebarVariants}
-          className="m-4 mr-0 flex w-[290px] flex-col rounded-[30px] border border-white/8 bg-[rgba(13,15,20,0.82)] backdrop-blur-2xl"
+    <div className="app-shell overflow-hidden bg-[#050508] p-4 font-sans text-white selection:bg-[#ADFF2F]/30">
+      <motion.div
+        className="flex flex-1 gap-4 overflow-hidden"
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ duration: 0.35 }}
+      >
+        <motion.div
+          initial={{ x: -20, opacity: 0 }}
+          animate={{ x: 0, opacity: 1 }}
+          transition={{ type: "spring", stiffness: 110, damping: 20 }}
+          className="h-full"
         >
-          <div className="flex-1 space-y-6 p-5 pt-6">
-            <div className="app-surface rounded-[26px] px-4 py-4">
-              <div className="mb-3 text-[10px] font-mono uppercase tracking-[0.18em] text-white/45">
-                Sessao atual
-              </div>
-              <div className="text-lg font-semibold text-white">
-                {auth?.authenticated ? auth.user?.display_name || "Conta ativa" : "Visitante"}
-              </div>
-              <div className="mt-1 text-[11px] leading-6 text-white/45">
-                {gameState.summonerName || "Aguardando nome do invocador"}
-              </div>
-            </div>
+          <LeftSidebar activeTab={effectiveView} setActiveTab={(tab) => setActiveView(tab as DashboardView)} />
+        </motion.div>
 
-            <div className="app-surface rounded-[26px] px-4 py-4">
-              <div className="mb-3 text-[10px] font-mono uppercase tracking-[0.18em] text-white/45">
-                Perfil V1
-              </div>
-              <div className="text-sm font-semibold text-white">
-                {profileSummary || "Perfil ainda nao configurado"}
-              </div>
-              <div className="mt-1 text-[11px] leading-6 text-white/45">
-                {settings?.main_champions?.length
-                  ? `mains: ${settings.main_champions.slice(0, 3).join(", ")}`
-                  : "Define tua role, objetivo e mains para o coach sair do generico."}
-              </div>
-            </div>
+        <motion.div
+          initial={{ scale: 0.985, opacity: 0 }}
+          animate={{ scale: 1, opacity: 1 }}
+          transition={{ type: "spring", stiffness: 110, damping: 22, delay: 0.05 }}
+          className="relative flex flex-1 flex-col overflow-hidden rounded-[24px] border border-white/5 bg-[#0A0A0C] shadow-[0_0_50px_rgba(0,0,0,0.5)]"
+        >
+          <TopNavbar activeView={effectiveView} />
+          <PhaseTabs activeView={effectiveView} onChange={setActiveView} />
 
-            {performance ? (
-              <div className="app-surface rounded-[26px] px-4 py-4">
-                <div className="mb-3 text-[10px] font-mono uppercase tracking-[0.18em] text-white/45">
-                  Evolucao V2
-                </div>
-                <div className="text-sm font-semibold text-white">{performance.record}</div>
-                <div className="mt-1 text-[11px] leading-6 text-white/45">
-                  {Math.round(performance.win_rate * 100)}% WR • {performance.matches_played} partidas
-                </div>
-                <div className="mt-4 space-y-2">
-                  {performance.metrics.slice(0, 3).map((metric) => (
-                    <div key={metric.id} className="rounded-2xl border border-white/8 bg-white/[0.03] px-3 py-3">
-                      <div className="flex items-center justify-between gap-3">
-                        <span className="text-[11px] font-semibold text-white">{metric.label}</span>
-                        <span
-                          className={`text-[10px] font-mono uppercase tracking-[0.14em] ${
-                            metric.status === "ahead"
-                              ? "text-toxic"
-                              : metric.status === "close"
-                                ? "text-amber-300"
-                                : "text-red-300"
-                          }`}
-                        >
-                          {metric.status === "ahead" ? "acima" : metric.status === "close" ? "perto" : "abaixo"}
-                        </span>
-                      </div>
-                      <div className="mt-1 text-[10px] text-white/45">
-                        score {metric.current.toFixed(2)} • alvo {metric.target.toFixed(2)}
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            ) : null}
+          <div className="custom-scrollbar flex-1 overflow-y-auto p-4">
+            <div className={`grid items-start gap-4 ${effectiveView === "settings" ? "grid-cols-1" : "grid-cols-[minmax(0,1fr)_300px]"}`}>
+              <motion.div
+                initial={{ y: 20, opacity: 0 }}
+                animate={{ y: 0, opacity: 1 }}
+                transition={{ type: "spring", stiffness: 110, damping: 22, delay: 0.12 }}
+              >
+                {centerView}
+              </motion.div>
 
-            {summary?.insights?.improvements?.length ? (
-              <div className="app-surface rounded-[26px] px-4 py-4">
-                <div className="mb-3 text-[10px] font-mono uppercase tracking-[0.18em] text-white/45">
-                  3 erros principais
-                </div>
-                <div className="space-y-2">
-                  {summary.insights.improvements.slice(0, 3).map((item) => (
-                    <div key={item} className="rounded-2xl border border-white/8 bg-white/[0.03] px-3 py-3 text-[11px] leading-6 text-white/68">
-                      {item}
-                    </div>
-                  ))}
-                </div>
-              </div>
-            ) : null}
-
-            <nav className="space-y-4">
-              {navItems.map((item) => (
-                <button
-                  key={item.id}
-                  onClick={() => setActiveTab(item.id as "dashboard" | "settings")}
-                  className={`relative w-full overflow-hidden rounded-[26px] border p-4 text-left transition-all ${
-                    activeTab === item.id
-                      ? "border-white/15 bg-white/[0.08] text-white"
-                      : "border-white/8 bg-white/[0.03] text-white/55 hover:bg-white/[0.06]"
-                  }`}
+              {effectiveView !== "settings" ? (
+                <motion.div
+                  initial={{ y: 20, opacity: 0 }}
+                  animate={{ y: 0, opacity: 1 }}
+                  transition={{ type: "spring", stiffness: 110, damping: 22, delay: 0.16 }}
                 >
-                  <div className="flex items-center gap-4">
-                    <item.icon
-                      className={`h-4 w-4 ${activeTab === item.id ? "text-toxic" : "text-white/40"}`}
-                    />
-                    <div>
-                      <p className="text-[11px] font-semibold">{item.label}</p>
-                      <p className="text-[10px] text-white/40">{item.desc}</p>
-                    </div>
-                  </div>
-                  {activeTab === item.id && (
-                    <div className="absolute inset-y-3 left-0 w-1 rounded-r-full bg-toxic shadow-[0_0_15px_hsl(var(--toxic))]" />
-                  )}
-                </button>
-              ))}
-            </nav>
-          </div>
-
-          <div className="soft-divider bg-black/10 p-5">
-            <div className="flex items-center gap-3">
-              <div className="h-2 w-2 animate-pulse rounded-full bg-toxic shadow-[0_0_12px_rgba(173,255,47,0.7)]" />
-              <span className="text-[10px] font-mono uppercase tracking-[0.18em] text-white/55">
-                Bridge sincronizada
-              </span>
+                  <RightSidebar activeView={effectiveView} />
+                </motion.div>
+              ) : null}
             </div>
           </div>
-        </motion.aside>
-
-        <main className="flex min-w-0 flex-1 flex-col overflow-hidden px-4 pb-4 pt-0">
-          <AnimatePresence mode="wait">
-            {activeTab === "dashboard" ? (
-              <motion.div
-                key="dashboard"
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                exit={{ opacity: 0 }}
-                className="flex flex-1 flex-col gap-4 overflow-hidden py-4"
-              >
-                {isChampSelect ? (
-                  <div className="grid min-h-0 flex-1 grid-cols-12 gap-4">
-                    <div className="col-span-12 flex min-h-0 flex-col gap-4 xl:col-span-8">
-                      <div className="min-h-0 flex-[1.2]">
-                        <HudPanel title="Modo tatico" icon={ShieldCheck} idSuffix="DRFT" className="h-full">
-                          <div className="relative flex h-full min-h-0 flex-col overflow-hidden bg-[#050508]">
-                            <ChampionBackground championName={gameState.championName} />
-                            <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_top_left,_rgba(173,255,47,0.12),_transparent_26%),linear-gradient(145deg,_rgba(5,5,8,0.35)_0%,_rgba(5,5,8,0.88)_72%)]" />
-
-                            <div className="relative z-10 flex items-center justify-between gap-4 px-5 py-4">
-                              <div className="max-w-xl">
-                                <div className="text-[10px] font-mono uppercase tracking-[0.2em] text-toxic/80">
-                                  Selecao de Campeoes
-                                </div>
-                                <h2 className="mt-2 text-2xl font-semibold tracking-[-0.05em] text-white">
-                                  Prioridade total para leitura do draft e picks recomendados.
-                                </h2>
-                                <p className="mt-2 text-[11px] leading-6 text-white/50">
-                                  O intel inimigo sobe para o centro da tela enquanto o restante do dashboard vira apoio tatico.
-                                </p>
-                              </div>
-                              <div className="hidden rounded-[24px] border border-white/10 bg-black/20 px-4 py-3 text-right xl:block">
-                                <div className="text-[9px] font-mono uppercase tracking-[0.16em] text-white/35">
-                                  fase atual
-                                </div>
-                                <div className="mt-2 text-sm font-semibold text-white">{gameState.phase}</div>
-                                <div className="mt-1 text-[10px] text-white/45">
-                                  {gameState.championName || "Campeao ainda nao travado"}
-                                </div>
-                              </div>
-                            </div>
-
-                            <div className="relative z-10 min-h-0 flex-1 px-5 pb-5">
-                              <MatchIntelPanel tacticalMode />
-                            </div>
-                          </div>
-                        </HudPanel>
-                      </div>
-
-                      <div className="min-h-0 flex-[0.8]">
-                        <HudPanel title="Estado da partida" icon={Activity} idSuffix="CORE" className="h-full">
-                          <NeuralStatus />
-                        </HudPanel>
-                      </div>
-                    </div>
-
-                    <div className="col-span-12 flex min-h-0 flex-col gap-4 xl:col-span-4">
-                      <div className="min-h-0 flex-1">
-                        <HudPanel title="Leitura de selva" icon={Target} idSuffix="TAC" className="h-full">
-                          <JungleIntelPanel />
-                        </HudPanel>
-                      </div>
-                      <div className="min-h-0 flex-1">
-                        <HudPanel title="Memoria da sessao" icon={Database} idSuffix="MEM" className="h-full">
-                          <MemoryFeed />
-                        </HudPanel>
-                      </div>
-                    </div>
-                  </div>
-                ) : (
-                  <div className="grid min-h-0 flex-1 grid-cols-12 gap-4">
-                    <div className="col-span-12 flex h-full min-h-0 flex-col gap-4 xl:col-span-8">
-                      <div className="min-h-0 flex-1">
-                        <HudPanel title="Visao da partida" icon={Activity} idSuffix="CORE" className="h-full">
-                          <div className="relative h-full w-full overflow-hidden bg-[#050508]">
-                            <ChampionBackground championName={gameState.championName} />
-                            <div className="pointer-events-none absolute inset-0 z-10 bg-[radial-gradient(circle_at_top_left,_rgba(255,255,255,0.08),_transparent_30%),linear-gradient(180deg,_rgba(5,5,8,0.05)_0%,_rgba(5,5,8,0.65)_100%)]" />
-
-                            <div className="absolute right-5 top-5 z-20 w-[320px] max-w-[calc(100%-2.5rem)]">
-                              <MatchIntelPanel />
-                            </div>
-
-                            <div className="absolute bottom-0 left-0 right-0 z-30">
-                              <NeuralStatus />
-                            </div>
-                          </div>
-                        </HudPanel>
-                      </div>
-                    </div>
-
-                    <div className="col-span-12 flex min-h-0 flex-col gap-4 xl:col-span-4">
-                      <div className="min-h-0 flex-1">
-                        <HudPanel title="Memoria da sessao" icon={Database} idSuffix="MEM" className="h-full">
-                          <MemoryFeed />
-                        </HudPanel>
-                      </div>
-                      <div className="min-h-0 flex-1">
-                        <HudPanel title="Leitura de selva" icon={Target} idSuffix="TAC" className="h-full">
-                          <JungleIntelPanel />
-                        </HudPanel>
-                      </div>
-                    </div>
-                  </div>
-                )}
-
-                <button
-                  type="button"
-                  onClick={() => setLogsOpen(true)}
-                  className="h-[220px] shrink-0 rounded-[28px] text-left transition-transform duration-200 hover:-translate-y-0.5"
-                >
-                  <HudPanel title="Message log" icon={Terminal} idSuffix="LOG" className="h-full">
-                    <div className="flex h-full flex-col">
-                      <div className="soft-divider flex items-center justify-between px-4 py-3">
-                        <div className="flex items-center gap-2 text-[10px] font-mono uppercase tracking-[0.18em] text-white/45">
-                          <Logs className="h-3.5 w-3.5 text-toxic" />
-                          clique para abrir todos os logs
-                        </div>
-                        <span className="rounded-full border border-white/10 bg-white/[0.04] px-3 py-1 text-[9px] font-mono uppercase tracking-[0.16em] text-white/45">
-                          {logs.length} eventos
-                        </span>
-                      </div>
-                      <NeuralLogChannel limit={6} compact />
-                    </div>
-                  </HudPanel>
-                </button>
-              </motion.div>
-            ) : (
-              <motion.div
-                key="settings"
-                initial={{ opacity: 0, x: 20 }}
-                animate={{ opacity: 1, x: 0 }}
-                exit={{ opacity: 0, x: -20 }}
-                className="flex-1 overflow-hidden"
-              >
-                <SettingsPanel />
-              </motion.div>
-            )}
-          </AnimatePresence>
-        </main>
-      </div>
-
-      <AnimatePresence>
-        {logsOpen && (
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            className="absolute inset-0 z-[300] flex items-center justify-center bg-black/70 p-6 backdrop-blur-sm"
-          >
-            <motion.div
-              initial={{ opacity: 0, y: 18, scale: 0.98 }}
-              animate={{ opacity: 1, y: 0, scale: 1 }}
-              exit={{ opacity: 0, y: 18, scale: 0.98 }}
-              className="app-surface flex h-[80vh] w-full max-w-5xl flex-col overflow-hidden rounded-[32px]"
-            >
-              <div className="soft-divider flex items-center justify-between px-6 py-5">
-                <div>
-                  <div className="text-[10px] font-mono uppercase tracking-[0.2em] text-white/45">
-                    historico completo
-                  </div>
-                  <div className="mt-1 text-2xl font-semibold tracking-[-0.05em] text-white">
-                    Message log
-                  </div>
-                </div>
-                <button
-                  type="button"
-                  onClick={() => setLogsOpen(false)}
-                  className="flex h-11 w-11 items-center justify-center rounded-full border border-white/10 bg-white/[0.04] text-white/65 transition-colors hover:bg-white hover:text-black"
-                >
-                  <X className="h-4 w-4" />
-                </button>
-              </div>
-              <NeuralLogChannel />
-            </motion.div>
-          </motion.div>
-        )}
-      </AnimatePresence>
+        </motion.div>
+      </motion.div>
     </div>
   );
 }

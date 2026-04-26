@@ -8,6 +8,17 @@ export default function JungleIntelPanel() {
   const { jungleIntel: intel } = useBridge();
 
   const isEmpty = !intel || (!intel.enemy_jungler_name && !intel.enemy_jungler_champion);
+  const sourceLabel = (value?: string | null) => {
+    if (!value) return "fonte local";
+    if (value === "summoner_spells") return "smite detectado";
+    if (value === "roster") return "roster";
+    if (value === "champion_kill") return "kill";
+    if (value === "dragonkill") return "dragao";
+    if (value === "heraldkill") return "arauto";
+    if (value === "baronkill") return "barao";
+    if (value === "hordekill") return "larvas";
+    return value;
+  };
 
   return (
     <div className="flex h-full flex-col overflow-hidden">
@@ -73,7 +84,7 @@ export default function JungleIntelPanel() {
                     {intel.last_seen_clock || "--:--"}
                   </div>
                   <div className="mt-1 text-[11px] text-white/40">
-                    {intel.last_seen_source || "fonte local"}
+                    {sourceLabel(intel.last_seen_source)}
                   </div>
                 </div>
                 <div className="rounded-[22px] border border-white/8 bg-white/[0.04] p-4">

@@ -35,6 +35,7 @@
 
   --font-display: var(--font-display);
   --font-mono: var(--font-mono);
+  --font-space: var(--font-space);
 }
 
 html {

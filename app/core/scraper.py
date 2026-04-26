@@ -1,15 +1,23 @@
+import re
 import threading
+from urllib.parse import quote
+
 import requests
 from bs4 import BeautifulSoup
 
 from core.ui_bridge import evaluate_js_call
+
+
+def _clean_name(value):
+    return str(value or "").split("#")[0].strip()
+
 
 class EnemyScraper:
     def __init__(self, assistant, window):
         self.assistant = assistant
         self.window = window
         self.scraped_players = set()
-        self.cache = {} # Cache de resultados {name: (rank, wr)}
+        self.cache = {}
         self.region = "br"
 
     def process_players(self, players_data, active_player_name):
@@ -17,58 +25,55 @@ class EnemyScraper:
             return
 
         our_team = "ORDER"
-        for p in players_data:
-            if p.get("summonerName") == active_player_name:
-                our_team = p.get("team")
+        cleaned_active = _clean_name(active_player_name)
+        for player in players_data:
+            if _clean_name(player.get("summonerName")) == cleaned_active:
+                our_team = player.get("team") or our_team
                 break
 
-        for p in players_data:
-            team = p.get("team")
-            name = p.get("summonerName")
-            champion = p.get("championName")
+        for player in players_data:
+            team = player.get("team")
+            name = str(player.get("summonerName") or "").strip()
+            champion = player.get("championName")
 
-            # Apenas busca do time inimigo e que ainda não foi buscado
             if team != our_team and name and name not in self.scraped_players:
                 self.scraped_players.add(name)
-                # Dispara a busca em thread separada para não travar o loop
+                if self.window:
+                    evaluate_js_call(
+                        self.window,
+                        "addPreGameStat",
+                        name,
+                        champion,
+                        "Carregando",
+                        "...",
+                    )
                 threading.Thread(target=self._scrape, args=(name, champion), daemon=True).start()
 
     def _scrape(self, summoner_name, champion_name):
         try:
             if summoner_name in self.cache:
                 rank, winrate = self.cache[summoner_name]
-                print(f"[Scraper] Usando cache para {summoner_name}")
             else:
-                # Tratamento de Nomes (Name#TAG vira Name-TAG, espaços viram +)
-                url_name = summoner_name.replace('#', '-').replace(' ', '+')
-                url = f"https://www.leagueofgraphs.com/pt/summoner/{self.region}/{url_name}"
-            
-            headers = {
-                'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/100.0.4896.127 Safari/537.36'
-            }
-            resp = requests.get(url, headers=headers, timeout=6)
-            
-            rank = "Desconhecido"
-            winrate = "N/A"
-            
-            if resp.status_code == 200:
-                soup = BeautifulSoup(resp.text, 'html.parser')
-                
-                # Buscar liga/elo
-                league_div = soup.find('div', class_='leagueTier')
-                if league_div:
-                    # Tira quebras de linha e pega o primeiro texto (ex: Ouro II)
-                    rank = league_div.get_text(strip=True).replace("\n", " ").split("LP")[0].strip()
+                url_name = quote(summoner_name.replace("#", "-"), safe="")
+                url = f"https://op.gg/lol/summoners/{self.region}/{url_name}"
+                headers = {
+                    "User-Agent": (
+                        "Mozilla/5.0 (Windows NT 10.0; Win64; x64) "
+                        "AppleWebKit/537.36 (KHTML, like Gecko) "
+                        "Chrome/124.0 Safari/537.36"
+                    )
+                }
+                resp = requests.get(url, headers=headers, timeout=8)
 
-                # Buscar Winrate global (Geralmente no primeiro pie-chart lateral)
-                pie_chart = soup.find('div', class_='pie-chart')
-                if pie_chart:
-                    winrate = pie_chart.get_text(strip=True)
-                
-                # Salva no cache
-                self.cache[summoner_name] = (rank, winrate)
+                rank = "Indisponivel"
+                winrate = "Indisponivel"
 
-            # Envia diretamente ao javascript da interface
+                if resp.status_code == 200:
+                    rank, winrate = self._parse_opgg_profile(resp.text)
+
+                if rank != "Indisponivel" or winrate != "Indisponivel":
+                    self.cache[summoner_name] = (rank, winrate)
+
             if self.window:
                 evaluate_js_call(
                     self.window,
@@ -78,13 +83,66 @@ class EnemyScraper:
                     rank,
                     winrate,
                 )
-                
-            # Log falado opcional se o winrate for absurdamente alto ou elo perigoso.
-            if "Diamante" in rank or "Mestre" in rank:
-                self.assistant.say(f"Atenção grave. Identifiquei que jogador {champion_name} do time adversário é Elo {rank}.")
 
-        except Exception as e:
-            print(f"[Scraper] Erro ao buscar {summoner_name}: {e}")
+            if any(token in rank.lower() for token in ("diamond", "master", "grandmaster", "challenger")):
+                self.assistant.say(
+                    f"Atenção. Identifiquei que {champion_name} do time adversário está em {rank}.",
+                    "warning",
+                    category="draft",
+                )
+
+        except Exception as exc:
+            print(f"[Scraper] Erro ao buscar {summoner_name}: {exc}")
+            if self.window:
+                evaluate_js_call(
+                    self.window,
+                    "addPreGameStat",
+                    summoner_name,
+                    champion_name,
+                    "Indisponivel",
+                    "Indisponivel",
+                )
+
+    def _parse_opgg_profile(self, html):
+        soup = BeautifulSoup(html, "html.parser")
+        description = ""
+        description_tag = soup.find("meta", attrs={"name": "description"})
+        if description_tag:
+            description = str(description_tag.get("content") or "").strip()
+
+        if not description:
+            return "Indisponivel", "Indisponivel"
+
+        lowered = description.lower()
+        if "unranked" in lowered:
+            return "Unranked", "Sem WR"
+
+        rank_match = re.search(
+            r"/\s*([A-Za-z]+)\s+(\d)(?:\s+\d+)?\s+\d+\s*LP",
+            description,
+            flags=re.IGNORECASE,
+        )
+        wr_match = re.search(
+            r"/\s*(\d+)\s*Win\s*(\d+)\s*Lose\s*Win rate\s*(\d+%)",
+            description,
+            flags=re.IGNORECASE,
+        )
+
+        rank = "Indisponivel"
+        winrate = "Indisponivel"
+
+        if rank_match:
+            tier = rank_match.group(1).capitalize()
+            division = rank_match.group(2)
+            rank = f"{tier} {division}"
+
+        if wr_match:
+            wins = wr_match.group(1)
+            losses = wr_match.group(2)
+            wr = wr_match.group(3)
+            winrate = f"{wr} ({wins}W/{losses}L)"
+
+        return rank, winrate
 
     def reset(self):
         self.scraped_players.clear()

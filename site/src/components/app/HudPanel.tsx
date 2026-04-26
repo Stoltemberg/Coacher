@@ -10,6 +10,7 @@ interface HudPanelProps {
   children: React.ReactNode;
   className?: string;
   idSuffix?: string;
+  subtitle?: string;
 }
 
 export function HudPanel({
@@ -18,6 +19,7 @@ export function HudPanel({
   children,
   className = "",
   idSuffix = "SYS",
+  subtitle = "Painel ativo do coach desktop",
 }: HudPanelProps) {
   const panelId = useMemo(() => {
     const source = `${title}:${idSuffix}`;
@@ -44,7 +46,7 @@ export function HudPanel({
               {title}
             </span>
             <span className="block text-[10px] text-white/45">
-              Painel ativo do coach desktop
+              {subtitle}
             </span>
           </div>
         </div>

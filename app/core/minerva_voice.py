@@ -29,6 +29,374 @@ class MinervaVoice:
         }
         return labels.get(topic, "essa parte do teu jogo")
 
+    @staticmethod
+    def _draft_pick_context_text(context):
+        labels = {
+            "lane-revealed": " Isso aqui ja responde o pick direto que eles revelaram na tua rota.",
+            "duo-forming": " Isso aqui ja reage a dupla que eles estao montando.",
+            "role-revealed": " Isso aqui ja mira a role que eles mostraram cedo na draft.",
+            "comp-read": " Isso aqui e mais leitura da comp e do desenho geral da draft.",
+        }
+        return labels.get(context, "")
+
+    @staticmethod
+    def _draft_ban_context_text(context):
+        labels = {
+            "duo-forming": " Esse ban quebra a dupla que eles estao tentando fechar.",
+            "role-revealed": " Esse ban ja pune o pick revelado dessa role.",
+            "comp-read": " Esse ban e mais leitura da comp do que resposta a um nome so.",
+        }
+        return labels.get(context, "")
+
+    @staticmethod
+    def _draft_pick_window_text(window):
+        labels = {
+            "blind-slot": " Teu slot aqui e blind, entao estabilidade pesa mais que highlight de matchup.",
+            "answer-slot": " Teu slot aqui ja responde mais do que blinda, entao da pra apertar mais o counter.",
+            "contest-slot": " Essa janela ainda e de contestacao, entao consistencia continua valendo muito.",
+            "adc-revealed": " So o ADC deles apareceu, entao ainda vale respeitar o suporte que falta fechar.",
+            "support-revealed": " So o suporte deles apareceu, entao ainda nao e hora de vender demais a lane no papel.",
+            "duo-answered": " A dupla deles ja esta bem desenhada, entao da pra apertar mais o pick da bot lane.",
+            "lane-semi": " Tua rota ja comecou a responder, mas ainda nao fechou o bastante para largar estabilidade.",
+            "lane-answered": " Tua rota ja esta bem respondida, entao da pra apertar mais o matchup.",
+            "map-blind": " O mapa ainda esta cego, entao jungle estavel pesa mais que leitura ousada.",
+            "map-semi": " O mapa ja comecou a desenhar, mas ainda pede consistencia antes de inventar.",
+            "map-answered": " O mapa ja esta mais respondido, entao da pra apertar melhor a leitura da jungle.",
+            "blue-open": " No lado azul e cedo nessa rota, entao estabilidade sobe mais do que pick bonito no papel.",
+            "red-answer": " No lado vermelho e mais tarde nessa janela, entao da pra responder de forma bem mais cirúrgica.",
+            "info-exposed": " Teu lado ja se expôs mais na draft, entao conforto e proteção sobem de valor.",
+            "info-answering": " Teu lado esta respondendo com mais informação, entao da pra ser mais cirúrgico.",
+            "comfort-window": " Como a draft ainda pode responder tua rota, conforto pesa mais agora.",
+            "response-open": " So lembra que a draft ainda pode responder esse pick depois.",
+            "draft-open": " A draft ainda esta aberta, entao nao e hora de viajar demais.",
+            "lane-partial": " So metade da lane apareceu, entao ainda nao e hora de se vender demais no papel.",
+            "lane-complete": " A lane deles ja esta quase fechada, entao da pra apertar mais o matchup.",
+            "lane-shaped": " A lane ja esta mais desenhada, entao o counter teorico ganha mais valor.",
+            "draft-shaped": " A draft ja esta mais fechada, entao da pra apertar mais o matchup.",
+        }
+        return labels.get(window, "")
+
+    @staticmethod
+    def _draft_ban_window_text(window):
+        labels = {
+            "blind-slot": " Como teu slot entra mais cego aqui, o ban vale bem mais como protecao da rota.",
+            "answer-slot": " Como teu slot ja responde mais do que blinda, esse ban pode ser mais cirurgico.",
+            "contest-slot": " Essa janela ainda e de contestacao, entao o ban ajuda a estabilizar a disputa da rota.",
+            "adc-revealed": " So o ADC deles apareceu, entao esse ban ainda precisa respeitar o suporte que falta fechar.",
+            "support-revealed": " So o suporte deles apareceu, entao esse corte ainda segura melhor a parte oculta da lane.",
+            "duo-answered": " A dupla deles ja esta bem desenhada, entao esse ban pode cortar com mais precisao.",
+            "lane-semi": " A rota ja comecou a responder, mas esse ban ainda precisa segurar o que falta fechar.",
+            "lane-answered": " A rota ja esta bem respondida, entao esse ban pode cortar com bem mais precisao.",
+            "map-blind": " O mapa ainda esta cego, entao esse corte da jungle vale mais por seguranca estrutural.",
+            "map-semi": " O mapa ja esta semi-desenhado, entao o corte pode mirar melhor engage e ritmo.",
+            "map-answered": " O mapa ja esta mais respondido, entao esse ban pode ser bem mais preciso.",
+            "blue-open": " No lado azul e cedo nessa janela, entao esse ban sobe de valor como proteção mais segura.",
+            "red-answer": " No lado vermelho e mais tarde nessa janela, entao esse ban pode ser mais cirúrgico.",
+            "info-exposed": " Como teu lado ja mostrou mais coisa, esse ban sobe de valor como proteção da draft.",
+            "info-answering": " Como teu lado esta respondendo com mais informação, esse ban pode ser mais preciso.",
+            "protect-pick": " Aqui o ban vale mais como protecao direta do teu pick.",
+            "lane-protect": " Aqui o corte protege mais a tua lane do que a comp toda.",
+            "draft-open": " Como a draft ainda esta aberta, esse corte limpa a mesa antes dela fechar.",
+            "lane-partial": " Como a lane deles ainda nao apareceu inteira, o ban segura melhor o desconhecido.",
+            "lane-complete": " Como a lane deles ja esta quase fechada, o ban fica bem mais cirurgico.",
+            "map-open": " Na jungle, esse corte limpa mais o mapa e a estrutura da comp do que uma lane so.",
+            "map-shaped": " Com o mapa mais desenhado, esse ban fica mais sobre engage e estrutura do jogo.",
+            "draft-shaped": " Como a draft ja esta mais desenhada, o ban fica mais cirurgico.",
+        }
+        return labels.get(window, "")
+
+    @staticmethod
+    def _should_add_pick_context(context, reasons, lane_plan_summary):
+        text = " ".join((reasons or [])).lower()
+        lane_text = (lane_plan_summary or "").lower()
+        if context == "lane-revealed":
+            return "revelado" not in text and "rota" not in text
+        if context == "duo-forming":
+            return "dupla" not in text and "lane" not in lane_text
+        if context == "role-revealed":
+            return "role" not in text and "revelado" not in text
+        if context == "comp-read":
+            return "comp" not in text and "composicao" not in text
+        return False
+
+    @staticmethod
+    def _should_add_ban_context(context, reasons):
+        text = " ".join((reasons or [])).lower()
+        if context == "duo-forming":
+            return "dupla" not in text
+        if context == "role-revealed":
+            return "revelado" not in text and "role" not in text
+        if context == "comp-read":
+            return "comp" not in text and "composicao" not in text
+        return False
+
+    @staticmethod
+    def _should_add_pick_window(window, familiarity, raw_reasons):
+        text = " ".join((raw_reasons or [])).lower()
+        if window == "blind-slot":
+            return "blind" not in text and "cego" not in text
+        if window == "answer-slot":
+            return "responde" not in text and "counter" not in text
+        if window == "contest-slot":
+            return "contest" not in text and "consistencia" not in text
+        if window == "adc-revealed":
+            return "adc" not in text and "suporte" not in text
+        if window == "support-revealed":
+            return "suporte" not in text and "lane no papel" not in text
+        if window == "duo-answered":
+            return "dupla" not in text and "bot lane" not in text and "desenhada" not in text
+        if window == "lane-semi":
+            return "comecou a responder" not in text and "estabilidade" not in text
+        if window == "lane-answered":
+            return "bem respondida" not in text and "matchup" not in text and "cirurgico" not in text
+        if window == "map-blind":
+            return "mapa" not in text and "cego" not in text
+        if window == "map-semi":
+            return "mapa" not in text and "desenhar" not in text and "consistencia" not in text
+        if window == "map-answered":
+            return "mapa" not in text and "jungle" not in text and "respondido" not in text
+        if window == "blue-open":
+            return "lado azul" not in text and "estavel" not in text and "blind" not in text
+        if window == "red-answer":
+            return "lado vermelho" not in text and "cirurgico" not in text and "responder" not in text
+        if window == "info-exposed":
+            return "mostrou mais" not in text and "exp" not in text and "conforto" not in text
+        if window == "info-answering":
+            return "respondendo" not in text and "mais informacao" not in text and "cirurgico" not in text
+        if window == "comfort-window":
+            return familiarity in {"main", "pool"} and "conforto" not in text
+        if window == "response-open":
+            return familiarity == "off_pool" and "resposta" not in text and "cuidado" not in text
+        if window == "lane-partial":
+            return "metade da lane" not in text and "nao mostrou tudo" not in text
+        if window == "lane-complete":
+            return "lane inimiga" not in text and "praticamente fechada" not in text
+        if window == "lane-shaped":
+            return familiarity == "off_pool" and "counter" not in text and "matchup" not in text
+        return False
+
+    @staticmethod
+    def _should_add_ban_window(window, current_pick, raw_reasons):
+        text = " ".join((raw_reasons or [])).lower()
+        if window == "blind-slot":
+            return "cego" not in text and "blind" not in text
+        if window == "answer-slot":
+            return "cirurgico" not in text and "responde" not in text
+        if window == "contest-slot":
+            return "contest" not in text and "estabilizar" not in text
+        if window == "adc-revealed":
+            return "adc" not in text and "suporte" not in text
+        if window == "support-revealed":
+            return "suporte" not in text and "oculta" not in text
+        if window == "duo-answered":
+            return "dupla" not in text and "precis" not in text and "desenhada" not in text
+        if window == "lane-semi":
+            return "comecou a responder" not in text and "segurar" not in text
+        if window == "lane-answered":
+            return "bem respondida" not in text and "precis" not in text and "cirurgico" not in text
+        if window == "map-blind":
+            return "mapa" not in text and "cego" not in text
+        if window == "map-semi":
+            return "mapa" not in text and "semi" not in text and "ritmo" not in text
+        if window == "map-answered":
+            return "mapa" not in text and "precis" not in text and "respondido" not in text
+        if window == "blue-open":
+            return "lado azul" not in text and "seguro" not in text and "blind" not in text
+        if window == "red-answer":
+            return "lado vermelho" not in text and "cirurgico" not in text and "responde" not in text
+        if window == "info-exposed":
+            return "mostrou mais" not in text and "protec" not in text
+        if window == "info-answering":
+            return "respondendo" not in text and "mais informacao" not in text and "cirurgico" not in text
+        if window == "protect-pick":
+            return bool(current_pick) and "protege" not in text and "pune direto" not in text
+        if window == "lane-protect":
+            return bool(current_pick) and "lane" not in text
+        if window == "lane-partial":
+            return "lane" not in text and "dupla" not in text
+        if window == "lane-complete":
+            return "cirurgico" not in text and "fechada" not in text
+        if window == "map-open":
+            return "mapa" not in text and "estrutura" not in text
+        if window == "map-shaped":
+            return "mapa" not in text and "engage" not in text
+        return False
+
+    @staticmethod
+    def _draft_pick_role_priority_text(role_label, window, lane_plan_summary, lane_win_condition):
+        role_key = str(role_label or "").strip().lower()
+        if role_key in {"bottom", "support"}:
+            if window == "adc-revealed":
+                return " A call aqui ainda respeita muito o suporte que falta aparecer do outro lado."
+            if window == "support-revealed":
+                return " A call aqui ainda respeita muito o carry que esse suporte pode habilitar."
+            if window == "duo-answered":
+                return " Agora sim a leitura ja pesa a dupla inteira e nao so um nome solto."
+        if role_key == "jungle":
+            if window == "map-blind":
+                return " Aqui a prioridade e pick de mapa seguro, nao leitura precoce demais."
+            if window == "map-semi":
+                return " Aqui a prioridade ja comeca a dividir entre mapa, engage e qual lane vai receber mais recurso."
+            if window == "map-answered":
+                return " Aqui a call ja pode apertar bem mais a leitura do mapa e da estrutura das fights."
+        if role_key in {"top", "mid", "middle"}:
+            if window in {"lane-semi", "lane-answered"} and lane_win_condition:
+                return " Essa recomendacao ja esta bem mais ancorada na tua win condition real de lane."
+            if window in {"blind-slot", "blue-open"}:
+                return " Aqui o ponto e sobreviver ao blind sem entregar a lane no papel."
+        return ""
+
+    @staticmethod
+    def _draft_ban_role_priority_text(role_label, window, current_pick):
+        role_key = str(role_label or "").strip().lower()
+        if role_key in {"bottom", "support"}:
+            if window == "adc-revealed":
+                return " O ban aqui segura mais o suporte que ainda falta fechar essa lane."
+            if window == "support-revealed":
+                return " O ban aqui segura mais o carry que esse suporte quer habilitar."
+            if window == "duo-answered":
+                return " Agora o corte ja pode quebrar a dupla inteira com mais precisao."
+        if role_key == "jungle":
+            if window == "map-blind":
+                return " Aqui o corte vale mais por nao deixar o mapa nascer torto."
+            if window == "map-semi":
+                return " Aqui o corte ja mira melhor engage, ritmo e lado forte."
+            if window == "map-answered":
+                return " Aqui o corte ja pode mirar bem mais a estrutura real da comp."
+        if role_key in {"top", "mid", "middle"} and current_pick:
+            if window in {"lane-semi", "lane-answered"}:
+                return " Aqui o ban ja conversa muito mais com a resposta da tua rota do que com a draft geral."
+        return ""
+
+    def _build_draft_pick_detail_text(
+        self,
+        role_label,
+        recommendation,
+        *,
+        suppress_window=False,
+        suppress_context=False,
+        suppress_role_priority=False,
+    ):
+        pick = recommendation or {}
+        role_key = str(role_label or "").strip().lower()
+        raw_reasons = list((pick.get("reasons") or [])[:2])
+        reasons = "; ".join(raw_reasons)
+        familiarity = pick.get("familiarity", "")
+        focus = pick.get("focus", "")
+        context = pick.get("context", "")
+        window = pick.get("window", "")
+        build_focus = "; ".join((pick.get("build_focus") or [])[:2])
+        lane_plan_summary = pick.get("lane_plan_summary", "")
+        lane_win_condition = pick.get("lane_win_condition", "")
+        lane_fail_condition = pick.get("lane_fail_condition", "")
+
+        familiarity_text = ""
+        if familiarity == "main":
+            familiarity_text = " E melhor ainda: esse e teu main, entao e o melhor pick jogavel agora."
+        elif familiarity == "pool":
+            familiarity_text = " E melhor ainda: esse boneco ja esta na tua pool, entao continua bem jogavel."
+        elif familiarity == "off_pool":
+            familiarity_text = " So te aviso: e resposta forte, mas foge do teu conforto."
+
+        focus_text = ""
+        if focus == "anti-lane":
+            focus_text = " Ele entra mais para ganhar o duelo e a fase de rota."
+        elif focus == "anti-comp":
+            focus_text = " Ele entra mais para responder a composicao e o jeito da luta."
+        elif focus == "comfort-pick":
+            focus_text = " Aqui o diferencial e conforto com resposta boa ao mesmo tempo."
+
+        context_text = ""
+        if not suppress_context:
+            context_text = (
+                self._draft_pick_context_text(context)
+                if self._should_add_pick_context(context, raw_reasons, lane_plan_summary)
+                else ""
+            )
+        window_text = ""
+        if not suppress_window:
+            window_text = (
+                self._draft_pick_window_text(window)
+                if self._should_add_pick_window(window, familiarity, raw_reasons)
+                else ""
+            )
+        role_priority_text = ""
+        if not suppress_role_priority:
+            role_priority_text = self._draft_pick_role_priority_text(
+                role_label,
+                window,
+                lane_plan_summary,
+                lane_win_condition,
+            )
+        if role_key == "jungle":
+            lane_plan_text = f" O plano do mapa aqui e {lane_plan_summary}." if lane_plan_summary else ""
+            win_text = f" A condicao de vitoria aqui vai ser {lane_win_condition}." if lane_win_condition else ""
+            fail_text = f" E o erro que mais pune esse mapa e {lane_fail_condition}." if lane_fail_condition else ""
+        else:
+            lane_plan_text = f" O plano da lane aqui e {lane_plan_summary}." if lane_plan_summary else ""
+            win_text = f" A condicao de vitoria da lane vai ser {lane_win_condition}." if lane_win_condition else ""
+            fail_text = f" E o erro que mais perde e {lane_fail_condition}." if lane_fail_condition else ""
+        build_text = f" E ja entra pensando em {build_focus}." if build_focus else ""
+
+        return (
+            reasons,
+            f"{focus_text}{context_text}{window_text}{role_priority_text}{lane_plan_text}{win_text}{fail_text}{familiarity_text}{build_text}",
+        )
+
+    def _build_draft_ban_detail_text(
+        self,
+        role_label,
+        recommendation,
+        current_pick=None,
+        *,
+        suppress_window=False,
+        suppress_context=False,
+        suppress_role_priority=False,
+    ):
+        ban = recommendation or {}
+        raw_reasons = list((ban.get("reasons") or [])[:2])
+        reasons = "; ".join(raw_reasons)
+        focus = ban.get("focus", "")
+        context = ban.get("context", "")
+        window = ban.get("window", "")
+
+        focus_text = ""
+        if focus == "anti-lane":
+            focus_text = (
+                " Isso aqui e mais protecao direta do teu pick e da tua lane."
+                if current_pick
+                else " Isso aqui e mais um corte para nao deixar a lane nascer ruim."
+            )
+        elif focus == "anti-pool":
+            focus_text = " Esse corte limpa muito do que tu mais gosta de jogar."
+        elif focus == "anti-role":
+            focus_text = " Esse ban e mais limpeza geral da role antes da draft fechar."
+        elif focus == "anti-comp":
+            focus_text = " Esse corte mexe mais na estrutura da comp deles."
+
+        context_text = ""
+        if not suppress_context:
+            context_text = (
+                self._draft_ban_context_text(context)
+                if self._should_add_ban_context(context, raw_reasons)
+                else ""
+            )
+        window_text = ""
+        if not suppress_window:
+            window_text = (
+                self._draft_ban_window_text(window)
+                if self._should_add_ban_window(window, current_pick, raw_reasons)
+                else ""
+            )
+        role_priority_text = ""
+        if not suppress_role_priority:
+            role_priority_text = self._draft_ban_role_priority_text(
+                role_label,
+                window,
+                current_pick,
+            )
+        return reasons, f"{focus_text}{context_text}{window_text}{role_priority_text}"
+
     def lobby_ready(self):
         return self._pick(
             "Minerva na area. Abre o cliente e deixa comigo que eu ja vou ler onde esse jogo vai entortar.",
@@ -601,24 +969,120 @@ class MinervaVoice:
     def draft_best_pick(self, role_label, recommendation):
         pick = recommendation or {}
         champion_name = pick.get("champion", "")
-        reasons = "; ".join((pick.get("reasons") or [])[:2])
-        build_focus = "; ".join((pick.get("build_focus") or [])[:2])
         role_text = f" pra {role_label}" if role_label and role_label != "flex" else ""
-        build_text = f" E ja entra pensando em {build_focus}." if build_focus else ""
+        reasons, detail_text = self._build_draft_pick_detail_text(role_label, recommendation)
         return self._pick(
-            f"Se tu quer a melhor resposta{role_text}, vai de {champion_name}. Motivo: {reasons}.{build_text}",
-            f"Meu melhor pick{role_text} agora e {champion_name}. Isso te da {reasons}.{build_text}",
+            f"Se tu quer o melhor pick jogavel{role_text}, vai de {champion_name}. Motivo: {reasons}.{detail_text}",
+            f"Meu melhor pick jogavel{role_text} agora e {champion_name}. Isso te da {reasons}.{detail_text}",
+        )
+
+    def draft_pick_duo_focus(self, role_label, recommendation):
+        pick = recommendation or {}
+        champion_name = pick.get("champion", "")
+        role_text = f" pra {role_label}" if role_label and role_label != "flex" else ""
+        reasons, detail_text = self._build_draft_pick_detail_text(
+            role_label,
+            recommendation,
+            suppress_window=True,
+            suppress_context=True,
+            suppress_role_priority=True,
+        )
+        return self._pick(
+            f"Na leitura dessa bot lane{role_text}, o melhor pick jogavel e {champion_name}. Motivo: {reasons}.{detail_text}",
+            f"Pra responder o que eles estao montando na lane{role_text}, eu iria de {champion_name}. Motivo: {reasons}.{detail_text}",
+        )
+
+    def draft_pick_map_focus(self, role_label, recommendation):
+        pick = recommendation or {}
+        champion_name = pick.get("champion", "")
+        role_text = f" pra {role_label}" if role_label and role_label != "flex" else ""
+        reasons, detail_text = self._build_draft_pick_detail_text(
+            role_label,
+            recommendation,
+            suppress_window=True,
+            suppress_context=True,
+            suppress_role_priority=True,
+        )
+        return self._pick(
+            f"Na leitura de mapa dessa draft{role_text}, o melhor pick jogavel e {champion_name}. Motivo: {reasons}.{detail_text}",
+            f"Pra essa jungle nascer do jeito certo{role_text}, eu iria de {champion_name}. Motivo: {reasons}.{detail_text}",
+        )
+
+    def draft_pick_answer_focus(self, role_label, recommendation):
+        pick = recommendation or {}
+        champion_name = pick.get("champion", "")
+        role_text = f" pra {role_label}" if role_label and role_label != "flex" else ""
+        reasons, detail_text = self._build_draft_pick_detail_text(
+            role_label,
+            recommendation,
+            suppress_window=True,
+        )
+        return self._pick(
+            f"Como teu slot aqui ja responde a rota{role_text}, eu apertaria a resposta em {champion_name}. Motivo: {reasons}.{detail_text}",
+            f"Nessa janela de resposta{role_text}, o pick mais cirurgico e {champion_name}. Motivo: {reasons}.{detail_text}",
         )
 
     def draft_best_ban(self, role_label, recommendation, current_pick=None):
         ban = recommendation or {}
         champion_name = ban.get("champion", "")
-        reasons = "; ".join((ban.get("reasons") or [])[:2])
         role_text = f" pra {role_label}" if role_label and role_label != "flex" else ""
         current_text = f" contra teu {current_pick}" if current_pick else ""
+        reasons, detail_text = self._build_draft_ban_detail_text(role_label, recommendation, current_pick)
         return self._pick(
-            f"Se ainda der tempo de banir{role_text}, meu corte mais limpo{current_text} e {champion_name}. Motivo: {reasons}.",
-            f"Ban que mais limpa essa draft{role_text}{current_text}: {champion_name}. Tira isso da mesa porque {reasons}.",
+            f"Se ainda der tempo de banir{role_text}, meu corte mais limpo{current_text} e {champion_name}. Motivo: {reasons}.{detail_text}",
+            f"Ban que mais limpa essa fase da draft{role_text}{current_text}: {champion_name}. Tira isso da mesa porque {reasons}.{detail_text}",
+        )
+
+    def draft_ban_duo_focus(self, role_label, recommendation, current_pick=None):
+        ban = recommendation or {}
+        champion_name = ban.get("champion", "")
+        role_text = f" pra {role_label}" if role_label and role_label != "flex" else ""
+        current_text = f" contra teu {current_pick}" if current_pick else ""
+        reasons, detail_text = self._build_draft_ban_detail_text(
+            role_label,
+            recommendation,
+            current_pick,
+            suppress_window=True,
+            suppress_context=True,
+            suppress_role_priority=True,
+        )
+        return self._pick(
+            f"Pra quebrar essa lane{role_text}, meu ban mais limpo{current_text} e {champion_name}. Motivo: {reasons}.{detail_text}",
+            f"Se tu quer cortar a dupla que eles estao montando{role_text}{current_text}, tira {champion_name}. Motivo: {reasons}.{detail_text}",
+        )
+
+    def draft_ban_map_focus(self, role_label, recommendation, current_pick=None):
+        ban = recommendation or {}
+        champion_name = ban.get("champion", "")
+        role_text = f" pra {role_label}" if role_label and role_label != "flex" else ""
+        current_text = f" contra teu {current_pick}" if current_pick else ""
+        reasons, detail_text = self._build_draft_ban_detail_text(
+            role_label,
+            recommendation,
+            current_pick,
+            suppress_window=True,
+            suppress_context=True,
+            suppress_role_priority=True,
+        )
+        return self._pick(
+            f"Pra limpar o mapa dessa draft{role_text}, meu corte mais limpo{current_text} e {champion_name}. Motivo: {reasons}.{detail_text}",
+            f"Se tu quer travar melhor engage, ritmo e estrutura{role_text}{current_text}, tira {champion_name}. Motivo: {reasons}.{detail_text}",
+        )
+
+    def draft_ban_answer_focus(self, role_label, recommendation, current_pick=None):
+        ban = recommendation or {}
+        champion_name = ban.get("champion", "")
+        role_text = f" pra {role_label}" if role_label and role_label != "flex" else ""
+        current_text = f" contra teu {current_pick}" if current_pick else ""
+        reasons, detail_text = self._build_draft_ban_detail_text(
+            role_label,
+            recommendation,
+            current_pick,
+            suppress_window=True,
+        )
+        return self._pick(
+            f"Como teu slot aqui ja responde a rota{role_text}, eu faria o corte cirurgico{current_text} em {champion_name}. Motivo: {reasons}.{detail_text}",
+            f"Nessa janela de resposta{role_text}{current_text}, o ban mais cirurgico e {champion_name}. Motivo: {reasons}.{detail_text}",
         )
 
     def draft_locked_matchup_plan(self, champion_name, enemy_anchor, matchup, guidance):
@@ -626,14 +1090,170 @@ class MinervaVoice:
         plan = matchup.get("plan", "")
         danger = matchup.get("danger", "")
         first_reset = guidance.get("first_reset_focus") or matchup.get("first_reset_focus", "")
+        reset_adjustment = guidance.get("reset_adjustment", "")
+        map_plan_summary = guidance.get("map_plan_summary", "")
+        fight_plan_summary = guidance.get("fight_plan_summary", "")
+        team_plan_summary = guidance.get("team_plan_summary", "")
+        synergy_summary = guidance.get("synergy_summary", "")
         opening = guidance.get("opening_plan", "")
+        first_item = guidance.get("first_item_plan", "")
+        setup = matchup.get("recommended_setup", "")
+        lane_win_condition = matchup.get("lane_win_condition", "")
+        lane_fail_condition = matchup.get("lane_fail_condition", "")
         build_focus = "; ".join((guidance.get("build_focus") or [])[:2])
+        role_key = str((guidance or {}).get("role") or "").strip().lower()
+        is_jungle = role_key == "jungle"
         reset_text = f" Primeiro reset em {first_reset}." if first_reset else ""
         opening_text = f" Abre o jogo por {opening}." if opening else ""
+        reset_adjustment_text = f" No reset, lembra disto: {reset_adjustment}." if reset_adjustment else ""
+        map_text = f" No mapa, teu plano e {map_plan_summary}." if map_plan_summary else ""
+        fight_text = f" Em fight, lembra que {fight_plan_summary}." if fight_plan_summary else ""
+        team_text = f" Tua comp quer {team_plan_summary}." if team_plan_summary else ""
+        synergy_text = f" E tua sinergia pede isto: {synergy_summary}." if synergy_summary else ""
+        item_text = f" Primeiro item: {first_item}." if first_item else ""
+        setup_text = f" Setup ideal: {setup}." if setup else ""
+        if is_jungle:
+            win_text = f" Tua condicao de vitoria aqui e {lane_win_condition}." if lane_win_condition else ""
+            fail_text = f" E o erro que mais pune esse mapa e {lane_fail_condition}." if lane_fail_condition else ""
+            opener_primary = f"Travou {champion_name}. Contra {enemy_anchor}, essa leitura ta {verdict}. Faz isto: {plan}."
+            opener_secondary = f"{champion_name} confirmado. Plano contra {enemy_anchor}: {plan}."
+        else:
+            win_text = f" Tua condicao de vitoria na lane e {lane_win_condition}." if lane_win_condition else ""
+            fail_text = f" E o erro que mais perde e {lane_fail_condition}." if lane_fail_condition else ""
+            opener_primary = f"Travou {champion_name}. Contra {enemy_anchor}, esse matchup ta {verdict}. Faz isto: {plan}."
+            opener_secondary = f"{champion_name} confirmado. Plano contra {enemy_anchor}: {plan}."
         build_text = f" Builda em {build_focus}." if build_focus else ""
+        if is_jungle:
+            return self._pick(
+                f"{opener_primary}{win_text}{fail_text} Nao cai em {danger}.{map_text}{reset_adjustment_text}{item_text}",
+                f"{opener_secondary}{win_text}{fail_text} O perigo real e {danger}.{reset_adjustment_text}{map_text}{item_text}",
+            )
+        if role_key in {"top", "mid", "middle"}:
+            return self._pick(
+                f"{opener_primary}{win_text}{fail_text} Nao cai em {danger}.{reset_text}{reset_adjustment_text}{item_text}",
+                f"{opener_secondary}{win_text}{fail_text} O perigo real e {danger}.{reset_adjustment_text}{item_text}",
+            )
         return self._pick(
-            f"Travou {champion_name}. Contra {enemy_anchor}, esse matchup ta {verdict}. Faz isto: {plan}. Nao cai em {danger}.{reset_text}",
-            f"{champion_name} confirmado. Plano contra {enemy_anchor}: {plan}. O perigo real e {danger}.{opening_text}{build_text}",
+            f"{opener_primary}{win_text}{fail_text} Nao cai em {danger}.{reset_text}{reset_adjustment_text}{map_text}{team_text}{synergy_text}{item_text}{setup_text}",
+            f"{opener_secondary}{win_text}{fail_text} O perigo real e {danger}.{opening_text}{reset_adjustment_text}{map_text}{fight_text}{team_text}{synergy_text}{item_text}{setup_text}{build_text}",
+        )
+
+    def draft_locked_danger_focus(self, champion_name, enemy_anchor, matchup, guidance):
+        danger = matchup.get("danger", "")
+        lane_fail_condition = matchup.get("lane_fail_condition", "")
+        reset_adjustment = guidance.get("reset_adjustment", "")
+        first_item = guidance.get("first_item_plan", "")
+        role_key = str((guidance or {}).get("role") or "").strip().lower()
+        if role_key == "jungle":
+            fail_text = f" O erro que mais pune esse mapa e {lane_fail_condition}." if lane_fail_condition else ""
+        else:
+            fail_text = f" O erro que mais perde e {lane_fail_condition}." if lane_fail_condition else ""
+        reset_text = f" No reset, lembra disto: {reset_adjustment}." if reset_adjustment else ""
+        item_text = f" Primeiro item: {first_item}." if first_item else ""
+        if role_key == "jungle":
+            return self._pick(
+                f"Travou {champion_name}. Minha call principal contra {enemy_anchor} e perigo de mapa: {danger}.{fail_text}{reset_text}{item_text}",
+                f"Contra {enemy_anchor}, o mapa se perde assim: {danger}.{fail_text}{reset_text}",
+            )
+        if role_key in {"top", "mid", "middle"}:
+            return self._pick(
+                f"Travou {champion_name}. Minha call principal contra {enemy_anchor} e perigo puro: {danger}.{fail_text}{reset_text}",
+                f"Contra {enemy_anchor}, a lane se perde assim: {danger}.{fail_text}{item_text}",
+            )
+        return self._pick(
+            f"Travou {champion_name}. Minha call principal contra {enemy_anchor} e perigo puro: {danger}.{fail_text}{reset_text}{item_text}",
+            f"Contra {enemy_anchor}, a lane se perde assim: {danger}.{fail_text}{reset_text}{item_text}",
+        )
+
+    def draft_locked_win_focus(self, champion_name, enemy_anchor, matchup, guidance):
+        lane_win_condition = matchup.get("lane_win_condition", "")
+        plan = matchup.get("plan", "")
+        map_plan_summary = guidance.get("map_plan_summary", "")
+        first_reset = guidance.get("first_reset_focus") or matchup.get("first_reset_focus", "")
+        role_key = str((guidance or {}).get("role") or "").strip().lower()
+        if role_key == "jungle":
+            win_text = f" Tua condicao de vitoria aqui e {lane_win_condition}." if lane_win_condition else ""
+        else:
+            win_text = f" Tua condicao de vitoria e {lane_win_condition}." if lane_win_condition else ""
+        map_text = f" No mapa, teu plano e {map_plan_summary}." if map_plan_summary else ""
+        reset_text = f" Primeiro reset em {first_reset}." if first_reset else ""
+        if role_key in {"top", "mid", "middle"}:
+            return self._pick(
+                f"Travou {champion_name}. Contra {enemy_anchor}, tua win condition e clara: {plan}.{win_text}{reset_text}",
+                f"Call principal da lane contra {enemy_anchor}: {plan}.{win_text}{reset_text}",
+            )
+        return self._pick(
+            f"Travou {champion_name}. Contra {enemy_anchor}, tua win condition e clara: {plan}.{win_text}{reset_text}{map_text}",
+            f"Call principal da lane contra {enemy_anchor}: {plan}.{win_text}{reset_text}{map_text}",
+        )
+
+    def draft_locked_synergy_focus(self, champion_name, enemy_anchor, matchup, guidance):
+        synergy_summary = guidance.get("synergy_summary", "")
+        team_plan_summary = guidance.get("team_plan_summary", "")
+        fight_plan_summary = guidance.get("fight_plan_summary", "")
+        team_text = f" Tua comp quer {team_plan_summary}." if team_plan_summary else ""
+        fight_text = f" Em fight, lembra que {fight_plan_summary}." if fight_plan_summary else ""
+        extra_text = team_text or fight_text
+        return self._pick(
+            f"Travou {champion_name}. Contra {enemy_anchor}, o que mais pesa aqui e a tua sinergia: {synergy_summary}.{extra_text}",
+            f"Meu foco principal nesse lock e tua comp, nao so a lane: {synergy_summary}.{extra_text}",
+        )
+
+    def draft_locked_duo_focus(self, champion_name, enemy_anchor, matchup, guidance):
+        lane_win_condition = matchup.get("lane_win_condition", "")
+        lane_fail_condition = matchup.get("lane_fail_condition", "")
+        synergy_summary = str(guidance.get("synergy_summary", "")).strip()
+        fight_plan_summary = guidance.get("fight_plan_summary", "")
+        first_reset = guidance.get("first_reset_focus") or matchup.get("first_reset_focus", "")
+        win_text = f" Tua win condition na lane e {lane_win_condition}." if lane_win_condition else ""
+        fail_text = f" E o erro que mais perde e {lane_fail_condition}." if lane_fail_condition else ""
+        reset_text = f" Primeiro reset em {first_reset}." if first_reset else ""
+        summary_text = ""
+        if synergy_summary:
+            lower_summary = synergy_summary.lower()
+            if lower_summary.startswith(("a lane ", "essa lane ", "tua lane ", "a dupla ", "essa dupla ", "tua dupla ")):
+                summary_text = f" {synergy_summary[0].upper()}{synergy_summary[1:]}."
+            else:
+                summary_text = f" A tua dupla quer {synergy_summary}."
+        if not summary_text and fight_plan_summary:
+            summary_text = f" Em troca curta da lane, lembra que {fight_plan_summary}."
+        return self._pick(
+            f"Travou {champion_name}. Aqui eu to lendo mais a dupla do que a lane isolada contra {enemy_anchor}.{summary_text}{win_text}{fail_text}{reset_text}",
+            f"Meu foco principal nesse lock e a dupla da lane.{summary_text}{fail_text}{reset_text}",
+        )
+
+    def draft_locked_map_focus(self, champion_name, enemy_anchor, matchup, guidance):
+        map_plan_summary = guidance.get("map_plan_summary", "")
+        fight_plan_summary = guidance.get("fight_plan_summary", "")
+        team_plan_summary = guidance.get("team_plan_summary", "")
+        reset_adjustment = guidance.get("reset_adjustment", "")
+        first_item = guidance.get("first_item_plan", "")
+        map_text = f" O mapa pede {map_plan_summary}." if map_plan_summary else ""
+        fight_text = f" Em fight, lembra que {fight_plan_summary}." if fight_plan_summary else ""
+        team_text = f" Tua comp quer {team_plan_summary}." if team_plan_summary else ""
+        reset_text = f" No reset, lembra disto: {reset_adjustment}." if reset_adjustment else ""
+        item_text = f" Primeiro item: {first_item}." if first_item else ""
+        role_key = str((guidance or {}).get("role") or "").strip().lower()
+        if role_key == "jungle":
+            return self._pick(
+                f"Travou {champion_name}. Meu foco principal aqui e mapa contra {enemy_anchor}.{map_text}{reset_text}{item_text}",
+                f"Pra essa partida nascer certa com {champion_name}, eu to lendo mapa primeiro.{map_text}{reset_text}{item_text}",
+            )
+        return self._pick(
+            f"Travou {champion_name}. Meu foco principal aqui nao e rota, e mapa contra {enemy_anchor}.{map_text}{fight_text}{team_text}{reset_text}{item_text}",
+            f"Pra essa partida nascer certa com {champion_name}, eu to lendo mapa primeiro.{map_text}{fight_text}{team_text}{reset_text}{item_text}",
+        )
+
+    def draft_locked_reset_focus(self, champion_name, enemy_anchor, matchup, guidance):
+        reset_adjustment = guidance.get("reset_adjustment", "")
+        first_item = guidance.get("first_item_plan", "")
+        setup = matchup.get("recommended_setup", "")
+        reset_text = f" No reset, lembra disto: {reset_adjustment}." if reset_adjustment else ""
+        item_text = f" Primeiro item: {first_item}." if first_item else ""
+        setup_text = f" Setup ideal: {setup}." if setup else ""
+        return self._pick(
+            f"Travou {champion_name}. O ponto mais importante contra {enemy_anchor} agora e reset e loja.{reset_text}{item_text}{setup_text}",
+            f"Nesse lock, o que mais organiza tua partida contra {enemy_anchor} e isto:{reset_text}{item_text}{setup_text}",
         )
 
     def opening_plan(self, champion_name, opening_plan):
@@ -685,11 +1305,153 @@ class MinervaVoice:
             f"Abre a loja com cerebro em {champion_name}: {focus}. Item certo compra janela de jogo.",
         )
 
+    def gold_reset_window(self, champion_name, current_gold, build_focus=None, role=None):
+        focus = "; ".join((build_focus or [])[:2])
+        focus_text = f" Prioridade de loja: {focus}." if focus else ""
+        gold_label = int(current_gold)
+        if str(role or "").strip().lower() == "jungle":
+            return self._pick(
+                f"Tu ja ta sentado em {gold_label} de gold com {champion_name}. Usa esse tempo pra resetar e comprar mapa, nao pra passear sem base.{focus_text}",
+                f"{gold_label} de gold na mao de {champion_name}. Base boa agora vale mais que mais uma volta torta no rio.{focus_text}",
+            )
+        return self._pick(
+            f"Tu ja ta com {gold_label} de gold em {champion_name}. Essa base precisa virar componente e tempo de lane.{focus_text}",
+            f"{gold_label} de gold parado com {champion_name}. Reseta e transforma isso em item antes de doar tua janela.{focus_text}",
+        )
+
+    def forced_reset_window(
+        self,
+        champion_name,
+        current_gold,
+        *,
+        health_ratio,
+        resource_ratio,
+        build_focus=None,
+        role=None,
+    ):
+        focus = "; ".join((build_focus or [])[:2])
+        focus_text = f" Prioridade de loja: {focus}." if focus else ""
+        gold_label = int(current_gold)
+        hp_label = int(max(0.0, min(1.0, health_ratio)) * 100)
+        resource_label = int(max(0.0, min(1.0, resource_ratio)) * 100)
+
+        if str(role or "").strip().lower() == "jungle":
+            return self._pick(
+                f"{champion_name} ta pedindo base agora: {gold_label} de gold, {hp_label}% de vida e {resource_label}% de recurso. Reseta e recompra mapa antes de doar tempo.{focus_text}",
+                f"Sem insistir no mapa assim: {gold_label} de gold, {hp_label}% de vida e {resource_label}% de recurso no teu {champion_name}. Base obrigatoria agora.{focus_text}",
+            )
+
+        return self._pick(
+            f"{champion_name} ja ta em ponto de base forcada: {gold_label} de gold, {hp_label}% de vida e {resource_label}% de recurso. Reseta antes da lane te punir de graca.{focus_text}",
+            f"Do jeito que teu {champion_name} ta agora, essa base nao e luxo: {gold_label} de gold, {hp_label}% de vida e {resource_label}% de recurso.{focus_text}",
+        )
+
     def power_spike_call(self, champion_name, power_spikes):
         spikes = ", depois ".join((power_spikes or [])[:2])
         return self._pick(
             f"Teu jogo de {champion_name} vai apertar em {spikes}. Se antecipa a isso e nao luta fora do teu tempo.",
             f"Spike de {champion_name} nessa partida: {spikes}. Luta boa e a que respeita esse relogio.",
+        )
+
+    def ultimate_spike_call(self, champion_name, ultimate_name, rank):
+        if rank <= 1:
+            return self._pick(
+                f"{ultimate_name} abriu no teu {champion_name}. Agora tua janela de all-in e de resposta mudou de verdade.",
+                f"Nivel seis chegou com {ultimate_name} no {champion_name}. Respeita teu spike e para de jogar como se nada tivesse mudado.",
+            )
+        if rank == 2:
+            return self._pick(
+                f"{ultimate_name} subiu de nivel no teu {champion_name}. Teu impacto em fight ficou bem mais serio agora.",
+                f"Segundo rank de {ultimate_name} online. Com {champion_name}, essa e uma janela real de acelerar fight e objetivo.",
+            )
+        return self._pick(
+            f"{ultimate_name} chegou no ultimo rank de {champion_name}. Se tu achar a luta certa, o boneco ja ta no teto.",
+            f"Ultimo rank de {ultimate_name} liberado. Agora teu {champion_name} precisa jogar cada fight com muito mais precisao e ambicao.",
+        )
+
+    def constrained_ultimate_spike_call(self, champion_name, ultimate_name, rank, *, health_ratio, resource_ratio):
+        hp_label = int(max(0.0, min(1.0, health_ratio)) * 100)
+        resource_label = int(max(0.0, min(1.0, resource_ratio)) * 100)
+        if rank <= 1:
+            return self._pick(
+                f"{ultimate_name} abriu no teu {champion_name}, mas teu estado nao banca flip: {hp_label}% de vida e {resource_label}% de recurso. Reseta ou recompra a janela antes de entrar.",
+                f"Nivel seis chegou pro teu {champion_name}, so que com {hp_label}% de vida e {resource_label}% de recurso isso ainda nao e convite pra all-in.",
+            )
+        return self._pick(
+            f"{ultimate_name} melhorou no teu {champion_name}, mas teu estado ainda corta a janela: {hp_label}% de vida e {resource_label}% de recurso. Primeiro organiza o boneco.",
+            f"Spike de ultimate existe, mas nao nesse estado: {hp_label}% de vida e {resource_label}% de recurso no teu {champion_name}.",
+        )
+
+    def primary_spell_spike_call(self, champion_name, spell_name, rank, role=None):
+        if str(role or "").strip().lower() == "jungle":
+            if rank >= 5:
+                return self._pick(
+                    f"{spell_name} ta maxado no teu {champion_name}. Tua leitura agora e limpar mais rapido e chegar primeiro no mapa certo.",
+                    f"{champion_name} fechou o max de {spell_name}. Isso precisa aparecer em tempo de clear, invade e objetivo.",
+                )
+            return self._pick(
+                f"{spell_name} chegou num ponto forte no teu {champion_name}. Tua rota agora e acelerar tempo de clear e aparecer primeiro.",
+                f"{champion_name} ganhou rank importante em {spell_name}. Usa isso pra comprar ritmo de mapa, nao so dano solto.",
+            )
+
+        if rank >= 5:
+            return self._pick(
+                f"{spell_name} ta maxado no teu {champion_name}. Teu padrao forte da lane ja ficou claro; joga em volta disso.",
+                f"{champion_name} fechou o max de {spell_name}. Agora tua lane precisa respeitar essa janela de pressao sem gastar ela torto.",
+            )
+        return self._pick(
+            f"{spell_name} chegou num rank forte no teu {champion_name}. Tua troca boa agora gira mais em volta dessa skill.",
+            f"{champion_name} ganhou um pico importante em {spell_name}. Se a lane abrir, usa essa janela com mais conviccao.",
+        )
+
+    def constrained_primary_spell_spike_call(
+        self,
+        champion_name,
+        spell_name,
+        rank,
+        *,
+        role=None,
+        health_ratio,
+        resource_ratio,
+    ):
+        hp_label = int(max(0.0, min(1.0, health_ratio)) * 100)
+        resource_label = int(max(0.0, min(1.0, resource_ratio)) * 100)
+        if str(role or "").strip().lower() == "jungle":
+            return self._pick(
+                f"{spell_name} subiu no teu {champion_name}, mas com {hp_label}% de vida e {resource_label}% de recurso isso vale mais pra reset e rota limpa do que pra forcar luta.",
+                f"Tem spike em {spell_name}, so que teu estado corta a agressao: {hp_label}% de vida e {resource_label}% de recurso. Primeiro recompra mapa.",
+            )
+        return self._pick(
+            f"{spell_name} chegou num rank forte no teu {champion_name}, mas com {hp_label}% de vida e {resource_label}% de recurso a call nao e forcar troca ruim.",
+            f"Teu {champion_name} ganhou pico em {spell_name}, so que o boneco nao banca a janela inteira: {hp_label}% de vida e {resource_label}% de recurso.",
+        )
+
+    def rune_identity_call(self, champion_name, keystone, primary_style, secondary_style, role=None):
+        name = (keystone or "").lower()
+        if any(token in name for token in ("conqueror", "conquist", "lethal", "tempo", "press the attack", "attack")):
+            plan = "troca longa e tempo de fight"
+        elif any(token in name for token in ("electrocute", "first strike", "hail", "dark harvest")):
+            plan = "janela curta, burst e reset disciplinado"
+        elif any(token in name for token in ("phase rush", "fleet", "aery", "comet")):
+            plan = "spacing, poke e kite"
+        elif any(token in name for token in ("aftershock", "guardian", "grasp", "glacial")):
+            plan = "entrada controlada e troca segura"
+        else:
+            plan = "execucao limpa e troca no teu tempo"
+
+        tree_text = ""
+        if primary_style or secondary_style:
+            tree_text = f" Setup {primary_style or 'primario'} com {secondary_style or 'secundario'}."
+
+        role_text = ""
+        if str(role or "").strip().lower() == "jungle":
+            role_text = " Isso precisa aparecer em reset, tempo de objetivo e primeiro engage."
+        else:
+            role_text = " Isso precisa aparecer ja na primeira leitura de lane."
+
+        return self._pick(
+            f"Tua runa principal em {champion_name} hoje e {keystone or 'essa setup'}. Isso pede {plan}.{tree_text}{role_text}",
+            f"{champion_name} entrou com {keystone or 'essa setup de runa'}. Joga por {plan}, nao no automatico.{tree_text}{role_text}",
         )
 
     def mid_game_job(self, champion_name, mid_game_job, situational_items):

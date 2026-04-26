@@ -4,6 +4,8 @@ import React, { createContext, useCallback, useContext, useEffect, useState } fr
 
 import {
   AuthSnapshot,
+  CoachCallSnapshot,
+  CoachLogEntry,
   DraftRecommendationsSnapshot,
   JungleIntel,
   PerformanceSnapshot,
@@ -11,6 +13,7 @@ import {
   PythonApi,
   SettingsSnapshot,
 } from "@/types/bridge";
+import { buildCoachCallSnapshot } from "@/components/app/coach-call";
 
 interface BridgeContextType {
   auth: AuthSnapshot | null;
@@ -25,7 +28,7 @@ interface BridgeContextType {
   draftRecommendations: DraftRecommendationsSnapshot | null;
   matchIntel: { name: string; champion: string; rank: string; winrate: string }[];
   summary: PostGameSummary | null;
-  logs: { message: string; type: string; id: number }[];
+  logs: CoachLogEntry[];
   isReady: boolean;
   api: PythonApi | null;
   updateSettings: (key: keyof SettingsSnapshot, value: unknown) => void;
@@ -49,11 +52,15 @@ export function BridgeProvider({ children }: { children: React.ReactNode }) {
     { name: string; champion: string; rank: string; winrate: string }[]
   >([]);
   const [summary, setSummary] = useState<PostGameSummary | null>(null);
-  const [logs, setLogs] = useState<{ message: string; type: string; id: number }[]>([]);
+  const [logs, setLogs] = useState<CoachLogEntry[]>([]);
   const [isReady, setIsReady] = useState(false);
 
-  const addLog = useCallback((message: string, type: string = "normal") => {
-    setLogs((prev) => [...prev.slice(-49), { message, type, id: Date.now() + Math.random() }]);
+  const addLog = useCallback((message: string, type: string = "normal", category?: string | null, call?: CoachCallSnapshot) => {
+    const structuredCall = buildCoachCallSnapshot(message, type, category, call);
+    setLogs((prev) => [
+      ...prev.slice(-49),
+      { message, type, category: category ?? null, call: structuredCall, id: Date.now() + Math.random() },
+    ]);
   }, []);
 
   useEffect(() => {
@@ -121,12 +128,12 @@ export function BridgeProvider({ children }: { children: React.ReactNode }) {
       });
     };
 
-    window.addAILog = (message, type) => {
-      addLog(message, type);
+    window.addAILog = (message, type, category, call) => {
+      addLog(message, type, category, call);
     };
 
-    window.playTTSUpdate = (message, type) => {
-      addLog(message, type || "normal");
+    window.playTTSUpdate = (message, type, category, call) => {
+      addLog(message, type || "normal", category, call);
     };
 
     window.setCoachTaxonomyFocus = (categoryId) => {
@@ -153,6 +160,9 @@ export function BridgeProvider({ children }: { children: React.ReactNode }) {
         });
         window.pywebview.api.get_performance_snapshot().then((snapshot) => {
           setPerformance(snapshot);
+        });
+        window.pywebview.api.get_jungle_intel_snapshot().then((snapshot) => {
+          setJungleIntel(snapshot);
         });
         window.pywebview.api.notify_ui_ready();
         addLog("Núcleo do Coacher online.", "system");

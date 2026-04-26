@@ -98,7 +98,7 @@ export default function AuthUI() {
         await api?.register_user(email.trim(), password, displayName.trim());
       }
     } catch (err: unknown) {
-      const message = err instanceof Error ? err.message : "Nao foi possivel autenticar agora.";
+      const message = err instanceof Error ? err.message : "Não foi possível autenticar agora.";
       setError(message);
       setIsShaking(true);
       setTimeout(() => setIsShaking(false), 400);
@@ -146,8 +146,8 @@ export default function AuthUI() {
 
             <motion.div variants={itemVariants} className="grid gap-4 pt-10 sm:grid-cols-3">
               {[
-                ["Sessao segura", "Login persistente por usuario"],
-                ["Telemetria viva", "LCU, memoria e configuracoes"],
+                ["Sessão segura", "Login persistente por usuário"],
+                ["Telemetria viva", "LCU, memória e configurações"],
                 ["Mesmo produto", "Site e app com a mesma identidade"],
               ].map(([title, note]) => (
                 <div key={title} className="rounded-3xl border border-white/10 bg-white/[0.04] p-4">
@@ -174,7 +174,7 @@ export default function AuthUI() {
                   <p className="mt-1 text-sm text-white/45">
                     {isLogin
                       ? "Usa tua conta para liberar o coach nesta maquina."
-                      : "Cria tua conta para salvar memoria, configuracoes e historico."}
+                      : "Cria tua conta para salvar memória, configurações e histórico."}
                   </p>
                 </div>
               </motion.div>

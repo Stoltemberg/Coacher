@@ -13,6 +13,7 @@ from collections import deque
 import pygame
 import requests
 from core.app_paths import writable_data_path
+from core.coach_call import build_coach_call_snapshot
 from core.voice_catalog import normalize_voice_personality, resolve_voice_personality
 
 try:
@@ -125,7 +126,11 @@ class VoiceAssistant:
     def say(self, text, event_type="neutral", category=None):
         display_text = self._prepare_display_text(text)
         if self.callback_log:
-            self.callback_log(display_text, event_type, category)
+            call_snapshot = build_coach_call_snapshot(display_text, event_type, category)
+            try:
+                self.callback_log(display_text, event_type, category, call_snapshot)
+            except TypeError:
+                self.callback_log(display_text, event_type, category)
         if not self.enabled:
             return
         spoken_text = self._prepare_tts_text(display_text)
